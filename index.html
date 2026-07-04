@@ -1,0 +1,999 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>[TOURNAMENT NAME] — Bracket & Prediction Hub</title>
+\
+<!-- Supabase client: replace SUPABASE_URL and SUPABASE_ANON_KEY -->
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  const SUPABASE_URL = 'https://jhrfbiheytbarcwzilof.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_SjxlrfUyllbp_4ePNKZM2Q_aZp2pUGv';
+  window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  // Show logged-in indicator and sign out
+async function showLoginIndicator() {
+  const { data: { user } } = await window.supabase.auth.getUser();
+  const el = document.getElementById('loginIndicator');
+  if (!user) { el.style.display = 'none'; return; }
+  document.getElementById('loggedInAs').textContent = `Signed in as ${user.email}`;
+  el.style.display = 'flex';
+}
+document.getElementById('signOutBtn').onclick = async () => {
+  await window.supabase.auth.signOut();
+  // reload to clear UI and show sign-in form
+  location.reload();
+};
+
+// Call showLoginIndicator after sign-in and on page load
+window.addEventListener('load', async () => {
+  await showLoginIndicator();
+});
+window.supabase.auth.onAuthStateChange((event, session) => {
+  showLoginIndicator();
+});
+// Admin: add player by email
+document.getElementById('addPlayerByEmail').onclick = async () => {
+  const email = document.getElementById('playerEmail').value.trim().toLowerCase();
+  const display_name = document.getElementById('playerDisplayName').value.trim();
+  const seed = document.getElementById('playerSeed').value.trim() || null;
+  const notes = document.getElementById('playerNotes').value.trim() || null;
+  if (!email) return alert('Enter an email for the player');
+  // Insert player row (auth_user_id left null until user claims)
+  const { data, error } = await window.supabase
+    .from('players')
+    .insert({ email, display_name: display_name || email.split('@')[0], seed: seed ? Number(seed) : null, notes })
+    .select()
+    .single();
+  if (error) {
+    document.getElementById('addPlayerMsg').textContent = 'Error: ' + error.message;
+    return;
+  }
+  document.getElementById('addPlayerMsg').textContent = `Player created for ${email}. They will claim this account when they sign in.`;
+  // Optionally refresh players list UI
+  loadPlayersList(); // implement or call your existing render function
+};
+// Admin: fetch unclaimed players
+async function fetchUnclaimedPlayers() {
+  const { data, error } = await window.supabase
+    .from('players')
+    .select('*')
+    .is('auth_user_id', null)
+    .order('created_at', { ascending: true });
+  return data;
+}
+async function loadPlayersList() {
+  const { data, error } = await window.supabase.from('players').select('*').order('seed', { ascending: true });
+  const el = document.getElementById('playersList'); // create this container in your admin UI
+  el.innerHTML = '';
+  data.forEach(p => {
+    const row = document.createElement('div');
+    row.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px">
+      <div><strong>${p.display_name}</strong><div class="muted">${p.email} ${p.auth_user_id ? '(claimed)' : '(unclaimed)'}</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="ghost" onclick="editPlayer('${p.id}')">Edit</button>
+        <button onclick="deletePlayer('${p.id}')">Delete</button>
+      </div>
+    </div>`;
+    el.appendChild(row);
+  });
+}
+window.loadPlayersList = loadPlayersList;
+
+</script>
+<style>
+  :root{
+    --bg:#0b0d10;
+    --panel:#0f1316;
+    --muted:#9aa3ad;
+    --rbg-blue:#005EB8;
+    --accent: #005EB8;
+    --success:#2ecc71;
+    --danger:#e74c3c;
+    --glass: rgba(255,255,255,0.03);
+    --card-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:linear-gradient(180deg,var(--bg),#050607);
+    color:#e6eef6;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:20px;
+  }
+  .wrap{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:18px}
+  header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  h1{font-size:20px;margin:0;color:var(--accent)}
+  .sub{color:var(--muted);font-size:13px}
+  .card{background:var(--panel);border-radius:10px;padding:14px;box-shadow:var(--card-shadow);border:1px solid rgba(255,255,255,0.03)}
+  label{display:block;font-size:13px;margin-bottom:6px;color:#cfe6ff}
+  input[type=text],select,input[type=number],textarea{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+  button{background:var(--accent);border:none;color:white;padding:8px 12px;border-radius:8px;cursor:pointer}
+  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06)}
+  .muted{color:var(--muted)}
+  .small{font-size:13px;color:var(--muted)}
+  .flex{display:flex;gap:8px;align-items:center}
+  .col{display:flex;flex-direction:column;gap:8px}
+  .players-list{max-height:220px;overflow:auto;margin-top:8px}
+  .player-row{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:rgba(255,255,255,0.01);margin-bottom:6px}
+  .bracket-wrap{overflow:auto;padding:8px}
+  .bracket{display:flex;gap:18px;align-items:flex-start}
+  .round{min-width:220px}
+  .match{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:8px;border-radius:8px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
+  .match .players{display:flex;flex-direction:column;gap:6px}
+  .player{display:flex;justify-content:space-between;align-items:center}
+  .player .name{font-weight:600}
+  .player .seed{font-size:12px;color:var(--muted)}
+  .winner{color:var(--success);font-weight:700}
+  .center{display:flex;align-items:center;justify-content:center}
+  .controls{display:flex;gap:8px;flex-wrap:wrap}
+  .leaderboard table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:8px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.03)}
+  th{color:var(--muted);font-weight:600}
+  footer{grid-column:1/-1;margin-top:12px;color:var(--muted);font-size:12px;text-align:center}
+  @media(max-width:980px){
+    .wrap{grid-template-columns:1fr; padding:12px}
+    header{flex-direction:column;align-items:flex-start;gap:8px}
+  }
+  /* small modal */
+  .modal{position:fixed;left:0;top:0;width:100%;height:100%;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:40}
+  .modal .box{width:720px;max-width:95%;background:var(--panel);padding:16px;border-radius:10px}
+  .tag{display:inline-block;padding:6px 8px;border-radius:999px;background:var(--glass);font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>[TOURNAMENT NAME] — Bracket & Prediction Hub</h1>
+        <div class="sub">Start: <strong class="tag">[START DATE]</strong> · Location: <strong class="tag">[LOCATION]</strong></div>
+        </div>
+        <!-- Login indicator (place near top of page) -->
+        <div id="loginIndicator" style="display:none;align-items:center;gap:10px;">
+        <span id="loggedInAs" style="color:#cfe6ff;font-weight:600"></span>
+        <button id="signOutBtn" class="ghost" style="margin-left:8px">Sign out</button>
+        </div>
+
+    </header>
+
+    <!-- Left column: bracket and matches -->
+    <main class="card">
+      <section style="margin-bottom:12px">
+        <div class="flex spaced" style="justify-content:space-between;align-items:center">
+          <div>
+            <h2 style="margin:0;color:#cfe6ff;font-size:16px">Bracket View</h2>
+            <div class="small muted">Click a match to view details, enter result, or place tips.</div>
+          </div>
+          <div class="controls">
+            <button id="genBracketBtn">Generate Bracket</button>
+            <button id="resetBracket" class="ghost">Reset Bracket</button>
+            <button id="exportBracket" class="ghost">Export JSON</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="bracket-wrap card" style="padding:12px">
+        <div id="bracketArea" class="bracket"></div>
+      </section>
+
+      <section style="margin-top:12px">
+        <h3 style="margin:0;color:#cfe6ff">Matches</h3>
+        <div class="small muted">All matches and status</div>
+        <div id="matchesList" style="margin-top:8px"></div>
+      </section>
+    </main>
+
+    <!-- Right column: admin, players, tipping, leaderboard -->
+    <aside class="card col">
+      <div>
+        <h3 style="margin:0;color:#cfe6ff">Tournament Admin</h3>
+        <div class="small muted">Create tournament and manage players</div>
+        <label style="margin-top:8px">Tournament name</label>
+        <input id="tName" placeholder="[TOURNAMENT NAME]" value="[TOURNAMENT NAME]">
+        <label style="margin-top:8px">Start date</label>
+        <input id="tDate" placeholder="[START DATE]" value="[START DATE]">
+        <label style="margin-top:8px">Location</label>
+        <input id="tLocation" placeholder="[LOCATION]" value="[LOCATION]">
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button id="saveMeta">Save</button>
+          <button id="clearAll" class="ghost">Clear All Data</button>
+        </div>
+      </div>
+
+      <hr style="border:none;height:12px">
+
+        <!-- Add Player by email -->
+        <div class="card" id="addPlayerCard">
+        <div style="font-weight:700;color:#cfe6ff">Add Player (by email)</div>
+        <!-- Add Players List for admin-->
+         <div id="playersList" class="players-list"></div>
+        <div class="muted" style="margin-top:6px">Create a player row for an invited account. When the user signs in, they will claim it.</div>
+        <label style="margin-top:8px">Email</label>
+        <input id="playerEmail" type="email" placeholder="user@company.com" style="padding:8px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit">
+        <label style="margin-top:8px">Display name (optional)</label>
+        <input id="playerDisplayName" placeholder="Optional display name">
+        <label style="margin-top:8px">Seed / Tag (optional)</label>
+        <input id="playerSeed" placeholder="e.g., 3">
+        <label style="margin-top:8px">Notes (optional)</label>
+        <input id="playerNotes" placeholder="Notes">
+        <div style="margin-top:10px;display:flex;gap:8px">
+            <button id="addPlayerByEmail" class="rbg-blue">Add Player</button>
+        </div>
+        <div id="addPlayerMsg" class="muted" style="margin-top:8px"></div>
+        </div>
+
+
+      <hr style="border:none;height:12px">
+
+      <div>
+        <h3 style="margin:0;color:#cfe6ff">Place a Tip</h3>
+        <div class="small muted">Pick winner and margin for any open match</div>
+        <label style="margin-top:8px">Your name</label>
+        <input id="tipperName" placeholder="Your name or nickname">
+        <label style="margin-top:8px">Select match</label>
+        <select id="tipMatch"></select>
+        <label style="margin-top:8px">Predicted winner</label>
+        <select id="predWinner"></select>
+        <label style="margin-top:8px">Predicted margin</label>
+        <input id="predMargin" type="number" min="0" value="2">
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button id="placeTip">Place Tip</button>
+          <button id="exportTips" class="ghost">Export Tips</button>
+        </div>
+      </div>
+
+      <hr style="border:none;height:12px">
+
+      <div>
+        <h3 style="margin:0;color:#cfe6ff">Leaderboard</h3>
+        <div class="small muted">Live ranking of tippers</div>
+        <div id="leaderboard" class="leaderboard" style="margin-top:8px"></div>
+      </div>
+    </aside>
+
+    <footer class="muted">Built for internal office tournaments · Points only · Replace placeholders before launch</footer>
+  </div>
+
+  <!-- Modal for match details -->
+  <div id="modal" class="modal">
+    <div class="box">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <h3 id="modalTitle" style="margin:0;color:#cfe6ff">Match</h3>
+          <div id="modalRound" class="small muted">Round info</div>
+        </div>
+        <div>
+          <button id="closeModal" class="ghost">Close</button>
+        </div>
+      </div>
+      <hr style="border:none;height:10px">
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+<script>
+/* Storage key and default structure */
+const STORAGE_KEY = 'pt_bracket_v1';
+const defaultData = {
+  meta: { tournament: '[TOURNAMENT NAME]', start: '[START DATE]', location: '[LOCATION]' },
+  players: [], // {id,name,seed,notes}
+  bracket: { rounds: [] }, // rounds: [ [match,match], ... ] match: {id,slotA:{playerId|null},slotB:{playerId|null},status:'open'|'finished',result:{a,b}}
+  tips: [], // {id,matchId,tipper,predictedWinner,predictedMargin,settled,points}
+  settings: { scoring: { winner:3, margin:2, underdog:2 } }
+};
+
+function loadData(){ const raw = localStorage.getItem(STORAGE_KEY); if(!raw){ localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData)); return JSON.parse(JSON.stringify(defaultData)); } try{ return JSON.parse(raw); }catch(e){ localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData)); return JSON.parse(JSON.stringify(defaultData)); } }
+function saveData(d){ localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
+
+let data = loadData();
+
+/* Utilities */
+function uid(prefix='id'){ return prefix + '_' + Math.random().toString(36).slice(2,9); }
+function $(id){ return document.getElementById(id); }
+
+/* Render meta */
+function renderMeta(){
+  $('tName').value = data.meta.tournament || '';
+  $('tDate').value = data.meta.start || '';
+  $('tLocation').value = data.meta.location || '';
+}
+
+/* Players management */
+function renderPlayers(){
+  const el = $('playersList'); el.innerHTML = '';
+  if(data.players.length === 0){ el.innerHTML = '<div class="small muted">No players yet</div>'; return; }
+  data.players.sort((a,b)=> (a.seed||a.name).toString().localeCompare((b.seed||b.name).toString(), undefined, {numeric:true}));
+  data.players.forEach(p=>{
+    const row = document.createElement('div'); row.className='player-row';
+    row.innerHTML = `<div><div style="font-weight:700">${p.name}</div><div class="small muted">${p.seed?('Seed '+p.seed):''} ${p.notes?('· '+p.notes):''}</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="ghost small-btn" onclick="editPlayer('${p.id}')">Edit</button>
+        <button class="small-btn" onclick="removePlayer('${p.id}')">Remove</button>
+      </div>`;
+    el.appendChild(row);
+  });
+}
+
+/* Add player */
+$('addPlayerBtn').onclick = function(){
+  const name = $('playerName').value.trim(); if(!name) return alert('Enter player name');
+  const seed = $('playerSeed').value.trim(); const notes = $('playerNote').value.trim();
+  const id = uid('p');
+  data.players.push({ id, name, seed: seed || null, notes: notes || '' });
+  saveData(data); renderPlayers(); $('playerName').value=''; $('playerSeed').value=''; $('playerNote').value='';
+};
+
+/* Edit and remove */
+function editPlayer(id){
+  const p = data.players.find(x=>x.id===id); if(!p) return;
+  const newName = prompt('Player name', p.name); if(newName===null) return;
+  const newSeed = prompt('Seed (leave blank to remove)', p.seed||''); if(newSeed===null) return;
+  const newNotes = prompt('Notes', p.notes||''); if(newNotes===null) return;
+  p.name = newName.trim() || p.name; p.seed = newSeed.trim() || null; p.notes = newNotes.trim() || '';
+  saveData(data); renderPlayers();
+}
+function removePlayer(id){
+  if(!confirm('Remove player?')) return;
+  data.players = data.players.filter(x=>x.id!==id);
+  // remove from bracket slots
+  if(data.bracket && data.bracket.rounds){
+    data.bracket.rounds.forEach(round=>{
+      round.forEach(m=>{
+        if(m.slotA && m.slotA.playerId === id) m.slotA.playerId = null;
+        if(m.slotB && m.slotB.playerId === id) m.slotB.playerId = null;
+      });
+    });
+  }
+  saveData(data); renderPlayers(); renderBracket(); renderMatches(); renderTipSelectors();
+}
+
+/* Auto-seed shuffle */
+$('shuffleSeeds').onclick = function(){
+  if(data.players.length === 0) return alert('No players to seed');
+  // simple shuffle and assign numeric seeds
+  const arr = [...data.players];
+  for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  arr.forEach((p,i)=>{ p.seed = i+1; });
+  data.players = arr;
+  saveData(data); renderPlayers();
+};
+
+/* Bracket generation single-elimination */
+function nextPowerOfTwo(n){ let p=1; while(p<n) p*=2; return p; }
+
+function generateBracket(){
+  if(data.players.length < 2) return alert('Add at least 2 players');
+  // sort by seed if present, else random
+  const seeded = [...data.players].sort((a,b)=>{
+    if(a.seed && b.seed) return Number(a.seed) - Number(b.seed);
+    if(a.seed) return -1;
+    if(b.seed) return 1;
+    return a.name.localeCompare(b.name);
+  });
+  const slots = nextPowerOfTwo(seeded.length);
+  const byes = slots - seeded.length;
+  // create initial round matches
+  const matches = [];
+  // pair top vs bottom seeding style
+  const playersOrdered = [];
+  // fill with seeded players then nulls for byes
+  seeded.forEach(p=>playersOrdered.push(p.id));
+  for(let i=0;i<byes;i++) playersOrdered.push(null);
+  // pairing algorithm: standard bracket pairing
+  // create array of positions using bracket seeding algorithm
+  function bracketPositions(n){
+    if(n===1) return [1];
+    const prev = bracketPositions(n/2);
+    const res = [];
+    prev.forEach(x=>res.push(x));
+    prev.forEach(x=>res.push(n+1-x));
+    return res;
+  }
+  const pos = bracketPositions(slots);
+  const posToPlayer = {};
+  for(let i=0;i<slots;i++){
+    posToPlayer[pos[i]] = playersOrdered[i] || null;
+  }
+  // create matches for round 1: pair positions (1 vs 2), (3 vs 4) etc by pos order
+  const round1 = [];
+  for(let i=1;i<=slots;i+=2){
+    const pA = posToPlayer[i] || null;
+    const pB = posToPlayer[i+1] || null;
+    round1.push({ id: uid('m'), slotA:{playerId:pA}, slotB:{playerId:pB}, status: (pA && pB)?'open':'open', result:null });
+  }
+  // build rounds: number of rounds = log2(slots)
+  const rounds = [round1];
+  let prevRound = round1;
+  let roundCount = Math.log2(slots);
+  for(let r=1;r<roundCount;r++){
+    const matchesCount = prevRound.length/2;
+    const newRound = [];
+    for(let i=0;i<matchesCount;i++){
+      newRound.push({ id: uid('m'), slotA:{playerId:null}, slotB:{playerId:null}, status:'pending', result:null });
+    }
+    rounds.push(newRound);
+    prevRound = newRound;
+  }
+  data.bracket = { rounds };
+  saveData(data); renderBracket(); renderMatches(); renderTipSelectors();
+}
+
+/* Render bracket visually */
+function renderBracket(){
+  const area = $('bracketArea'); area.innerHTML = '';
+  if(!data.bracket || !data.bracket.rounds || data.bracket.rounds.length===0){
+    area.innerHTML = '<div class="small muted">No bracket yet. Generate bracket to begin.</div>'; return;
+  }
+  const rounds = data.bracket.rounds;
+  rounds.forEach((round,ri)=>{
+    const col = document.createElement('div'); col.className='round';
+    const title = document.createElement('div'); title.style.marginBottom='8px'; title.innerHTML = `<div style="font-weight:700;color:#cfe6ff">Round ${ri+1}</div><div class="small muted">${round.length} matches</div>`;
+    col.appendChild(title);
+    round.forEach(m=>{
+      const matchEl = document.createElement('div'); matchEl.className='match';
+      matchEl.onclick = ()=>openMatchModal(m.id);
+      const pA = m.slotA && m.slotA.playerId ? data.players.find(p=>p.id===m.slotA.playerId) : null;
+      const pB = m.slotB && m.slotB.playerId ? data.players.find(p=>p.id===m.slotB.playerId) : null;
+      matchEl.innerHTML = `<div class="players">
+        <div class="player"><div><span class="name">${pA?pA.name:'TBD'}</span><div class="small muted">${pA && pA.seed?('Seed '+pA.seed):''}</div></div><div class="small muted">${m.result?m.result.a:''}</div></div>
+        <div class="player"><div><span class="name">${pB?pB.name:'TBD'}</span><div class="small muted">${pB && pB.seed?('Seed '+pB.seed):''}</div></div><div class="small muted">${m.result?m.result.b:''}</div></div>
+      </div>`;
+      col.appendChild(matchEl);
+    });
+    area.appendChild(col);
+  });
+}
+
+/* Find match by id across rounds */
+function findMatchById(id){
+  for(const round of data.bracket.rounds || []){
+    for(const m of round) if(m.id===id) return m;
+  }
+  return null;
+}
+
+/* Render matches list */
+function renderMatches(){
+  const el = $('matchesList'); el.innerHTML = '';
+  if(!data.bracket || !data.bracket.rounds) return;
+  data.bracket.rounds.forEach((round,ri)=>{
+    round.forEach(m=>{
+      const pA = m.slotA && m.slotA.playerId ? data.players.find(p=>p.id===m.slotA.playerId) : null;
+      const pB = m.slotB && m.slotB.playerId ? data.players.find(p=>p.id===m.slotB.playerId) : null;
+      const div = document.createElement('div'); div.className='match';
+      div.style.marginBottom='8px';
+      div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-weight:700">${pA?pA.name:'TBD'} vs ${pB?pB.name:'TBD'}</div><div class="small muted">Round ${ri+1} · ${m.status}</div></div>
+        <div style="display:flex;gap:6px">
+          <button class="ghost small-btn" onclick="openMatchModal('${m.id}')">Open</button>
+        </div>
+      </div>`;
+      el.appendChild(div);
+    });
+  });
+}
+
+/* Modal for match details, results, tips */
+function openMatchModal(matchId){
+  const m = findMatchById(matchId);
+  if(!m) return alert('Match not found');
+  const pA = m.slotA && m.slotA.playerId ? data.players.find(p=>p.id===m.slotA.playerId) : null;
+  const pB = m.slotB && m.slotB.playerId ? data.players.find(p=>p.id===m.slotB.playerId) : null;
+  $('modalTitle').textContent = `${pA?pA.name:'TBD'} vs ${pB?pB.name:'TBD'}`;
+  $('modalRound').textContent = `Match ID ${m.id} · Status: ${m.status}`;
+  const body = $('modalBody'); body.innerHTML = '';
+  const info = document.createElement('div');
+  info.innerHTML = `<div style="display:flex;gap:12px">
+    <div style="flex:1">
+      <div style="font-weight:700">${pA?pA.name:'TBD'}</div><div class="small muted">${pA && pA.notes?pA.notes:''}</div>
+    </div>
+    <div style="flex:1">
+      <div style="font-weight:700">${pB?pB.name:'TBD'}</div><div class="small muted">${pB && pB.notes?pB.notes:''}</div>
+    </div>
+  </div>`;
+  body.appendChild(info);
+
+  // result entry (admin)
+  const resDiv = document.createElement('div'); resDiv.style.marginTop='12px';
+  resDiv.innerHTML = `<div style="font-weight:700;color:#cfe6ff">Enter result</div>
+    <div class="small muted">Admin only. Submitting settles tips for this match.</div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <input id="modalScoreA" type="number" placeholder="${pA?pA.name:'A'} score" min="0" style="flex:1">
+      <input id="modalScoreB" type="number" placeholder="${pB?pB.name:'B'} score" min="0" style="flex:1">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="submitMatchResult">Submit Result</button>
+      <button id="clearMatchResult" class="ghost">Clear Result</button>
+    </div>`;
+  body.appendChild(resDiv);
+
+  // tips for this match
+  const tipsDiv = document.createElement('div'); tipsDiv.style.marginTop='12px';
+  tipsDiv.innerHTML = `<div style="font-weight:700;color:#cfe6ff">Tips for this match</div><div id="matchTipsList" class="small muted" style="margin-top:6px">Loading tips...</div>`;
+  body.appendChild(tipsDiv);
+
+  // wire up actions
+  $('submitMatchResult').onclick = function(){
+    const a = parseInt($('modalScoreA').value||'0',10);
+    const b = parseInt($('modalScoreB').value||'0',10);
+    m.status = 'finished'; m.result = { a, b };
+    // propagate winner to next round slot
+    propagateWinner(m.id);
+    // settle tips
+    settleTipsForMatch(m.id);
+    saveData(data); renderBracket(); renderMatches(); renderLeaderboard(); renderTipSelectors();
+    alert('Result recorded');
+    closeModal();
+  };
+  $('clearMatchResult').onclick = function(){
+    if(!confirm('Clear result and reopen match?')) return;
+    m.status = 'open'; m.result = null;
+    // clear downstream slots that used this match as source
+    clearDownstream(m.id);
+    // unset tips
+    data.tips.filter(t=>t.matchId===m.id).forEach(t=>{ t.settled=false; t.points=0; });
+    saveData(data); renderBracket(); renderMatches(); renderLeaderboard(); renderTipSelectors();
+    closeModal();
+  };
+
+  // render tips list
+  const tipsList = $('matchTipsList');
+  const matchTips = data.tips.filter(t=>t.matchId===m.id);
+  if(matchTips.length===0) tipsList.innerHTML = '<div class="small muted">No tips yet</div>';
+  else{
+    tipsList.innerHTML = '';
+    matchTips.forEach(t=>{
+      const div = document.createElement('div'); div.style.marginBottom='6px';
+      div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${t.tipper}</strong> predicted <em>${t.predictedWinner}</em> by ${t.predictedMargin}</div><div class="small muted">${t.settled?('Points: '+(t.points||0)):'Open'}</div></div>`;
+      tipsList.appendChild(div);
+    });
+  }
+
+  $('modal').style.display='flex';
+}
+function closeModal(){ $('modal').style.display='none'; }
+$('closeModal').onclick = closeModal;
+
+/* Propagate winner to next round slot */
+function propagateWinner(matchId){
+  // find which round and index this match is
+  const rounds = data.bracket.rounds;
+  for(let r=0;r<rounds.length;r++){
+    for(let i=0;i<rounds[r].length;i++){
+      const m = rounds[r][i];
+      if(m.id === matchId){
+        // if not last round, place winner into next round slot
+        if(r+1 < rounds.length){
+          const nextMatchIndex = Math.floor(i/2);
+          const nextMatch = rounds[r+1][nextMatchIndex];
+          const winnerId = m.result.a > m.result.b ? (m.slotA.playerId) : (m.result.b > m.result.a ? m.slotB.playerId : null);
+          if(winnerId){
+            if(i % 2 === 0) nextMatch.slotA.playerId = winnerId;
+            else nextMatch.slotB.playerId = winnerId;
+            // mark next match open if both slots filled
+            if(nextMatch.slotA.playerId && nextMatch.slotB.playerId) nextMatch.status = 'open';
+            else nextMatch.status = 'pending';
+          }
+        }
+        saveData(data);
+        return;
+      }
+    }
+  }
+}
+
+/* Clear downstream winners when result cleared */
+function clearDownstream(matchId){
+  const rounds = data.bracket.rounds;
+  for(let r=0;r<rounds.length;r++){
+    for(let i=0;i<rounds[r].length;i++){
+      const m = rounds[r][i];
+      if(m.id === matchId){
+        // clear all later rounds that depend on this match
+        for(let rr=r+1; rr<rounds.length; rr++){
+          rounds[rr].forEach(nm=>{
+            if(nm.slotA && nm.slotA.playerId && data.players.find(p=>p.id===nm.slotA.playerId) && nm.slotA.playerId === (m.slotA.playerId || m.slotB.playerId)){
+              nm.slotA.playerId = null; nm.status = 'pending'; nm.result = null;
+            }
+            if(nm.slotB && nm.slotB.playerId && data.players.find(p=>p.id===nm.slotB.playerId) && nm.slotB.playerId === (m.slotA.playerId || m.slotB.playerId)){
+              nm.slotB.playerId = null; nm.status = 'pending'; nm.result = null;
+            }
+          });
+        }
+        saveData(data); return;
+      }
+    }
+  }
+}
+
+/* Tips management */
+function renderTipSelectors(){
+  const tipMatch = $('tipMatch'); tipMatch.innerHTML = '';
+  const predWinner = $('predWinner'); predWinner.innerHTML = '';
+  // list open matches
+  const options = [];
+  if(data.bracket && data.bracket.rounds){
+    data.bracket.rounds.forEach(round=>{
+      round.forEach(m=>{
+        if(m.status !== 'finished'){
+          const pA = m.slotA && m.slotA.playerId ? data.players.find(p=>p.id===m.slotA.playerId) : null;
+          const pB = m.slotB && m.slotB.playerId ? data.players.find(p=>p.id===m.slotB.playerId) : null;
+          const label = `${pA?pA.name:'TBD'} vs ${pB?pB.name:'TBD'} (${m.id})`;
+          const opt = document.createElement('option'); opt.value = m.id; opt.textContent = label;
+          tipMatch.appendChild(opt);
+        }
+      });
+    });
+  }
+  tipMatch.onchange = function(){
+    const mid = this.value; predWinner.innerHTML = '';
+    const m = findMatchById(mid);
+    if(!m) return;
+    const pA = m.slotA && m.slotA.playerId ? data.players.find(p=>p.id===m.slotA.playerId) : null;
+    const pB = m.slotB && m.slotB.playerId ? data.players.find(p=>p.id===m.slotB.playerId) : null;
+    if(pA){ const o = document.createElement('option'); o.value = pA.name; o.textContent = pA.name; predWinner.appendChild(o); }
+    if(pB){ const o = document.createElement('option'); o.value = pB.name; o.textContent = pB.name; predWinner.appendChild(o); }
+  };
+}
+
+/* Place tip */
+$('placeTip').onclick = function(){
+  const tipper = $('tipperName').value.trim() || 'Anon';
+  const matchId = $('tipMatch').value;
+  const predictedWinner = $('predWinner').value;
+  const predictedMargin = parseInt($('predMargin').value || '0',10);
+  if(!matchId || !predictedWinner) return alert('Select match and predicted winner');
+  const id = uid('t');
+  data.tips.push({ id, matchId, tipper, predictedWinner, predictedMargin, timestamp:Date.now(), settled:false, points:0 });
+  saveData(data); renderLeaderboard(); alert('Tip placed');
+};
+
+/* Settle tips for a match */
+function settleTipsForMatch(matchId){
+  const m = findMatchById(matchId);
+  if(!m || !m.result) return;
+  const a = m.result.a; const b = m.result.b;
+  const winnerName = a > b ? (data.players.find(p=>p.id===m.slotA.playerId)?.name) : (b > a ? data.players.find(p=>p.id===m.slotB.playerId)?.name : null);
+  const margin = Math.abs(a - b);
+  data.tips.filter(t=>t.matchId===matchId && !t.settled).forEach(t=>{
+    let pts = 0;
+    if(winnerName && t.predictedWinner === winnerName) pts += data.settings.scoring.winner;
+    if(t.predictedMargin === margin) pts += data.settings.scoring.margin;
+    // underdog bonus heuristic: if predicted winner had no seed or higher numeric seed value (worse), give bonus
+    const predictedPlayer = data.players.find(p=>p.name===t.predictedWinner);
+    const opponent = (predictedPlayer && m.slotA.playerId === predictedPlayer.id) ? data.players.find(p=>p.id===m.slotB.playerId) : data.players.find(p=>p.id===m.slotA.playerId);
+    if(predictedPlayer && opponent){
+      const pSeed = predictedPlayer.seed ? Number(predictedPlayer.seed) : 9999;
+      const oSeed = opponent.seed ? Number(opponent.seed) : 9999;
+      if(pSeed > oSeed) pts += data.settings.scoring.underdog;
+    }
+    t.points = pts; t.settled = true;
+  });
+  saveData(data);
+}
+
+/* Leaderboard */
+function renderLeaderboard(){
+  const scores = {};
+  data.tips.forEach(t=>{
+    if(!scores[t.tipper]) scores[t.tipper] = { name:t.tipper, tips:0, points:0 };
+    scores[t.tipper].tips++;
+    scores[t.tipper].points += t.points || 0;
+  });
+  const arr = Object.values(scores).sort((a,b)=>b.points - a.points || a.name.localeCompare(b.name));
+  const el = $('leaderboard'); el.innerHTML = '';
+  if(arr.length===0){ el.innerHTML = '<div class="small muted">No tips yet</div>'; return; }
+  const table = document.createElement('table');
+  table.innerHTML = `<thead><tr><th>Tipper</th><th>Tips</th><th>Points</th></tr></thead>`;
+  const tbody = document.createElement('tbody');
+  arr.forEach(r=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${r.name}</td><td>${r.tips}</td><td style="color:var(--accent);font-weight:700">${r.points}</td>`;
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody); el.appendChild(table);
+}
+
+/* Export and admin actions */
+$('genBracketBtn').onclick = function(){ if(!confirm('Generate bracket from current players? Existing bracket will be replaced.')) return; generateBracket(); };
+$('resetBracket').onclick = function(){ if(!confirm('Reset bracket?')) return; data.bracket = { rounds: [] }; saveData(data); renderBracket(); renderMatches(); renderTipSelectors(); };
+$('exportBracket').onclick = function(){ const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'tournament.json'; a.click(); URL.revokeObjectURL(url); };
+$('exportTips').onclick = function(){ const rows=[['id','matchId','tipper','predictedWinner','predictedMargin','timestamp','settled','points']]; data.tips.forEach(t=>rows.push([t.id,t.matchId,t.tipper,t.predictedWinner,t.predictedMargin,new Date(t.timestamp).toISOString(),t.settled,t.points||0])); const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n'); const blob = new Blob([csv],{type:'text/csv'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='tips.csv'; a.click(); URL.revokeObjectURL(url); };
+$('clearAll').onclick = function(){ if(!confirm('Clear all tournament data? This cannot be undone.')) return; localStorage.removeItem(STORAGE_KEY); data = loadData(); renderAll(); };
+
+/* Save meta */
+$('saveMeta').onclick = function(){ data.meta.tournament = $('tName').value.trim() || data.meta.tournament; data.meta.start = $('tDate').value.trim() || data.meta.start; data.meta.location = $('tLocation').value.trim() || data.meta.location; saveData(data); renderMeta(); alert('Tournament meta saved'); };
+
+/* Export JSON */
+$('exportBracket').onclick = function(){ const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'tournament.json'; a.click(); URL.revokeObjectURL(url); };
+
+/* Download full JSON */
+function downloadAll(){ const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'tournament_full.json'; a.click(); URL.revokeObjectURL(url); }
+
+/* Initial render */
+function renderAll(){ renderMeta(); renderPlayers(); renderBracket(); renderMatches(); renderTipSelectors(); renderLeaderboard(); }
+renderAll();
+
+/* Accessibility: close modal on background click */
+$('modal').onclick = function(e){ if(e.target === this) closeModal(); };
+
+</script>
+<!-- BEGIN Tournament Auth and Scheduling Patch -->
+<style>
+  /* Minimal styles to match dark theme and RBG blue */
+  .rbg-blue{background:#005EB8;color:#fff;border-radius:6px;padding:6px 10px;border:none;cursor:pointer}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#cfe6ff;padding:6px 10px;border-radius:6px;cursor:pointer}
+  .card{background:#0f1316;padding:12px;border-radius:8px;margin:12px 0;color:#e6eef6}
+  .muted{color:#9aa3ad;font-size:13px}
+  .small{font-size:13px;color:#cfe6ff}
+</style>
+
+<div id="appRoot" style="max-width:1100px;margin:18px auto;padding:12px">
+  <div id="authArea" class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div class="small" style="font-weight:700;color:#cfe6ff">Sign in</div>
+        <div class="muted" style="margin-top:6px">Use your work email. Magic link will be sent.</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input id="emailInput" type="email" placeholder="you@company.com" style="padding:8px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit">
+        <button id="sendMagic" class="rbg-blue">Send magic link</button>
+      </div>
+    </div>
+    <div id="authMsg" class="muted" style="margin-top:8px"></div>
+  </div>
+
+  <div id="dashboard" style="display:none">
+    <div id="nextMatchCard"></div>
+    <div id="myMatchesList"></div>
+    <div id="notificationsList" class="card"></div>
+  </div>
+</div>
+
+<script type="module">
+  // Helper: safe JSON parse
+  function safeParse(v){ try{return JSON.parse(v);}catch(e){return null;} }
+
+  // Auth UI actions
+  document.getElementById('sendMagic').onclick = async () => {
+    const email = document.getElementById('emailInput').value.trim();
+    if (!email) return alert('Enter an email address');
+    document.getElementById('authMsg').textContent = 'Sending magic link...';
+    const { error } = await window.supabase.auth.signInWithOtp({ email });
+    document.getElementById('authMsg').textContent = error ? 'Error: ' + error.message : 'Magic link sent — check your email.';
+  };
+
+  // Ensure profile exists and is claimed
+  async function ensureProfile() {
+    const { data: { user } } = await window.supabase.auth.getUser();
+    if (!user) return null;
+    // find by auth_user_id
+    let { data: player, error } = await window.supabase
+      .from('players')
+      .select('*')
+      .eq('auth_user_id', user.id)
+      .maybeSingle();
+    if (error) throw error;
+    if (!player) {
+      // try by email
+      const { data: byEmail } = await window.supabase
+        .from('players')
+        .select('*')
+        .eq('email', user.email)
+        .limit(1);
+      if (byEmail && byEmail.length > 0) {
+        const p = byEmail[0];
+        const { error: upErr } = await window.supabase
+          .from('players')
+          .update({ auth_user_id: user.id })
+          .eq('id', p.id);
+        if (upErr) throw upErr;
+        player = { ...p, auth_user_id: user.id };
+      } else {
+        // create new player
+        const { data: newPlayer, error: insErr } = await window.supabase
+          .from('players')
+          .insert({
+            auth_user_id: user.id,
+            email: user.email,
+            display_name: user.user_metadata?.full_name || user.email.split('@')[0]
+          })
+          .select()
+          .single();
+        if (insErr) throw insErr;
+        player = newPlayer;
+      }
+    }
+    return player;
+  }
+
+  // Fetch matches for player
+  async function fetchMyMatches(playerId) {
+    const { data, error } = await window.supabase
+      .from('matches')
+      .select(`
+        id,
+        tournament_slug,
+        slot_a,
+        slot_b,
+        scheduled,
+        proposed_times,
+        status,
+        acceptances,
+        result,
+        created_at,
+        slot_a:slot_a (id, display_name, email, seed),
+        slot_b:slot_b (id, display_name, email, seed)
+      `)
+      .or(`slot_a.eq.${playerId},slot_b.eq.${playerId}`)
+      .order('created_at', { ascending: true });
+    if (error) throw error;
+    return data;
+  }
+
+  // Render next match card and list
+  function renderMatchesUI(player, matches) {
+    const next = matches.find(m => m.status !== 'finished');
+    const root = document.getElementById('nextMatchCard');
+    root.innerHTML = '';
+    if (!next) {
+      root.innerHTML = `<div class="card"><div class="small">No upcoming matches</div></div>`;
+    } else {
+      const opponent = (next.slot_a && next.slot_a.id === player.id) ? next.slot_b : next.slot_a;
+      const timeText = next.scheduled ? new Date(next.scheduled.start).toLocaleString() : 'Proposed';
+      const proposedTimes = (next.proposed_times || []).map(t => `<div style="margin-top:6px"><strong>${t.id}</strong> · ${new Date(t.start).toLocaleString()} → ${new Date(t.end).toLocaleString()}</div>`).join('');
+      root.innerHTML = `
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:700;color:#cfe6ff">${opponent ? opponent.display_name : 'TBD'}</div>
+              <div class="muted" style="margin-top:6px">When: ${timeText}</div>
+              <div class="muted" style="margin-top:6px">Status: ${next.status}</div>
+              ${proposedTimes}
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button id="acceptBtn" class="rbg-blue">Accept first proposed</button>
+              <button id="proposeBtn" class="ghost">Propose alternative</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById('acceptBtn').onclick = async () => {
+        if (!next.proposed_times || next.proposed_times.length === 0) return alert('No proposed times to accept');
+        const chosenId = next.proposed_times[0].id;
+        await acceptProposedTime(next.id, chosenId);
+        alert('Accepted. If both players accept the same time it will auto-confirm.');
+      };
+      document.getElementById('proposeBtn').onclick = async () => {
+        const start = prompt('Propose start (ISO, e.g., 2026-07-20T12:30:00+10:00)');
+        const end = prompt('Propose end (ISO, e.g., 2026-07-20T12:50:00+10:00)');
+        if (!start || !end) return;
+        await proposeAlternative(next.id, start, end, 'Proposed via app');
+        alert('Proposal sent to opponent.');
+      };
+    }
+
+    // list all matches
+    const list = document.getElementById('myMatchesList');
+    list.innerHTML = '<div class="card"><div style="font-weight:700;color:#cfe6ff">My Matches</div></div>';
+    const container = document.createElement('div');
+    container.className = 'card';
+    matches.forEach(m => {
+      const opp = (m.slot_a && m.slot_a.id === player.id) ? m.slot_b : m.slot_a;
+      const t = m.scheduled ? new Date(m.scheduled.start).toLocaleString() : 'Proposed';
+      const el = document.createElement('div');
+      el.style.padding = '8px 0';
+      el.innerHTML = `<div style="font-weight:700">${opp ? opp.display_name : 'TBD'} · ${t} · ${m.status}</div>`;
+      container.appendChild(el);
+    });
+    list.appendChild(container);
+  }
+
+  // Get current player row
+  async function getCurrentPlayer() {
+    const { data: { user } } = await window.supabase.auth.getUser();
+    if (!user) return null;
+    const { data: player } = await window.supabase.from('players').select('*').eq('auth_user_id', user.id).maybeSingle();
+    return player;
+  }
+
+  // Accept proposed time
+  async function acceptProposedTime(matchId, timeId) {
+    const player = await getCurrentPlayer();
+    if (!player) throw new Error('Player not found');
+    const { data: match } = await window.supabase.from('matches').select('*').eq('id', matchId).single();
+    const acceptances = match.acceptances || {};
+    acceptances[player.id] = timeId;
+    await window.supabase.from('matches').update({ acceptances }).eq('id', matchId);
+    // re-check and auto-confirm if both accepted same time
+    const { data: updated } = await window.supabase.from('matches').select('*').eq('id', matchId).single();
+    const acc = updated.acceptances || {};
+    const slotA = updated.slot_a;
+    const slotB = updated.slot_b;
+    if (slotA && slotB && acc[slotA] && acc[slotB] && acc[slotA] === acc[slotB]) {
+      const chosenTime = (updated.proposed_times || []).find(t => t.id === acc[slotA]);
+      if (chosenTime) {
+        await window.supabase.from('matches').update({ scheduled: chosenTime, status: 'confirmed' }).eq('id', matchId);
+      }
+    }
+  }
+
+  // Propose alternative
+  async function proposeAlternative(matchId, startIso, endIso, message) {
+    const player = await getCurrentPlayer();
+    if (!player) throw new Error('Player not found');
+    await window.supabase.from('proposals').insert({
+      match_id: matchId,
+      proposed_by: player.id,
+      start: startIso,
+      "end": endIso,
+      message
+    });
+  }
+
+  // Realtime subscriptions for matches and notifications
+  let matchChannel = null;
+  let notifChannel = null;
+  function subscribeRealtime(playerId, onMatchUpdate, onNotif) {
+    // unsubscribe existing
+    if (matchChannel) matchChannel.unsubscribe();
+    if (notifChannel) notifChannel.unsubscribe();
+
+    matchChannel = window.supabase.channel('public:matches')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'matches', filter: `slot_a=eq.${playerId}` }, payload => onMatchUpdate(payload))
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'matches', filter: `slot_b=eq.${playerId}` }, payload => onMatchUpdate(payload))
+      .subscribe();
+
+    notifChannel = window.supabase.channel('public:notifications')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `player_id=eq.${playerId}` }, payload => onNotif(payload.new))
+      .subscribe();
+  }
+
+  // Render notifications
+  function renderNotificationRow(n) {
+    const container = document.getElementById('notificationsList');
+    const el = document.createElement('div');
+    el.style.padding = '8px';
+    el.innerHTML = `<div style="font-weight:700">${n.payload?.type || 'Notification'}</div><div class="muted">${JSON.stringify(n.payload)}</div>`;
+    container.appendChild(el);
+  }
+
+  // Boot sequence on page load
+  window.addEventListener('load', async () => {
+    // check session
+    const { data } = await window.supabase.auth.getSession();
+    if (!data.session) {
+      // not signed in
+      return;
+    }
+    // signed in: claim profile and render dashboard
+    document.getElementById('authArea').innerHTML = `<div class="small" style="color:#cfe6ff">Signed in as ${data.session.user.email}</div>`;
+    const player = await ensureProfile();
+    if (!player) return;
+    document.getElementById('dashboard').style.display = 'block';
+    // initial fetch
+    const matches = await fetchMyMatches(player.id);
+    renderMatchesUI(player, matches);
+    // subscribe realtime
+    subscribeRealtime(player.id, async () => {
+      const updatedMatches = await fetchMyMatches(player.id);
+      renderMatchesUI(player, updatedMatches);
+    }, (notif) => {
+      renderNotificationRow(notif);
+    });
+  });
+
+  // Optional: handle sign out for testing
+  window.supabase.auth.onAuthStateChange((event, session) => {
+    if (!session) {
+      // signed out: reload to show sign-in UI
+      location.reload();
+    }
+  });
+</script>
+<!-- END Tournament Auth and Scheduling Patch -->
+
+</body>
+</html>
