@@ -90,6 +90,9 @@
   .rating-down{color:#f87171}
   .h2h-bar{height:4px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:3px;overflow:hidden}
   .h2h-bar-fill{height:100%;border-radius:2px;background:var(--accent)}
+  .lb-name{cursor:pointer;color:#cfe6ff;text-decoration:none}
+  .lb-name:hover{color:var(--accent-2);text-decoration:underline}
+  .t-status{display:inline-block;font-size:11px;padding:1px 7px;border-radius:4px;margin-left:6px;font-weight:600}
   /* Modals */
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:1000}
   .modal{background:#1a1f26;border-radius:14px;padding:24px;width:380px;max-width:calc(100vw - 32px);box-shadow:var(--card-shadow);border:1px solid rgba(255,255,255,0.08)}
@@ -179,7 +182,7 @@
               <div class="muted">Create and manage tournaments</div>
             </div>
             <div class="flex">
-              <button id="createTournamentBtn" class="primary">Create Tournament</button>
+              <span id="createTournamentWrap"><button id="createTournamentBtn" class="primary">Create Tournament</button></span>
               <button id="refreshTournaments" class="ghost">Refresh</button>
             </div>
           </div>
@@ -516,7 +519,7 @@
 
       <!-- Right column (admin & quick lists) -->
       <aside>
-        <div class="card">
+        <div class="card" id="adminActionsCard">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
               <div style="font-weight:700;color:#cfe6ff">Admin / Quick Actions</div>
@@ -537,7 +540,7 @@
           </div>
         </div>
 
-        <div class="card" style="margin-top:12px">
+        <div class="card" id="adminPlayersCard" style="margin-top:12px">
           <div style="font-weight:700;color:#cfe6ff">Players</div>
           <div class="muted" style="margin-top:6px">Claimed vs unclaimed</div>
           <div id="playersList" class="list" style="margin-top:8px"></div>
@@ -583,6 +586,33 @@
       <div class="modal-actions">
         <button id="settingsClose" class="ghost">Cancel</button>
         <button id="settingsSave" class="primary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tournament Modal -->
+  <div id="tournamentModal" class="modal-overlay" style="display:none">
+    <div class="modal">
+      <h2>Create Tournament</h2>
+      <label>Name</label>
+      <input id="tournamentName" placeholder="e.g. Office Cup 2026">
+      <label>Start Date</label>
+      <input id="tournamentDate" type="date">
+      <label>Format</label>
+      <select id="tournamentFormat">
+        <option value="single_elimination">Single Elimination</option>
+        <option value="round_robin">Round Robin</option>
+      </select>
+      <label>Max Players</label>
+      <select id="tournamentMaxPlayers">
+        <option value="4">4</option>
+        <option value="8" selected>8</option>
+        <option value="16">16</option>
+        <option value="32">32</option>
+      </select>
+      <div class="modal-actions">
+        <button id="tournamentModalClose" class="ghost">Cancel</button>
+        <button id="tournamentModalSave" class="primary">Create</button>
       </div>
     </div>
   </div>
@@ -743,8 +773,16 @@ function loadLocalUser() {
 }
 
 function updateAuthUI() {
-  // Profile tab always visible regardless of login state
+  // Profile tab always visible
   $('profileTab').style.display = 'inline-block';
+
+  // Admin-only elements
+  const admin = isAdmin();
+  ['adminActionsCard', 'adminPlayersCard'].forEach(id => {
+    const el = $(id); if (el) el.style.display = admin ? '' : 'none';
+  });
+  if ($('createTournamentWrap'))
+    $('createTournamentWrap').style.display = admin ? '' : 'none';
 
   if (currentUser) {
     $('signInArea').style.display     = 'none';
@@ -767,6 +805,7 @@ function updateAuthUI() {
     $('signInArea').style.display     = 'flex';
     $('loginIndicator').style.display = 'none';
     $('profileTab').textContent       = 'Profile';
+    currentPlayer = null;
   }
 }
 
@@ -1098,12 +1137,12 @@ function renderLeaderboard() {
     sEl.innerHTML = '<div class="muted">No players with games yet.</div>';
   } else {
     singles.forEach(r => {
-      const p = appData.players.find(x=>x.id===r.player_id) || { display_name: r.player_name||'Unknown' };
+      const p = appData.players.find(x=>x.id===r.player_id) || { id: r.player_id, display_name: r.player_name||'Unknown' };
       const rc = p.rating_change;
       const rcHtml = rc!=null ? ` <span style="font-size:11px;color:${rc>=0?'#4ade80':'#f87171'}">${rc>=0?'+':''}${rc}</span>` : '';
       const el = document.createElement('div');
       el.style.padding = '6px';
-      el.innerHTML = `<strong>#${r.rank} ${p.display_name}</strong>${rcHtml}<div class="muted">${r.rating||1500} Elo &middot; ${r.games||p.games_played||0} games</div>`;
+      el.innerHTML = `<strong>#${r.rank} <span class="lb-name" onclick="openPlayerProfile('${p.id||r.player_id}')">${p.display_name}</span></strong>${rcHtml}<div class="muted">${r.rating||1500} Elo &middot; ${r.games||p.games_played||0} games</div>`;
       sEl.appendChild(el);
     });
   }
@@ -1267,6 +1306,10 @@ function renderProfile(playerId) {
                   .filter(Boolean).join(' \u00b7 ');
 
   el.innerHTML = '';
+
+  // Show/hide Edit Stats button based on permissions
+  const canEdit = isAdmin() || currentPlayer?.id === playerId;
+  $('editProfile').style.display = canEdit ? 'inline-block' : 'none';
 
   // Name + meta
   el.insertAdjacentHTML('beforeend', `
@@ -1448,44 +1491,295 @@ $('seedRanking').onclick = async () => {
 /* ============================================================
    Tournaments
    ============================================================ */
-$('createTournamentBtn').onclick = async () => {
-  const name  = prompt('Tournament name');
-  if (!name) return;
-  const start = prompt('Start date (YYYY-MM-DD)', new Date().toISOString().slice(0, 10));
-  if (!start) return;
-  const t = { id: crypto.randomUUID(), name, start_date: start, status: 'scheduled', created_at: new Date().toISOString() };
+$('createTournamentBtn').onclick = () => {
+  $('tournamentName').value      = '';
+  $('tournamentDate').value      = new Date().toISOString().slice(0, 10);
+  $('tournamentFormat').value    = 'single_elimination';
+  $('tournamentMaxPlayers').value = '8';
+  $('tournamentModal').style.display = 'flex';
+};
+$('tournamentModal').addEventListener('click', e => {
+  if (e.target === $('tournamentModal')) $('tournamentModal').style.display = 'none';
+});
+$('tournamentModalClose').onclick = () => { $('tournamentModal').style.display = 'none'; };
+$('tournamentModalSave').onclick = async () => {
+  const name   = $('tournamentName').value.trim();
+  const start  = $('tournamentDate').value;
+  const format = $('tournamentFormat').value;
+  const max    = Number($('tournamentMaxPlayers').value);
+  if (!name) return alert('Enter a tournament name.');
+  const t = {
+    id: crypto.randomUUID(), name, start_date: start,
+    format, max_players: max, status: 'scheduled',
+    participant_ids: [], bracket_data: null,
+    created_at: new Date().toISOString()
+  };
   appData.tournaments.push(t);
   const ok = await writeData(`Create tournament ${name}`);
   if (!ok) { appData.tournaments.pop(); return; }
+  $('tournamentModal').style.display = 'none';
   loadTournaments();
 };
 
 function loadTournaments() {
   const sorted = [...appData.tournaments].sort((a, b) => a.start_date.localeCompare(b.start_date));
-  const el = $('tournamentList');
+  const admin  = isAdmin();
+  const el     = $('tournamentList');
   el.innerHTML = '';
   if (!sorted.length) { $('tournamentStatus').textContent = 'No tournaments scheduled.'; return; }
+
+  const statusColors = { scheduled:'#9aa3ad', draft:'#9aa3ad', in_progress:'#60a5fa', completed:'#4ade80' };
   sorted.forEach(t => {
-    const row = document.createElement('div');
-    row.style.padding = '8px';
-    row.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">
-      <div><strong>${t.name}</strong><div class="muted">${t.start_date} &middot; ${t.status}</div></div>
+    const pCount  = (t.participant_ids || []).length;
+    const max     = t.max_players || '?';
+    const fmt     = (t.format || 'single_elimination').replace('_', ' ');
+    const sc      = statusColors[t.status] || '#9aa3ad';
+    const row     = document.createElement('div');
+    row.style.cssText = 'padding:8px;border-bottom:1px solid rgba(255,255,255,.04)';
+    row.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+      <div>
+        <strong>${t.name}</strong>
+        <span class="t-status" style="background:${sc}22;color:${sc}">${t.status.replace('_',' ')}</span>
+        <div class="muted" style="margin-top:2px">${t.start_date} &middot; ${fmt} &middot; ${pCount}/${max} players</div>
+      </div>
       <div style="display:flex;gap:6px">
-        <button class="ghost" onclick="viewTournament('${t.id}')">View</button>
+        <button class="ghost" style="font-size:12px;padding:4px 10px" onclick="viewTournament('${t.id}')">
+          ${admin ? 'Manage' : 'View'}
+        </button>
       </div>
     </div>`;
     el.appendChild(row);
   });
-  $('tournamentStatus').textContent = `Next: ${sorted[0].name} (${sorted[0].start_date})`;
+  $('tournamentStatus').textContent = `${sorted.length} tournament${sorted.length!==1?'s':''}`;
   const sel = $('matchTournament');
   sel.innerHTML = '<option value="">None</option>';
-  sorted.forEach(t => sel.insertAdjacentHTML('beforeend', `<option value="${t.id}">${t.name}</option>`));
+  sorted.filter(t => t.status !== 'completed')
+    .forEach(t => sel.insertAdjacentHTML('beforeend', `<option value="${t.id}">${t.name}</option>`));
+}
+
+function renderBracketHTML(t) {
+  if (!t.bracket_data) return '';
+  const admin = isAdmin();
+  let html = '';
+
+  if (t.format === 'round_robin') {
+    const matches = t.bracket_data.matches || [];
+    const done    = matches.filter(m => m.winner).length;
+    html += `<div style="font-weight:700;color:#cfe6ff;margin-bottom:8px">Round Robin <span class="muted">(${done}/${matches.length} played)</span></div>`;
+    matches.forEach(m => {
+      const pa = appData.players.find(p => p.id === m.player_a);
+      const pb = appData.players.find(p => p.id === m.player_b);
+      html += `<div class="player-row" style="margin-bottom:4px;flex-wrap:wrap;gap:4px">
+        <span style="flex:1">
+          <strong style="color:${m.winner===m.player_a?'#4ade80':'#cfe6ff'}">${pa?.display_name||'?'}</strong>
+          <span class="muted"> vs </span>
+          <strong style="color:${m.winner===m.player_b?'#4ade80':'#cfe6ff'}">${pb?.display_name||'?'}</strong>
+          ${m.winner ? `<span class="muted"> &middot; ${appData.players.find(p=>p.id===m.winner)?.display_name} wins</span>` : ''}
+        </span>
+        ${admin && !m.winner ? `<button class="ghost" style="font-size:11px;padding:3px 8px" onclick="recordBracketResult('${t.id}','${m.id}','${m.player_a}','${m.player_b}')">Record</button>` : ''}
+      </div>`;
+    });
+    if (t.status === 'completed') {
+      // Show standings
+      const standings = appData.players
+        .filter(p => t.participant_ids?.includes(p.id))
+        .map(p => {
+          const pW = matches.filter(m => m.winner === p.id).length;
+          const pL = matches.filter(m => (m.player_a===p.id||m.player_b===p.id) && m.winner && m.winner!==p.id).length;
+          return { p, w: pW, l: pL };
+        })
+        .sort((a,b) => b.w - a.w);
+      html += `<div style="font-weight:700;color:#cfe6ff;margin-top:12px;margin-bottom:6px">Final Standings</div>`;
+      standings.forEach((s,i) => {
+        html += `<div style="padding:4px 0"><strong>#${i+1} ${s.p.display_name}</strong><span class="muted"> &middot; ${s.w}W ${s.l}L</span></div>`;
+      });
+    }
+    return html;
+  }
+
+  // Single elimination
+  const rounds = t.bracket_data.rounds || [];
+  const total  = rounds.length;
+  rounds.forEach((matches, ri) => {
+    const label = ri === total-1 ? 'Final' : ri === total-2 ? 'Semi-finals' : ri === total-3 ? 'Quarter-finals' : `Round ${ri+1}`;
+    html += `<div style="font-weight:700;color:#cfe6ff;margin-bottom:6px${ri>0?';margin-top:14px':''}">${label}</div>`;
+    matches.forEach(m => {
+      const pa   = m.player_a ? appData.players.find(p=>p.id===m.player_a) : null;
+      const pb   = m.player_b ? appData.players.find(p=>p.id===m.player_b) : null;
+      const aName = pa ? pa.display_name : (m.status==='bye'?'BYE':'TBD');
+      const bName = pb ? pb.display_name : (m.status==='bye'?'BYE':'TBD');
+      html += `<div class="player-row" style="margin-bottom:4px;flex-wrap:wrap;gap:4px">
+        <span style="flex:1">
+          <strong style="color:${m.winner===m.player_a?'#4ade80':'#cfe6ff'}">${aName}</strong>
+          <span class="muted"> vs </span>
+          <strong style="color:${m.winner===m.player_b?'#4ade80':'#cfe6ff'}">${bName}</strong>
+          ${m.winner ? `<span class="muted"> &middot; ${appData.players.find(p=>p.id===m.winner)?.display_name} wins</span>` : (m.status==='bye'?'<span class="muted"> &middot; BYE</span>':'')}
+        </span>
+        ${admin && !m.winner && pa && pb ? `<button class="ghost" style="font-size:11px;padding:3px 8px" onclick="recordBracketResult('${t.id}','${m.id}','${m.player_a}','${m.player_b}')">Record</button>` : ''}
+      </div>`;
+    });
+  });
+  return html;
 }
 
 window.viewTournament = function(id) {
   const t = appData.tournaments.find(x => x.id === id);
   if (!t) return;
-  $('bracketArea').innerHTML = `<div style="font-weight:700">${t.name}</div><div class="muted">Status: ${t.status} &middot; Start: ${t.start_date}</div>`;
+  const admin       = isAdmin();
+  const participants = (t.participant_ids||[]).map(pid => appData.players.find(p=>p.id===pid)).filter(Boolean);
+  const slots       = t.max_players || 8;
+  const fmt         = (t.format||'single_elimination').replace('_',' ');
+  const sc          = { scheduled:'#9aa3ad', in_progress:'#60a5fa', completed:'#4ade80', draft:'#9aa3ad' }[t.status]||'#9aa3ad';
+  const notStarted  = !t.bracket_data;
+
+  let html = `
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:#fff">${t.name}</div>
+        <div class="muted">${t.start_date} &middot; ${fmt}
+          <span class="t-status" style="background:${sc}22;color:${sc}">${t.status.replace('_',' ')}</span>
+        </div>
+      </div>
+      ${admin ? `<div style="display:flex;gap:6px">
+        ${notStarted && participants.length >= 2 ? `<button class="primary" style="font-size:12px;padding:5px 12px" onclick="generateBracket('${id}')">Generate Bracket</button>` : ''}
+        <button class="ghost" style="font-size:12px;padding:5px 12px;color:#f87171;border-color:rgba(248,113,113,.3)" onclick="deleteTournament('${id}')">Delete</button>
+      </div>` : ''}
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div style="font-weight:700;color:#cfe6ff;margin-bottom:8px">Participants (${participants.length}&thinsp;/&thinsp;${slots})</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+        ${participants.length ? participants.map(p=>`
+          <span style="background:rgba(255,255,255,.06);padding:4px 10px;border-radius:6px;font-size:13px;display:inline-flex;align-items:center;gap:4px">
+            ${p.display_name}
+            ${admin && notStarted ? `<button onclick="removeTournamentParticipant('${id}','${p.id}')" style="background:none;border:none;color:#f87171;cursor:pointer;padding:0;line-height:1;font-size:14px">&times;</button>` : ''}
+          </span>`).join('') : '<span class="muted">No participants yet.</span>'}
+      </div>
+      ${admin && notStarted && participants.length < slots ? `
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <select id="addParticipantSel" style="flex:1;min-width:150px">
+            <option value="">Add player&hellip;</option>
+            ${appData.players.filter(p=>!(t.participant_ids||[]).includes(p.id)).map(p=>`<option value="${p.id}">${p.display_name}</option>`).join('')}
+          </select>
+          <button class="primary" style="font-size:12px;padding:6px 14px" onclick="addTournamentParticipant('${id}')">Add</button>
+        </div>` : ''}
+    </div>`;
+
+  if (t.bracket_data) {
+    html += renderBracketHTML(t);
+  } else {
+    html += `<div class="muted" style="padding:10px;background:rgba(255,255,255,.02);border-radius:8px">${
+      participants.length < 2 ? 'Add at least 2 players, then generate the bracket.' :
+      `${participants.length} players ready. ${admin ? 'Click <strong>Generate Bracket</strong> to begin.' : 'Waiting for admin to generate bracket.'}`
+    }</div>`;
+  }
+
+  $('bracketArea').innerHTML = html;
+};
+
+window.addTournamentParticipant = async function(id) {
+  const t = appData.tournaments.find(x=>x.id===id);
+  const pid = $('addParticipantSel')?.value;
+  if (!t||!pid) return;
+  t.participant_ids = t.participant_ids||[];
+  if (t.participant_ids.includes(pid)) return;
+  if (t.participant_ids.length >= (t.max_players||8)) return alert('Tournament is full.');
+  t.participant_ids.push(pid);
+  await writeData(`Add participant to ${t.name}`);
+  viewTournament(id);
+};
+
+window.removeTournamentParticipant = async function(id, pid) {
+  const t = appData.tournaments.find(x=>x.id===id);
+  if (!t) return;
+  t.participant_ids = (t.participant_ids||[]).filter(x=>x!==pid);
+  await writeData(`Remove participant from ${t.name}`);
+  viewTournament(id);
+};
+
+window.deleteTournament = async function(id) {
+  if (!confirm('Delete this tournament and all its data?')) return;
+  appData.tournaments = appData.tournaments.filter(t=>t.id!==id);
+  await writeData('Delete tournament');
+  loadTournaments();
+  $('bracketArea').innerHTML = '<div class="muted">Bracket view will appear here when a tournament is selected.</div>';
+};
+
+window.generateBracket = async function(id) {
+  const t = appData.tournaments.find(x=>x.id===id);
+  if (!t) return;
+  const ps = [...(t.participant_ids||[])];
+  if (ps.length < 2) return alert('Need at least 2 players.');
+
+  if (t.format === 'round_robin') {
+    const matches = [];
+    for (let i=0; i<ps.length; i++)
+      for (let j=i+1; j<ps.length; j++)
+        matches.push({ id: crypto.randomUUID(), player_a:ps[i], player_b:ps[j], winner:null, status:'pending' });
+    t.bracket_data = { type:'round_robin', matches };
+  } else {
+    // Single elimination — shuffle and pad to next power of 2
+    const shuffled = [...ps].sort(()=>Math.random()-.5);
+    const size = Math.pow(2, Math.ceil(Math.log2(Math.max(shuffled.length, 2))));
+    while (shuffled.length < size) shuffled.push(null);
+
+    const rounds = [];
+    let slots = shuffled;
+    while (slots.length >= 2) {
+      const rnd = [];
+      for (let i=0; i<slots.length; i+=2) {
+        const m = { id:crypto.randomUUID(), player_a:slots[i], player_b:slots[i+1], winner:null, status:'pending' };
+        if (!m.player_a) { m.winner=m.player_b; m.status='bye'; }
+        if (!m.player_b) { m.winner=m.player_a; m.status='bye'; }
+        rnd.push(m);
+      }
+      rounds.push(rnd);
+      slots = rnd.map(()=>null); // next round TBD
+    }
+    t.bracket_data = { type:'single_elimination', rounds };
+  }
+  t.status = 'in_progress';
+  await writeData(`Generate bracket for ${t.name}`);
+  viewTournament(id);
+};
+
+window.recordBracketResult = async function(tid, mid, playerAId, playerBId) {
+  const t = appData.tournaments.find(x=>x.id===tid);
+  if (!t) return;
+  const pa = appData.players.find(p=>p.id===playerAId)?.display_name || 'Player A';
+  const pb = appData.players.find(p=>p.id===playerBId)?.display_name || 'Player B';
+  const aWon = confirm(`Who won?\n\nOK \u2192 ${pa}\nCancel \u2192 ${pb}`);
+  const winnerId = aWon ? playerAId : playerBId;
+
+  if (t.format === 'round_robin') {
+    const m = (t.bracket_data.matches||[]).find(x=>x.id===mid);
+    if (m) { m.winner=winnerId; m.status='completed'; }
+  } else {
+    // Single elimination: record and advance winner
+    for (let ri=0; ri<(t.bracket_data.rounds||[]).length; ri++) {
+      const rnd = t.bracket_data.rounds[ri];
+      const mi  = rnd.findIndex(x=>x.id===mid);
+      if (mi < 0) continue;
+      rnd[mi].winner = winnerId; rnd[mi].status = 'completed';
+      // Seed into next round
+      const nextRnd = t.bracket_data.rounds[ri+1];
+      if (nextRnd) {
+        const nm = nextRnd[Math.floor(mi/2)];
+        if (nm) { mi%2===0 ? (nm.player_a=winnerId) : (nm.player_b=winnerId); }
+      }
+      break;
+    }
+  }
+
+  // Check completion
+  const allDone = t.format==='round_robin'
+    ? (t.bracket_data.matches||[]).every(m=>m.winner)
+    : (t.bracket_data.rounds?.slice(-1)[0]||[]).every(m=>m.winner);
+  if (allDone) t.status = 'completed';
+
+  await writeData('Record bracket result');
+  loadTournaments();
+  viewTournament(tid);
 };
 
 /* ============================================================
@@ -1498,16 +1792,26 @@ function populatePlayerSelectors() {
   const selPr = $('profilePlayerSelect');
   const selHi = $('historyFilter');
   const sorted = [...appData.players].sort((a, b) => a.display_name.localeCompare(b.display_name));
+  const admin  = isAdmin();
 
   [selA, selB, selC, selD].forEach(s => { s.innerHTML = '<option value="">Select player</option>'; });
-  selSt.innerHTML = '<option value="">Select player\u2026</option>';
   selPr.innerHTML = '<option value="">Select player\u2026</option>';
   selHi.innerHTML = '<option value="">All players</option>';
 
   sorted.forEach(p => {
     const opt = `<option value="${p.id}">${p.display_name}</option>`;
-    [selA, selB, selC, selD, selSt, selPr, selHi].forEach(s => s.insertAdjacentHTML('beforeend', opt));
+    [selA, selB, selC, selD, selPr, selHi].forEach(s => s.insertAdjacentHTML('beforeend', opt));
   });
+
+  // Stats selector: admins see all players, others see only themselves
+  selSt.innerHTML = '<option value="">Select player\u2026</option>';
+  sorted.forEach(p => {
+    if (admin || currentPlayer?.id === p.id) {
+      selSt.insertAdjacentHTML('beforeend', `<option value="${p.id}">${p.display_name}</option>`);
+    }
+  });
+  if (!admin && currentPlayer) selSt.setAttribute('disabled', '');
+  else selSt.removeAttribute('disabled');
 
   if (currentPlayer) {
     selSt.value = currentPlayer.id;
@@ -1515,6 +1819,15 @@ function populatePlayerSelectors() {
     selPr.value = currentPlayer.id;
     renderProfile(currentPlayer.id);
   }
+}
+
+/* Navigate to any player's read-only profile from leaderboard */
+function openPlayerProfile(playerId) {
+  tabs.forEach(b => b.classList.remove('active'));
+  tabs.find(b => b.dataset.tab === 'profile')?.classList.add('active');
+  for (const k in tabSections) tabSections[k].style.display = k === 'profile' ? 'block' : 'none';
+  $('profilePlayerSelect').value = playerId;
+  renderProfile(playerId);
 }
 
 /* Load existing stats into the form for the selected player */
@@ -1987,7 +2300,8 @@ $('saveStats').onclick = async () => {
 $('editProfile').onclick = () => {
   const pid = $('profilePlayerSelect').value;
   if (!pid) return alert('Select a player first.');
-  // Navigate to the Stats tab with this player pre-selected
+  if (!isAdmin() && currentPlayer?.id !== pid)
+    return alert('You can only edit your own stats.');
   tabs.forEach(b => b.classList.remove('active'));
   tabs.find(b => b.dataset.tab === 'stats')?.classList.add('active');
   for (const k in tabSections) tabSections[k].style.display = k === 'stats' ? 'block' : 'none';
