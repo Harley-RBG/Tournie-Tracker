@@ -77,6 +77,19 @@
     .brand h1{font-size:16px}
     .score{font-size:48px}
   }
+  /* Profile & stats UI */
+  .stats-grid .full-width{grid-column:1/-1}
+  .stat-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+  .stat-pill{flex:1;min-width:80px;background:rgba(255,255,255,0.04);border-radius:8px;padding:8px 12px;text-align:center}
+  .stat-pill .val{font-size:17px;font-weight:700;color:#fff;line-height:1.2}
+  .stat-pill .lbl{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.04em}
+  .form-chip{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:5px;font-size:11px;font-weight:700}
+  .form-chip.win{background:#14532d;color:#4ade80}
+  .form-chip.loss{background:#450a0a;color:#f87171}
+  .rating-up{color:#4ade80}
+  .rating-down{color:#f87171}
+  .h2h-bar{height:4px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:3px;overflow:hidden}
+  .h2h-bar-fill{height:100%;border-radius:2px;background:var(--accent)}
   /* Modals */
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:1000}
   .modal{background:#1a1f26;border-radius:14px;padding:24px;width:380px;max-width:calc(100vw - 32px);box-shadow:var(--card-shadow);border:1px solid rgba(255,255,255,0.08)}
@@ -102,7 +115,7 @@
           <button data-tab="tournaments">Tournaments</button>
           <button data-tab="recorder">Match Recorder</button>
           <button data-tab="stats">Player Stats</button>
-          <button data-tab="profile" id="profileTab" style="display:none">Profile</button>
+          <button data-tab="profile" id="profileTab">Profile</button>
         </nav>
 
         <div style="width:1px;height:36px;background:rgba(255,255,255,0.03);margin:0 8px"></div>
@@ -231,6 +244,14 @@
                 <option value="B">Side B serves first</option>
               </select>
 
+              <label class="muted" style="margin-top:8px">Format</label>
+              <select id="sessionFormat">
+                <option value="1">Single game</option>
+                <option value="3">Best of 3</option>
+                <option value="5">Best of 5</option>
+                <option value="7">Best of 7</option>
+              </select>
+
               <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
                 <input type="checkbox" id="winBy2Check" checked>
                 <label for="winBy2Check" class="muted" style="margin-top:0;cursor:pointer">Win by 2</label>
@@ -276,6 +297,16 @@
                 </div>
               </div>
 
+              <!-- Session score (hidden until Best-of-N started) -->
+              <div id="sessionScore" style="display:none;margin:8px 0;padding:8px;background:rgba(255,255,255,0.05);border-radius:8px;text-align:center">
+                <div class="muted" id="sessionInfo" style="font-size:11px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Best of 3</div>
+                <div style="display:flex;justify-content:center;align-items:center;gap:24px">
+                  <span style="font-size:28px;font-weight:700;color:#fff" id="sessionGamesA">0</span>
+                  <span class="muted" style="font-size:13px">games</span>
+                  <span style="font-size:28px;font-weight:700;color:#fff" id="sessionGamesB">0</span>
+                </div>
+              </div>
+
               <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
                 <button id="switchSides" class="ghost">Switch Sides</button>
                 <button id="completeGame" class="primary">Complete Game</button>
@@ -311,7 +342,7 @@
             </div>
 
             <div class="card">
-              <div style="font-weight:700;color:#cfe6ff">Skills</div>
+              <div style="font-weight:700;color:#cfe6ff">Skills (1–10)</div>
               <label class="muted" style="margin-top:8px">Serve - Consistency</label>
               <input id="statServeConsistency" placeholder="1-10">
               <label class="muted" style="margin-top:8px">Forehand - Power</label>
@@ -319,23 +350,67 @@
               <label class="muted" style="margin-top:8px">Backhand - Consistency</label>
               <input id="statBackhandConsistency" placeholder="1-10">
             </div>
+
+            <div class="card full-width">
+              <div style="font-weight:700;color:#cfe6ff">Player Profile</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:8px">
+                <div>
+                  <label class="muted">Handedness</label>
+                  <select id="statHandedness">
+                    <option value="">—</option>
+                    <option value="Right">Right</option>
+                    <option value="Left">Left</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="muted">Grip</label>
+                  <select id="statGrip">
+                    <option value="">—</option>
+                    <option value="Shakehand">Shakehand</option>
+                    <option value="Penhold">Penhold</option>
+                    <option value="V-grip">V-grip</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="muted">Play Style</label>
+                  <select id="statPlayStyle">
+                    <option value="">—</option>
+                    <option value="Attacker">Attacker</option>
+                    <option value="All-round">All-round</option>
+                    <option value="Defender">Defender</option>
+                    <option value="Blocker">Blocker</option>
+                    <option value="Chopper">Chopper</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="muted">Primary Weapon</label>
+                  <input id="statPrimaryWeapon" placeholder="e.g. FH loop, serve">
+                </div>
+                <div style="grid-column:1/-1">
+                  <label class="muted">Weaknesses / Notes</label>
+                  <textarea id="statWeaknessNotes" rows="2" placeholder="Tactical notes, coach observations…" style="resize:vertical"></textarea>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
         <!-- Profile -->
         <section id="tab-profile" class="panel card" style="display:none">
-          <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
             <div>
               <div style="font-weight:700;color:var(--accent)">Player Profile</div>
-              <div class="muted" id="profileSubtitle">Profile details</div>
+              <div class="muted">Stats, history &amp; scouting</div>
             </div>
-            <div class="flex">
-              <button id="editProfile" class="ghost">Edit Profile</button>
-              <button id="viewMyMatches" class="ghost">My Matches</button>
+            <div class="flex" style="flex-wrap:wrap;gap:8px">
+              <select id="profilePlayerSelect" style="min-width:160px"><option value="">Select player…</option></select>
+              <button id="editProfile" class="ghost">Edit Stats</button>
             </div>
           </div>
-
-          <div id="profileContent" style="margin-top:12px" class="muted">Select a profile to view details.</div>
+          <div id="profileContent" style="margin-top:12px">
+            <div class="muted">Select a player above to view their profile.</div>
+          </div>
         </section>
       </main>
 
@@ -427,21 +502,27 @@ const LS_USER  = 'tt_user';
 const LS_PAT   = 'tt_gh_pat';
 
 /* ---------- In-memory state ---------- */
-const EMPTY_DATA = () => ({ players: [], matches: [], tournaments: [], rankings: { singles: [], doubles: [] }, player_stats: [] });
+const EMPTY_DATA = () => ({ players: [], matches: [], sessions: [], points: [], tournaments: [], rankings: { singles: [], doubles: [] }, player_stats: [] });
 let appData     = EMPTY_DATA();
 let _dbSha      = null;
 let currentUser = null;   // { email, displayName }
 let currentPlayer = null; // entry in appData.players matching currentUser.email
 let currentMatch  = {
-  a: null, b: null, c: null, d: null, // c,d = doubles partners
+  a: null, b: null, c: null, d: null,
   scoreA: 0, scoreB: 0,
   mode: 'casual',
-  type: 'singles',       // 'singles' | 'doubles'
+  type: 'singles',
   gameType: 11,
   winBy2: true,
   tournament: null,
-  serveOrder: [],        // player ids in rotation order
-  firstServer: 'A'
+  serveOrder: [],
+  firstServer: 'A',
+  sessionFormat: 1,
+  sessionId:     null,
+  gamesA:        0,
+  gamesB:        0,
+  gameNumber:    1,
+  pointLog:      []  // live per-point capture, flushed on game complete
 };
 
 /* ---------- Navigation ---------- */
@@ -482,6 +563,8 @@ async function readData() {
     appData.rankings ??= { singles: [], doubles: [] };
     appData.rankings.singles ??= [];
     appData.rankings.doubles ??= [];
+    appData.sessions         ??= [];
+    appData.points           ??= [];
   } catch (e) {
     console.error('readData failed', e);
   }
@@ -529,26 +612,30 @@ function loadLocalUser() {
 }
 
 function updateAuthUI() {
+  // Profile tab always visible regardless of login state
+  $('profileTab').style.display = 'inline-block';
+
   if (currentUser) {
     $('signInArea').style.display     = 'none';
     $('loginIndicator').style.display = 'flex';
     $('loggedInAs').textContent       = currentUser.displayName || currentUser.email;
     currentPlayer = appData.players.find(p => p.email === currentUser.email) || null;
     if (currentPlayer) {
-      $('profileTab').style.display = 'inline-block';
-      $('profileTab').textContent   = `Profile (${currentPlayer.display_name})`;
-      // pre-select in stats dropdown if it exists
-      if ($('statsPlayerSelect').value === '' || $('statsPlayerSelect').value !== currentPlayer.id) {
+      $('profileTab').textContent = `Profile (${currentPlayer.display_name})`;
+      if ($('statsPlayerSelect').value !== currentPlayer.id) {
         $('statsPlayerSelect').value = currentPlayer.id;
         loadStatsForPlayer(currentPlayer.id);
       }
+      if ($('profilePlayerSelect').value !== currentPlayer.id) {
+        $('profilePlayerSelect').value = currentPlayer.id;
+      }
     } else {
-      $('profileTab').style.display = 'none';
+      $('profileTab').textContent = 'Profile';
     }
   } else {
     $('signInArea').style.display     = 'flex';
     $('loginIndicator').style.display = 'none';
-    $('profileTab').style.display     = 'none';
+    $('profileTab').textContent       = 'Profile';
   }
 }
 
@@ -627,13 +714,21 @@ $('addPlayerByEmail').onclick = async () => {
   }
   $('addPlayerMsg').textContent = 'Saving\u2026';
   const player = {
-    id:           crypto.randomUUID(),
+    id:             crypto.randomUUID(),
     email,
     display_name,
-    notes:        '',
-    games_played: 0,
-    points:       0,
-    created_at:   new Date().toISOString()
+    notes:          '',
+    games_played:   0,
+    points:         0,
+    rating:         1500,
+    best_rating:    1500,
+    rating_change:  null,
+    handedness:     null,
+    grip:           null,
+    play_style:     null,
+    primary_weapon: null,
+    weakness_notes: '',
+    created_at:     new Date().toISOString()
   };
   appData.players.push(player);
   const ok = await writeData(`Add player ${display_name}`);
@@ -701,49 +796,322 @@ window.deletePlayer = async function(id) {
    Rankings & Leaderboard
    ============================================================ */
 function renderLeaderboard() {
-  const sEl = $('singlesList');
-  const dEl = $('doublesList');
-  sEl.innerHTML = '';
-  dEl.innerHTML = '';
+  const sEl = $('singlesList'), dEl = $('doublesList');
+  sEl.innerHTML = ''; dEl.innerHTML = '';
 
-  const singles = appData.rankings.singles;
+  // Singles: use ranked array, or fallback to all players sorted by Elo
+  const singles = appData.rankings.singles.length
+    ? appData.rankings.singles
+    : [...appData.players].filter(p=>(p.games_played||0)>0)
+        .sort((a,b)=>(b.rating||1500)-(a.rating||1500))
+        .map((p,i)=>({ player_id:p.id, player_name:p.display_name, rank:i+1, rating:p.rating||1500, games:p.games_played||0 }));
+
   if (!singles.length) {
-    const sorted = [...appData.players].sort((a, b) => (b.points || 0) - (a.points || 0));
-    if (!sorted.length) { sEl.innerHTML = '<div class="muted">No players yet.</div>'; }
-    sorted.forEach((p, i) => {
-      const el = document.createElement('div');
-      el.style.padding = '6px';
-      el.innerHTML = `<strong>#${i + 1} ${p.display_name}</strong><div class="muted">${p.points || 0} pts &middot; ${p.games_played || 0} games</div>`;
-      sEl.appendChild(el);
-    });
+    sEl.innerHTML = '<div class="muted">No players with games yet.</div>';
   } else {
     singles.forEach(r => {
-      const p  = appData.players.find(x => x.id === r.player_id) || { display_name: r.player_name || 'Unknown' };
+      const p = appData.players.find(x=>x.id===r.player_id) || { display_name: r.player_name||'Unknown' };
+      const rc = p.rating_change;
+      const rcHtml = rc!=null ? ` <span style="font-size:11px;color:${rc>=0?'#4ade80':'#f87171'}">${rc>=0?'+':''}${rc}</span>` : '';
       const el = document.createElement('div');
       el.style.padding = '6px';
-      el.innerHTML = `<strong>#${r.rank} ${p.display_name}</strong><div class="muted">${r.points || 0} pts</div>`;
+      el.innerHTML = `<strong>#${r.rank} ${p.display_name}</strong>${rcHtml}<div class="muted">${r.rating||1500} Elo &middot; ${r.games||p.games_played||0} games</div>`;
       sEl.appendChild(el);
     });
   }
 
   const doubles = appData.rankings.doubles;
-  if (!doubles.length) {
-    dEl.innerHTML = '<div class="muted">No doubles rankings yet.</div>';
-  } else {
-    doubles.forEach(r => {
-      const el = document.createElement('div');
-      el.style.padding = '6px';
-      el.innerHTML = `<strong>#${r.rank} ${r.team_name || 'Team'}</strong><div class="muted">${r.points || 0} pts</div>`;
-      dEl.appendChild(el);
-    });
-  }
+  dEl.innerHTML = doubles.length
+    ? doubles.map(r=>`<div style="padding:6px"><strong>#${r.rank} ${r.team_name||'Team'}</strong><div class="muted">${r.points||0} pts</div></div>`).join('')
+    : '<div class="muted">No doubles rankings yet.</div>';
 }
 
 function rebuildSinglesRankings() {
   appData.rankings.singles = [...appData.players]
-    .sort((a, b) => (b.points || 0) - (a.points || 0))
-    .map((p, i) => ({ player_id: p.id, player_name: p.display_name, rank: i + 1, points: p.points || 0 }));
+    .filter(p => (p.games_played || 0) > 0)
+    .sort((a, b) => (b.rating || 1500) - (a.rating || 1500))
+    .map((p, i) => ({ player_id: p.id, player_name: p.display_name, rank: i + 1, rating: p.rating || 1500, games: p.games_played || 0 }));
 }
+
+/* ============================================================
+   Elo Rating System  (K=40 for <30 games, K=20 thereafter)
+   ============================================================ */
+function eloExpected(rA, rB) { return 1 / (1 + Math.pow(10, (rB - rA) / 400)); }
+function eloK(played)         { return played < 30 ? 40 : 20; }
+
+function applyEloUpdate(pa, pb, sideAWon) {
+  const ra = pa.rating || 1500, rb = pb.rating || 1500;
+  const ea = eloExpected(ra, rb);
+  const sa = sideAWon ? 1 : 0;
+  const newRa = Math.round(ra + eloK(pa.games_played || 0) * (sa      - ea));
+  const newRb = Math.round(rb + eloK(pb.games_played || 0) * ((1-sa)  - (1-ea)));
+  pa.rating_change = newRa - ra;  pb.rating_change = newRb - rb;
+  pa.rating = newRa;              pb.rating = newRb;
+  pa.best_rating = Math.max(pa.best_rating || 1500, newRa);
+  pb.best_rating = Math.max(pb.best_rating || 1500, newRb);
+}
+
+/* ============================================================
+   Stats Engine — all derived from appData.matches
+   ============================================================ */
+function computePlayerStats(playerId) {
+  const ms = appData.matches
+    .filter(m => m.player_a === playerId || m.player_b === playerId ||
+                 m.player_c === playerId || m.player_d === playerId)
+    .sort((a, b) => a.created_at.localeCompare(b.created_at));
+
+  let wins=0, losses=0, pw=0, pl=0;
+  let cw=0, cl=0, dw=0, dl=0, rw=0, rl=0, sw=0, sl=0, dblW=0, dblL=0;
+  const h2h = {};
+
+  for (const m of ms) {
+    const onA = m.player_a === playerId || m.player_c === playerId;
+    const won = onA ? m.winner === m.player_a : m.winner === m.player_b;
+    const me  = onA ? m.score_a : m.score_b;
+    const opp = onA ? m.score_b : m.score_a;
+    const gt  = m.game_type || 11;
+    won ? wins++ : losses++;
+    pw += me; pl += opp;
+    if (Math.abs(m.score_a - m.score_b) <= 2) won ? cw++ : cl++;
+    if (Math.min(m.score_a, m.score_b) >= gt-1) won ? dw++ : dl++;
+    if (m.mode === 'ranked')  won ? rw++ : rl++;
+    if (m.type === 'singles') won ? sw++ : sl++;
+    if (m.type === 'doubles') won ? dblW++ : dblL++;
+    const oppId = onA ? m.player_b : m.player_a;
+    if (oppId) { h2h[oppId] ??= {w:0,l:0}; won ? h2h[oppId].w++ : h2h[oppId].l++; }
+  }
+
+  // Current streak (scan from newest)
+  let curStr=0, curWin=null;
+  for (let i=ms.length-1; i>=0; i--) {
+    const m=ms[i], onA=m.player_a===playerId||m.player_c===playerId;
+    const won=onA?m.winner===m.player_a:m.winner===m.player_b;
+    if (curWin===null){curWin=won;curStr=1;} else if(won===curWin)curStr++; else break;
+  }
+  // Best win streak
+  let bestStr=0, tmp=0;
+  for (const m of ms) {
+    const onA=m.player_a===playerId||m.player_c===playerId;
+    (onA?m.winner===m.player_a:m.winner===m.player_b) ? (tmp++,bestStr=Math.max(bestStr,tmp)) : (tmp=0);
+  }
+
+  const total = wins+losses;
+  const pct   = (n,d) => d ? Math.round(n/d*100) : 0;
+
+  // Session stats (Phase 2)
+  const mySess = (appData.sessions || []).filter(s =>
+    s.player_a===playerId||s.player_b===playerId||s.player_c===playerId||s.player_d===playerId
+  );
+  let sessW=0,sessL=0,decidW=0,decidL=0,comebackW=0;
+  for (const s of mySess) {
+    const onA = s.player_a===playerId||s.player_c===playerId;
+    const won  = onA ? s.winner===s.player_a : s.winner===s.player_b;
+    won ? sessW++ : sessL++;
+    if ((s.games_a||0)+(s.games_b||0) === s.format) won ? decidW++ : decidL++;
+    if (won) {
+      const g1 = appData.matches.find(m=>m.session_id===s.id&&m.game_number===1);
+      if (g1) {
+        const wonG1 = onA ? g1.winner===g1.player_a : g1.winner===g1.player_b;
+        if (!wonG1) comebackW++;
+      }
+    }
+  }
+
+  // Point-level stats (Phase 3 — auto-captured during live scoring)
+  const myGameIds   = new Set(ms.map(m => m.id));
+  const myPoints    = (appData.points || []).filter(pt => myGameIds.has(pt.game_id));
+  let sPts=0,sWins=0,rPts=0,rWins=0,prPts=0,prWins=0;
+  for (const pt of myPoints) {
+    const m = appData.matches.find(g => g.id === pt.game_id);
+    if (!m) continue;
+    const onA    = m.player_a===playerId||m.player_c===playerId;
+    const won    = onA ? pt.winner_side==='A' : pt.winner_side==='B';
+    const svrOnA = pt.server_id===m.player_a||pt.server_id===m.player_c;
+    const serving = onA ? svrOnA : !svrOnA;
+    serving ? (sPts++, won && sWins++) : (rPts++, won && rWins++);
+    if (pt.pressure_flag) { prPts++; if (won) prWins++; }
+  }
+
+  return {
+    total, wins, losses,
+    win_pct: pct(wins,total), point_diff: pw-pl,
+    avg_scored:   total ? (pw/total).toFixed(1) : '0.0',
+    avg_conceded: total ? (pl/total).toFixed(1) : '0.0',
+    current_streak: curStr, streak_win: curWin===true, best_streak: bestStr,
+    close_wins:cw, close_losses:cl, close_win_pct: pct(cw,cw+cl),
+    deuce_wins:dw, deuce_losses:dl, deuce_win_pct:  pct(dw,dw+dl),
+    ranked_wins:rw, ranked_losses:rl, ranked_win_pct: pct(rw,rw+rl),
+    singles_wins:sw, singles_losses:sl, doubles_wins:dblW, doubles_losses:dblL,
+    session_wins:sessW, session_losses:sessL, session_win_pct: pct(sessW,sessW+sessL),
+    decider_wins:decidW, decider_losses:decidL, decider_win_pct: pct(decidW,decidW+decidL),
+    comeback_wins: comebackW,
+    serve_pts:sPts,    serve_wins:sWins,    serve_win_pct:   pct(sWins,sPts),
+    receive_pts:rPts,  receive_wins:rWins,  receive_win_pct: pct(rWins,rPts),
+    pressure_pts:prPts, pressure_wins:prWins, pressure_win_pct: pct(prWins,prPts),
+    total_pts_tracked: sPts + rPts,
+    recent_form: ms.slice(-10).map(m => {
+      const onA=m.player_a===playerId||m.player_c===playerId;
+      return onA?m.winner===m.player_a:m.winner===m.player_b;
+    }),
+    h2h
+  };
+}
+
+/* ============================================================
+   Profile Renderer
+   ============================================================ */
+function renderProfile(playerId) {
+  const el = $('profileContent');
+  if (!playerId) { el.innerHTML = '<div class="muted">Select a player above.</div>'; return; }
+  const player = appData.players.find(p => p.id === playerId);
+  if (!player)  { el.innerHTML = '<div class="muted">Player not found.</div>'; return; }
+
+  const stats  = computePlayerStats(playerId);
+  const rank   = appData.rankings.singles.find(r => r.player_id === playerId)?.rank ?? '\u2014';
+  const rating = player.rating || 1500;
+  const rc     = player.rating_change;
+  const rcHtml = rc != null ? ` <span class="${rc>=0?'rating-up':'rating-down'}">(${rc>=0?'+':''}${rc})</span>` : '';
+  const diff   = stats.point_diff;
+  const ps     = appData.player_stats.find(s => s.player_id === playerId);
+  const meta   = [player.play_style, player.grip,
+                  player.handedness ? player.handedness+'-handed' : null,
+                  player.primary_weapon ? 'Weapon: '+player.primary_weapon : null]
+                  .filter(Boolean).join(' \u00b7 ');
+
+  el.innerHTML = '';
+
+  // Name + meta
+  el.insertAdjacentHTML('beforeend', `
+    <div style="margin-bottom:12px">
+      <div style="font-size:17px;font-weight:700;color:#fff">${player.display_name}</div>
+      <div class="muted">${player.email}${meta ? ' \u00b7 ' + meta : ''}</div>
+    </div>`);
+
+  // Summary pills
+  el.insertAdjacentHTML('beforeend', `
+    <div class="stat-bar">
+      <div class="stat-pill"><div class="val">${rating}${rcHtml}</div><div class="lbl">Elo Rating</div></div>
+      <div class="stat-pill"><div class="val">#${rank}</div><div class="lbl">Rank</div></div>
+      <div class="stat-pill"><div class="val">${stats.win_pct}%</div><div class="lbl">Win Rate</div></div>
+      <div class="stat-pill"><div class="val">${stats.wins}\u2013${stats.losses}</div><div class="lbl">W\u2013L</div></div>
+      <div class="stat-pill"><div class="val">${diff>=0?'+':''}${diff}</div><div class="lbl">Pt Diff</div></div>
+      <div class="stat-pill"><div class="val">${stats.total?stats.current_streak+(stats.streak_win?'W':'L'):'\u2014'}</div><div class="lbl">Streak</div></div>
+    </div>`);
+
+  // Recent form chips
+  if (stats.recent_form.length) {
+    const chips = stats.recent_form.map(w=>`<span class="form-chip ${w?'win':'loss'}">${w?'W':'L'}</span>`).join('');
+    el.insertAdjacentHTML('beforeend', `
+      <div style="margin-bottom:14px">
+        <div class="muted" style="margin-bottom:6px;font-size:12px">Recent form (last ${stats.recent_form.length})</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">${chips}</div>
+      </div>`);
+  }
+
+  // Stats cards
+  const skillsHtml = ps ? [
+    ps.serve_style       ?`<div class="muted" style="margin-bottom:3px">Serve style: <strong style="color:#cfe6ff">${ps.serve_style}</strong></div>`:'',
+    ps.serve_consistency ?`<div class="muted" style="margin-bottom:3px">Serve consistency: <strong style="color:#cfe6ff">${ps.serve_consistency}/10</strong></div>`:'',
+    ps.forehand_power    ?`<div class="muted" style="margin-bottom:3px">Forehand power: <strong style="color:#cfe6ff">${ps.forehand_power}/10</strong></div>`:'',
+    ps.backhand_consistency?`<div class="muted" style="margin-bottom:3px">Backhand: <strong style="color:#cfe6ff">${ps.backhand_consistency}/10</strong></div>`:'',
+    ps.return_pct        ?`<div class="muted" style="margin-bottom:3px">Return %: <strong style="color:#cfe6ff">${ps.return_pct}%</strong></div>`:''
+  ].filter(Boolean).join('') : '<div class="muted">No skill ratings entered yet.</div>';
+
+  el.insertAdjacentHTML('beforeend', `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-bottom:12px">
+      <div class="card" style="padding:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Performance</div>
+        <div class="muted" style="margin-bottom:3px">Avg scored: <strong style="color:#cfe6ff">${stats.avg_scored}</strong></div>
+        <div class="muted" style="margin-bottom:3px">Avg conceded: <strong style="color:#cfe6ff">${stats.avg_conceded}</strong></div>
+        <div class="muted" style="margin-bottom:3px">Best win streak: <strong style="color:#cfe6ff">${stats.best_streak}</strong></div>
+        <div class="muted" style="margin-bottom:3px">Close games: <strong style="color:#cfe6ff">${stats.close_win_pct}% (${stats.close_wins}/${stats.close_wins+stats.close_losses})</strong></div>
+        <div class="muted" style="margin-bottom:3px">Deuce: <strong style="color:#cfe6ff">${stats.deuce_win_pct}% (${stats.deuce_wins}/${stats.deuce_wins+stats.deuce_losses})</strong></div>
+      </div>
+      <div class="card" style="padding:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">By Format</div>
+        <div class="muted" style="margin-bottom:3px">Ranked: <strong style="color:#cfe6ff">${stats.ranked_wins}W ${stats.ranked_losses}L (${stats.ranked_win_pct}%)</strong></div>
+        <div class="muted" style="margin-bottom:3px">Singles: <strong style="color:#cfe6ff">${stats.singles_wins}W ${stats.singles_losses}L</strong></div>
+        <div class="muted" style="margin-bottom:3px">Doubles: <strong style="color:#cfe6ff">${stats.doubles_wins}W ${stats.doubles_losses}L</strong></div>
+        ${stats.session_wins+stats.session_losses > 0 ? `
+        <div class="muted" style="margin-bottom:3px">Sessions: <strong style="color:#cfe6ff">${stats.session_wins}W ${stats.session_losses}L (${stats.session_win_pct}%)</strong></div>
+        <div class="muted" style="margin-bottom:3px">Deciders: <strong style="color:#cfe6ff">${stats.decider_wins}W ${stats.decider_losses}L (${stats.decider_win_pct}%)</strong></div>
+        ${stats.comeback_wins ? `<div class="muted" style="margin-bottom:3px">Comeback wins: <strong style="color:#4ade80">${stats.comeback_wins}</strong></div>` : ''}
+        ` : ''}
+        <div class="muted" style="margin-bottom:3px">Best rating: <strong style="color:#cfe6ff">${player.best_rating||1500}</strong></div>
+      </div>
+      <div class="card" style="padding:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Skills</div>
+        ${skillsHtml}
+      </div>
+      ${stats.total_pts_tracked > 0 ? `
+      <div class="card" style="padding:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Point Stats <span style="font-weight:400;opacity:.6">(${stats.total_pts_tracked} pts tracked)</span></div>
+        <div class="muted" style="margin-bottom:3px">Serve win %: <strong style="color:${stats.serve_win_pct>=50?'#4ade80':'#f87171'}">${stats.serve_win_pct}%</strong> <span style="opacity:.5">(${stats.serve_wins}/${stats.serve_pts})</span></div>
+        <div class="muted" style="margin-bottom:3px">Receive win %: <strong style="color:${stats.receive_win_pct>=50?'#4ade80':'#f87171'}">${stats.receive_win_pct}%</strong> <span style="opacity:.5">(${stats.receive_wins}/${stats.receive_pts})</span></div>
+        <div class="muted" style="margin-bottom:3px">Pressure pts win %: <strong style="color:#cfe6ff">${stats.pressure_win_pct}%</strong> <span style="opacity:.5">(${stats.pressure_wins}/${stats.pressure_pts})</span></div>
+      </div>` : ''}
+    </div>`);
+
+  // H2H
+  const h2hPairs = Object.entries(stats.h2h).sort((a,b)=>(b[1].w+b[1].l)-(a[1].w+a[1].l));
+  if (h2hPairs.length) {
+    const rows = h2hPairs.map(([oid,r])=>{
+      const opp=appData.players.find(p=>p.id===oid), tot=r.w+r.l, p=Math.round(r.w/tot*100);
+      return `<div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
+        <div style="display:flex;justify-content:space-between">
+          <span class="small">${opp?.display_name||'Unknown'}</span>
+          <span class="muted" style="font-size:12px">${r.w}\u2013${r.l} <span style="color:${p>=50?'#4ade80':'#f87171'}">(${p}%)</span></span>
+        </div>
+        <div class="h2h-bar"><div class="h2h-bar-fill" style="width:${p}%"></div></div>
+      </div>`;
+    }).join('');
+    el.insertAdjacentHTML('beforeend', `
+      <div class="card" style="padding:10px;margin-bottom:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Head to Head</div>
+        ${rows}
+      </div>`);
+  }
+
+  // Match history
+  const hist = appData.matches
+    .filter(m=>m.player_a===playerId||m.player_b===playerId||m.player_c===playerId||m.player_d===playerId)
+    .sort((a,b)=>b.created_at.localeCompare(a.created_at)).slice(0,20);
+
+  if (hist.length) {
+    const rows = hist.map(m=>{
+      const onA=m.player_a===playerId||m.player_c===playerId;
+      const won=onA?m.winner===m.player_a:m.winner===m.player_b;
+      const pa=appData.players.find(p=>p.id===m.player_a), pb=appData.players.find(p=>p.id===m.player_b);
+      const pc=m.player_c?appData.players.find(p=>p.id===m.player_c):null;
+      const pd=m.player_d?appData.players.find(p=>p.id===m.player_d):null;
+      const sA=m.type==='doubles'?`${pa?.display_name}/${pc?.display_name}`:pa?.display_name||'?';
+      const sB=m.type==='doubles'?`${pb?.display_name}/${pd?.display_name}`:pb?.display_name||'?';
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
+        <span><strong style="color:${won?'#4ade80':'#f87171'};margin-right:6px">${won?'W':'L'}</strong><span class="small">${sA} ${m.score_a}\u2013${m.score_b} ${sB}</span></span>
+        <span class="muted" style="font-size:11px;white-space:nowrap">${m.mode} \u00b7 ${new Date(m.created_at).toLocaleDateString()}</span>
+      </div>`;
+    }).join('');
+    el.insertAdjacentHTML('beforeend', `
+      <div class="card" style="padding:10px;margin-bottom:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Recent Matches</div>
+        ${rows}
+      </div>`);
+  } else {
+    el.insertAdjacentHTML('beforeend', '<div class="muted" style="margin-top:8px">No matches recorded yet.</div>');
+  }
+
+  if (player.weakness_notes) {
+    el.insertAdjacentHTML('beforeend', `
+      <div class="card" style="padding:10px;margin-top:8px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Notes &amp; Weaknesses</div>
+        <div class="muted">${player.weakness_notes}</div>
+      </div>`);
+  }
+}
+
+$('profilePlayerSelect').addEventListener('change', () => {
+  renderProfile($('profilePlayerSelect').value);
+});
 
 $('seedRanking').onclick = async () => {
   if (!confirm('Auto-seed singles rankings from current player points?')) return;
@@ -802,32 +1170,41 @@ function populatePlayerSelectors() {
   const selA  = $('playerA'), selB  = $('playerB');
   const selC  = $('playerC'), selD  = $('playerD');
   const selSt = $('statsPlayerSelect');
+  const selPr = $('profilePlayerSelect');
   const sorted = [...appData.players].sort((a, b) => a.display_name.localeCompare(b.display_name));
 
   [selA, selB, selC, selD].forEach(s => { s.innerHTML = '<option value="">Select player</option>'; });
   selSt.innerHTML = '<option value="">Select player\u2026</option>';
+  selPr.innerHTML = '<option value="">Select player\u2026</option>';
 
   sorted.forEach(p => {
     const opt = `<option value="${p.id}">${p.display_name}</option>`;
-    [selA, selB, selC, selD, selSt].forEach(s => s.insertAdjacentHTML('beforeend', opt));
+    [selA, selB, selC, selD, selSt, selPr].forEach(s => s.insertAdjacentHTML('beforeend', opt));
   });
 
-  // pre-select logged-in player in stats dropdown
   if (currentPlayer) {
     selSt.value = currentPlayer.id;
     loadStatsForPlayer(currentPlayer.id);
+    selPr.value = currentPlayer.id;
+    renderProfile(currentPlayer.id);
   }
 }
 
 /* Load existing stats into the form for the selected player */
 function loadStatsForPlayer(playerId) {
   const s = appData.player_stats.find(x => x.player_id === playerId);
-  $('statServeStyle').value          = s?.serve_style         || '';
-  $('statReturnPct').value           = s?.return_pct          || '';
-  $('statGamesPlayed').value         = s?.games_played        || '';
-  $('statServeConsistency').value    = s?.serve_consistency   || '';
-  $('statForehandPower').value       = s?.forehand_power      || '';
+  const p = appData.players.find(x => x.id === playerId);
+  $('statServeStyle').value          = s?.serve_style          || '';
+  $('statReturnPct').value           = s?.return_pct           || '';
+  $('statGamesPlayed').value         = s?.games_played         || '';
+  $('statServeConsistency').value    = s?.serve_consistency    || '';
+  $('statForehandPower').value       = s?.forehand_power       || '';
   $('statBackhandConsistency').value = s?.backhand_consistency || '';
+  $('statHandedness').value    = p?.handedness     || '';
+  $('statGrip').value          = p?.grip           || '';
+  $('statPlayStyle').value     = p?.play_style     || '';
+  $('statPrimaryWeapon').value = p?.primary_weapon || '';
+  $('statWeaknessNotes').value = p?.weakness_notes || '';
 }
 
 $('statsPlayerSelect').addEventListener('change', () => {
@@ -840,12 +1217,29 @@ $('matchType').addEventListener('change', () => {
   $('doublesSection').style.display = $('matchType').value === 'doubles' ? 'block' : 'none';
 });
 
+/* ---------- Serve order helper ---------- */
+function buildServeOrder() {
+  const { a, b, c, d, type, firstServer } = currentMatch;
+  return type === 'doubles'
+    ? (firstServer === 'A' ? [a, b, c, d] : [b, a, d, c])
+    : (firstServer === 'A' ? [a, b]       : [b, a]);
+}
+
+/* ---------- Session score display ---------- */
+function updateSessionScoreUI() {
+  $('sessionGamesA').textContent = currentMatch.gamesA;
+  $('sessionGamesB').textContent = currentMatch.gamesB;
+  const needed = Math.ceil(currentMatch.sessionFormat / 2);
+  $('sessionInfo').textContent   = `Best of ${currentMatch.sessionFormat} \u00b7 First to ${needed} games`;
+}
+
 $('startMatchBtn').onclick = () => {
   const type = $('matchType').value;
   const a    = $('playerA').value || null;
   const b    = $('playerB').value || null;
   const c    = type === 'doubles' ? ($('playerC').value || null) : null;
   const d    = type === 'doubles' ? ($('playerD').value || null) : null;
+  const fmt  = Number($('sessionFormat').value);
 
   if (!a || !b) return alert('Select both players.');
   if (a === b)  return alert('Players must be different.');
@@ -854,22 +1248,24 @@ $('startMatchBtn').onclick = () => {
     if (new Set([a, b, c, d]).size !== 4) return alert('All four players must be different.');
   }
 
-  const firstSrv = $('firstServerSelect').value; // 'A' | 'B'
+  const firstSrv = $('firstServerSelect').value;
 
   Object.assign(currentMatch, {
     a, b, c, d,
     scoreA: 0, scoreB: 0,
-    mode:        $('matchMode').value,
+    mode:          $('matchMode').value,
     type,
-    gameType:    Number($('gameType').value),
-    winBy2:      $('winBy2Check').checked,
-    firstServer: firstSrv,
-    tournament:  $('matchTournament').value || null,
-    // Serve rotation: singles [a,b] or doubles [a,b,c,d], shifted if B serves first
-    serveOrder: type === 'doubles'
-      ? (firstSrv === 'A' ? [a, b, c, d] : [b, a, d, c])
-      : (firstSrv === 'A' ? [a, b]       : [b, a])
+    gameType:      Number($('gameType').value),
+    winBy2:        $('winBy2Check').checked,
+    firstServer:   firstSrv,
+    tournament:    $('matchTournament').value || null,
+    sessionFormat: fmt,
+    sessionId:     fmt > 1 ? crypto.randomUUID() : null,
+    gamesA:        0,
+    gamesB:        0,
+    gameNumber:    1
   });
+  currentMatch.serveOrder = buildServeOrder();
 
   const pa = appData.players.find(p => p.id === a);
   const pb = appData.players.find(p => p.id === b);
@@ -884,8 +1280,16 @@ $('startMatchBtn').onclick = () => {
     : (pb?.display_name || 'Player B');
 
   $('matchActions').textContent = '';
+
+  if (fmt > 1) {
+    $('sessionScore').style.display = 'block';
+    updateSessionScoreUI();
+    $('matchStatus').textContent = `Game 1 of ${fmt} \u00b7 ${currentMatch.mode} \u00b7 ${type}`;
+  } else {
+    $('sessionScore').style.display = 'none';
+    $('matchStatus').textContent = `${currentMatch.mode} \u00b7 ${type} \u00b7 first to ${currentMatch.gameType}${currentMatch.winBy2 ? ' (W+2)' : ''}`;
+  }
   updateScoreUI();
-  $('matchStatus').textContent = `${currentMatch.mode} \u00b7 ${type} \u00b7 first to ${currentMatch.gameType}${currentMatch.winBy2 ? ' (W+2)' : ''}`;
 };
 
 $('resetMatchBtn').onclick = () => {
@@ -893,13 +1297,16 @@ $('resetMatchBtn').onclick = () => {
     a: null, b: null, c: null, d: null,
     scoreA: 0, scoreB: 0,
     mode: 'casual', type: 'singles', gameType: 11, winBy2: true,
-    tournament: null, serveOrder: [], firstServer: 'A'
+    tournament: null, serveOrder: [], firstServer: 'A',
+    sessionFormat: 1, sessionId: null, gamesA: 0, gamesB: 0, gameNumber: 1,
+    pointLog: []
   });
-  $('sideAName').textContent    = 'Player A';
-  $('sideBName').textContent    = 'Player B';
-  $('matchActions').textContent = '';
+  $('sideAName').textContent      = 'Player A';
+  $('sideBName').textContent      = 'Player B';
+  $('matchActions').textContent   = '';
+  $('sessionScore').style.display = 'none';
   updateScoreUI();
-  $('matchStatus').textContent  = 'Idle';
+  $('matchStatus').textContent = 'Idle';
 };
 
 function updateScoreUI() {
@@ -955,10 +1362,51 @@ function updateServeIndicator() {
   }
 }
 
-$('addPointA').onclick = () => { currentMatch.scoreA++; updateScoreUI(); checkAutoComplete(); };
-$('addPointB').onclick = () => { currentMatch.scoreB++; updateScoreUI(); checkAutoComplete(); };
-$('subPointA').onclick = () => { if (currentMatch.scoreA > 0) { currentMatch.scoreA--; updateScoreUI(); } };
-$('subPointB').onclick = () => { if (currentMatch.scoreB > 0) { currentMatch.scoreB--; updateScoreUI(); } };
+/* ============================================================
+   Live point capture (Phase 3)
+   Server, winner side, and pressure flag are logged automatically
+   on every +1 tap. Rally length and end type are null until tagged.
+   ============================================================ */
+function logPoint(winnerSide) {
+  const sA = currentMatch.scoreA, sB = currentMatch.scoreB;
+  const gt  = currentMatch.gameType;
+  currentMatch.pointLog.push({
+    id:             crypto.randomUUID(),
+    game_id:        null,                 // set when game completes
+    session_id:     currentMatch.sessionId || null,
+    point_number:   currentMatch.pointLog.length + 1,
+    server_id:      getServingPlayerId(sA, sB),
+    winner_side:    winnerSide,           // 'A' | 'B'
+    score_a_before: sA,
+    score_b_before: sB,
+    pressure_flag:  Math.max(sA, sB) >= gt - 2,  // last 3+ pts of a game
+    rally_length:   null,                 // tagged later: 'short'|'medium'|'long'
+    end_type:       null                  // tagged later: 'winner'|'forced_error' etc.
+  });
+}
+
+$('addPointA').onclick = () => {
+  if (currentMatch.serveOrder.length) logPoint('A');
+  currentMatch.scoreA++; updateScoreUI(); checkAutoComplete();
+};
+$('addPointB').onclick = () => {
+  if (currentMatch.serveOrder.length) logPoint('B');
+  currentMatch.scoreB++; updateScoreUI(); checkAutoComplete();
+};
+$('subPointA').onclick = () => {
+  if (currentMatch.scoreA > 0) {
+    currentMatch.scoreA--;
+    updateScoreUI();
+    if (currentMatch.pointLog.length) currentMatch.pointLog.pop(); // undo
+  }
+};
+$('subPointB').onclick = () => {
+  if (currentMatch.scoreB > 0) {
+    currentMatch.scoreB--;
+    updateScoreUI();
+    if (currentMatch.pointLog.length) currentMatch.pointLog.pop(); // undo
+  }
+};
 
 $('switchSides').onclick = () => {
   // Swap side assignments and scores
@@ -999,16 +1447,20 @@ async function completeGame() {
   const sideAWon = currentMatch.scoreA > currentMatch.scoreB;
   const isRanked = currentMatch.mode === 'ranked';
   const isDbl    = currentMatch.type === 'doubles';
+  const inSess   = currentMatch.sessionFormat > 1;
 
-  const winnerName = isDbl
-    ? (sideAWon ? `${pa.display_name}/${pc?.display_name}` : `${pb.display_name}/${pd?.display_name}`)
-    : (sideAWon ? pa.display_name : pb.display_name);
+  const sideAName = isDbl ? `${pa.display_name}/${pc?.display_name}` : pa.display_name;
+  const sideBName = isDbl ? `${pb.display_name}/${pd?.display_name}` : pb.display_name;
+  const winnerName = sideAWon ? sideAName : sideBName;
 
   const matchRecord = {
     id:            crypto.randomUUID(),
     tournament_id: currentMatch.tournament || null,
     mode:          currentMatch.mode,
     type:          currentMatch.type,
+    game_type:     currentMatch.gameType,
+    session_id:    currentMatch.sessionId || null,
+    game_number:   inSess ? currentMatch.gameNumber : null,
     player_a:      currentMatch.a,
     player_b:      currentMatch.b,
     player_c:      currentMatch.c || null,
@@ -1021,23 +1473,28 @@ async function completeGame() {
   };
   appData.matches.push(matchRecord);
 
-  // Update games_played for all participants
-  [pa, pb, pc, pd].filter(Boolean).forEach(p => { p.games_played = (p.games_played || 0) + 1; });
+  // Commit live point log (with game reference)
+  const pointCount = currentMatch.pointLog.length;
+  currentMatch.pointLog.forEach(pt => { pt.game_id = matchRecord.id; });
+  appData.points.push(...currentMatch.pointLog);
+  currentMatch.pointLog = [];
 
-  // Ranked singles: 3 pts for win, 1 pt for loss
+  [pa, pb, pc, pd].filter(Boolean).forEach(p => { p.games_played = (p.games_played || 0) + 1; });
   if (isRanked && !isDbl) {
+    applyEloUpdate(pa, pb, sideAWon);
     pa.points = (pa.points || 0) + (sideAWon ? 3 : 1);
     pb.points = (pb.points || 0) + (sideAWon ? 1 : 3);
     rebuildSinglesRankings();
   }
 
   $('matchActions').textContent = 'Saving\u2026';
-  const label = isDbl
-    ? `${pa.display_name}/${pc?.display_name} vs ${pb.display_name}/${pd?.display_name}`
-    : `${pa.display_name} vs ${pb.display_name}`;
-  const ok = await writeData(`Record match: ${label}`);
+  const gameLabel = isDbl ? `${sideAName} vs ${sideBName}` : `${pa.display_name} vs ${pb.display_name}`;
+  const saveMsg   = inSess ? `Session game ${currentMatch.gameNumber}: ${gameLabel}` : `Record game: ${gameLabel}`;
+  const ok = await writeData(saveMsg);
+
   if (!ok) {
     appData.matches.pop();
+    if (pointCount > 0) appData.points.splice(appData.points.length - pointCount, pointCount);
     [pa, pb, pc, pd].filter(Boolean).forEach(p => { p.games_played--; });
     if (isRanked && !isDbl) {
       pa.points -= sideAWon ? 3 : 1;
@@ -1047,13 +1504,57 @@ async function completeGame() {
     return;
   }
 
-  $('matchActions').textContent = `Recorded \u2014 Winner: ${winnerName}`;
   renderLeaderboard();
 
+  /* ---- Session handling ---- */
+  if (inSess) {
+    sideAWon ? currentMatch.gamesA++ : currentMatch.gamesB++;
+    currentMatch.gameNumber++;
+    updateSessionScoreUI();
+
+    const needed   = Math.ceil(currentMatch.sessionFormat / 2);
+    const sessOver = currentMatch.gamesA >= needed || currentMatch.gamesB >= needed;
+
+    if (sessOver) {
+      // Finalise and save the session summary record
+      const sessRec = {
+        id:           currentMatch.sessionId,
+        player_a:     currentMatch.a,  player_b:     currentMatch.b,
+        player_c:     currentMatch.c || null, player_d: currentMatch.d || null,
+        format:       currentMatch.sessionFormat,
+        mode:         currentMatch.mode, type: currentMatch.type,
+        tournament_id: currentMatch.tournament || null,
+        games_a:      currentMatch.gamesA, games_b: currentMatch.gamesB,
+        winner:       currentMatch.gamesA >= needed ? currentMatch.a : currentMatch.b,
+        created_at:   new Date().toISOString()
+      };
+      appData.sessions.push(sessRec);
+      await writeData(`Complete session: ${gameLabel}`);
+
+      $('matchActions').textContent =
+        `Session complete \u2014 ${currentMatch.gamesA >= needed ? sideAName : sideBName} wins ${currentMatch.gamesA}\u2013${currentMatch.gamesB}!`;
+      $('sessionScore').style.display = 'none';
+      setTimeout(() => $('resetMatchBtn').click(), 3000);
+    } else {
+      // Next game — TT rule: first server alternates each game
+      currentMatch.firstServer = currentMatch.firstServer === 'A' ? 'B' : 'A';
+      currentMatch.serveOrder  = buildServeOrder();
+      currentMatch.scoreA = 0; currentMatch.scoreB = 0;
+      currentMatch.pointLog = [];
+      updateScoreUI();
+      $('matchStatus').textContent =
+        `Game ${currentMatch.gameNumber} of ${currentMatch.sessionFormat} \u00b7 ${currentMatch.gamesA}\u2013${currentMatch.gamesB} in games`;
+      $('matchActions').textContent =
+        `Game ${currentMatch.gameNumber - 1} done \u2014 ${sideAWon ? sideAName : sideBName} leads. Next server: Side ${currentMatch.firstServer}.`;
+    }
+    return;
+  }
+
+  /* ---- Single game rematch prompt ---- */
+  $('matchActions').textContent = `Recorded \u2014 Winner: ${winnerName}`;
   setTimeout(() => {
     if (confirm('Rematch with same players?')) {
-      currentMatch.scoreA = 0;
-      currentMatch.scoreB = 0;
+      currentMatch.scoreA = 0; currentMatch.scoreB = 0;
       updateScoreUI();
       $('matchStatus').textContent  = `${currentMatch.mode} \u00b7 ${currentMatch.type} \u00b7 rematch`;
       $('matchActions').textContent = '';
@@ -1103,6 +1604,12 @@ $('saveStats').onclick = async () => {
     forehand_power:       Number($('statForehandPower').value    || 0),
     backhand_consistency: Number($('statBackhandConsistency').value || 0)
   };
+  // Save profile fields directly on the player record
+  target.handedness     = $('statHandedness').value    || null;
+  target.grip           = $('statGrip').value          || null;
+  target.play_style     = $('statPlayStyle').value     || null;
+  target.primary_weapon = $('statPrimaryWeapon').value || null;
+  target.weakness_notes = $('statWeaknessNotes').value || '';
   const idx = appData.player_stats.findIndex(s => s.player_id === target.id);
   if (idx >= 0) appData.player_stats[idx] = payload;
   else          appData.player_stats.push(payload);
@@ -1113,52 +1620,15 @@ $('saveStats').onclick = async () => {
 /* ============================================================
    Profile view
    ============================================================ */
-$('viewMyMatches').onclick = () => {
-  if (!currentPlayer) return alert('Log in first.');
-  const pid = currentPlayer.id;
-  const myMatches = appData.matches
-    .filter(g => g.player_a === pid || g.player_b === pid || g.player_c === pid || g.player_d === pid)
-    .sort((a, b) => b.created_at.localeCompare(a.created_at))
-    .slice(0, 50);
-
-  const el = $('profileContent');
-  el.innerHTML = `<div style="font-weight:700">${currentPlayer.display_name}</div>
-    <div class="muted">${currentPlayer.email} &middot; ${currentPlayer.games_played || 0} games &middot; ${currentPlayer.points || 0} pts</div>`;
-
-  if (!myMatches.length) {
-    el.insertAdjacentHTML('beforeend', '<div class="muted" style="margin-top:8px">No matches recorded yet.</div>');
-    return;
-  }
-  myMatches.forEach(g => {
-    const pa = appData.players.find(x => x.id === g.player_a);
-    const pb = appData.players.find(x => x.id === g.player_b);
-    const pc = g.player_c ? appData.players.find(x => x.id === g.player_c) : null;
-    const pd = g.player_d ? appData.players.find(x => x.id === g.player_d) : null;
-    const isDbl = g.type === 'doubles';
-    const sideA = isDbl ? `${pa?.display_name ?? '?'}/${pc?.display_name ?? '?'}` : (pa?.display_name ?? '?');
-    const sideB = isDbl ? `${pb?.display_name ?? '?'}/${pd?.display_name ?? '?'}` : (pb?.display_name ?? '?');
-    const myOnSideA = g.player_a === pid || g.player_c === pid;
-    const won = myOnSideA ? g.winner === g.player_a : g.winner === g.player_b;
-    const row = document.createElement('div');
-    row.style.cssText = 'padding:8px;border-bottom:1px solid rgba(255,255,255,0.04);margin-top:4px';
-    row.innerHTML = `<strong style="color:${won ? '#4ade80' : '#f87171'}">${won ? 'W' : 'L'}</strong>
-      <span class="small"> ${sideA} ${g.score_a}\u2013${g.score_b} ${sideB}</span>
-      <div class="muted">${g.mode}${isDbl ? ' doubles' : ''} &middot; ${new Date(g.created_at).toLocaleString()}</div>`;
-    el.appendChild(row);
-  });
-};
-
-$('editProfile').onclick = async () => {
-  if (!currentPlayer) return alert('Log in first.');
-  const newName = prompt('Display name', currentPlayer.display_name);
-  if (newName === null || !newName.trim()) return;
-  currentPlayer.display_name = newName.trim();
-  const ok = await writeData(`Edit profile for ${currentPlayer.display_name}`);
-  if (ok) {
-    $('profileTab').textContent = `Profile (${currentPlayer.display_name})`;
-    renderPlayersList();
-    alert('Profile updated.');
-  }
+$('editProfile').onclick = () => {
+  const pid = $('profilePlayerSelect').value;
+  if (!pid) return alert('Select a player first.');
+  // Navigate to the Stats tab with this player pre-selected
+  tabs.forEach(b => b.classList.remove('active'));
+  tabs.find(b => b.dataset.tab === 'stats')?.classList.add('active');
+  for (const k in tabSections) tabSections[k].style.display = k === 'stats' ? 'block' : 'none';
+  $('statsPlayerSelect').value = pid;
+  loadStatsForPlayer(pid);
 };
 
 /* ============================================================
