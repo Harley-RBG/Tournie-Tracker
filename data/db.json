@@ -126,11 +126,24 @@
     {
       "player_id": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
       "serve_style": "Slice",
-      "return_pct": 0,
-      "games_played": 0,
+      "serve_primary_type": "Sidespin",
+      "serve_power": 6,
+      "serve_spin_rating": 9,
       "serve_consistency": 8,
+      "fh_style": "Counter",
       "forehand_power": 6,
-      "backhand_consistency": 8
+      "fh_spin": 0,
+      "fh_accuracy": 0,
+      "bh_style": "Chop",
+      "bh_power": 5,
+      "bh_spin": 9,
+      "backhand_consistency": 7,
+      "return_pct": 70,
+      "return_aggression": 8,
+      "footwork": 7,
+      "speed_agility": 7,
+      "pressure_handling": 4,
+      "mental_consistency": 5
     }
   ],
   "settings": {
