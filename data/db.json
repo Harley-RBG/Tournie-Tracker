@@ -70,5 +70,15 @@
     "singles": [],
     "doubles": []
   },
-  "player_stats": []
+  "player_stats": [
+    {
+      "player_id": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
+      "serve_style": "Slice",
+      "return_pct": 0,
+      "games_played": 0,
+      "serve_consistency": 8,
+      "forehand_power": 6,
+      "backhand_consistency": 8
+    }
+  ]
 }
