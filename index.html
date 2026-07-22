@@ -113,6 +113,7 @@
         <nav id="mainNav" aria-label="Main navigation">
           <button data-tab="leaderboard" class="active">Leaderboard</button>
           <button data-tab="tournaments">Tournaments</button>
+          <button data-tab="history">History</button>
           <button data-tab="recorder">Match Recorder</button>
           <button data-tab="stats">Player Stats</button>
           <button data-tab="profile" id="profileTab">Profile</button>
@@ -186,6 +187,26 @@
           <div id="tournamentStatus" style="margin-top:12px" class="muted">Loading tournaments...</div>
           <div id="tournamentList" style="margin-top:12px"></div>
           <div id="bracketArea" style="margin-top:12px" class="muted card">Bracket view will appear here when a tournament is selected.</div>
+        </section>
+
+        <!-- Match History -->
+        <section id="tab-history" class="panel card" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <div>
+              <div style="font-weight:700;color:var(--accent)">Match History</div>
+              <div class="muted" id="historyCount">All recorded games</div>
+            </div>
+            <div class="flex" style="flex-wrap:wrap;gap:8px">
+              <select id="historyFilter" style="min-width:140px"><option value="">All players</option></select>
+              <select id="historyModeFilter" style="min-width:110px">
+                <option value="">All modes</option>
+                <option value="casual">Casual</option>
+                <option value="ranked">Ranked</option>
+                <option value="tournament">Tournament</option>
+              </select>
+            </div>
+          </div>
+          <div id="historyList" style="margin-top:12px"></div>
         </section>
 
         <!-- Match Recorder -->
@@ -331,26 +352,105 @@
           </div>
 
           <div class="stats-grid">
+            <!-- Serve -->
             <div class="card">
-              <div style="font-weight:700;color:#cfe6ff">Serve & Return</div>
-              <label class="muted" style="margin-top:8px">Serve Style</label>
-              <input id="statServeStyle" placeholder="Flat / Kick / Slice">
-              <label class="muted" style="margin-top:8px">Return %</label>
-              <input id="statReturnPct" placeholder="e.g., 62">
-              <label class="muted" style="margin-top:8px">Games played</label>
-              <input id="statGamesPlayed" placeholder="0">
+              <div style="font-weight:700;color:#cfe6ff">Serve</div>
+              <label class="muted" style="margin-top:8px">Style / description</label>
+              <input id="statServeStyle" placeholder="Flat / Kick / Slice / Heavy topspin">
+              <label class="muted" style="margin-top:8px">Primary spin type</label>
+              <select id="statServePrimaryType">
+                <option value="">—</option>
+                <option value="Backspin">Backspin</option>
+                <option value="Topspin">Topspin</option>
+                <option value="Sidespin">Sidespin</option>
+                <option value="No-spin">No-spin</option>
+                <option value="Mixed">Mixed / Varied</option>
+              </select>
+              <label class="muted" style="margin-top:8px">Power (1–10)</label>
+              <input id="statServePower" type="number" min="1" max="10" placeholder="1-10">
+              <label class="muted" style="margin-top:8px">Spin quality (1–10)</label>
+              <input id="statServeSpinRating" type="number" min="1" max="10" placeholder="1-10">
+              <label class="muted" style="margin-top:8px">Consistency (1–10)</label>
+              <input id="statServeConsistency" type="number" min="1" max="10" placeholder="1-10">
             </div>
 
+            <!-- Forehand -->
             <div class="card">
-              <div style="font-weight:700;color:#cfe6ff">Skills (1–10)</div>
-              <label class="muted" style="margin-top:8px">Serve - Consistency</label>
-              <input id="statServeConsistency" placeholder="1-10">
-              <label class="muted" style="margin-top:8px">Forehand - Power</label>
-              <input id="statForehandPower" placeholder="1-10">
-              <label class="muted" style="margin-top:8px">Backhand - Consistency</label>
-              <input id="statBackhandConsistency" placeholder="1-10">
+              <div style="font-weight:700;color:#cfe6ff">Forehand</div>
+              <label class="muted" style="margin-top:8px">Primary stroke</label>
+              <select id="statFhStyle">
+                <option value="">—</option>
+                <option value="Loop">Loop / Topspin</option>
+                <option value="Drive">Drive</option>
+                <option value="Punch">Punch / Hit</option>
+                <option value="Smash">Smash</option>
+                <option value="Flick">Flick</option>
+                <option value="Counter">Counter loop</option>
+                <option value="Chop">Chop / Slice</option>
+              </select>
+              <label class="muted" style="margin-top:8px">Power (1–10)</label>
+              <input id="statForehandPower" type="number" min="1" max="10" placeholder="1-10">
+              <label class="muted" style="margin-top:8px">Spin (1–10)</label>
+              <input id="statFhSpin" type="number" min="1" max="10" placeholder="1-10">
+              <label class="muted" style="margin-top:8px">Accuracy (1–10)</label>
+              <input id="statFhAccuracy" type="number" min="1" max="10" placeholder="1-10">
             </div>
 
+            <!-- Backhand -->
+            <div class="card">
+              <div style="font-weight:700;color:#cfe6ff">Backhand</div>
+              <label class="muted" style="margin-top:8px">Primary stroke</label>
+              <select id="statBhStyle">
+                <option value="">—</option>
+                <option value="Loop">Loop / Topspin</option>
+                <option value="Drive">Drive</option>
+                <option value="Punch">Punch / Hit</option>
+                <option value="Block">Block</option>
+                <option value="Flick">Flick / Banana</option>
+                <option value="Push">Push</option>
+                <option value="Chop">Chop / Slice</option>
+              </select>
+              <label class="muted" style="margin-top:8px">Power (1–10)</label>
+              <input id="statBhPower" type="number" min="1" max="10" placeholder="1-10">
+              <label class="muted" style="margin-top:8px">Spin (1–10)</label>
+              <input id="statBhSpin" type="number" min="1" max="10" placeholder="1-10">
+              <label class="muted" style="margin-top:8px">Consistency (1–10)</label>
+              <input id="statBackhandConsistency" type="number" min="1" max="10" placeholder="1-10">
+            </div>
+
+            <!-- Return & Movement -->
+            <div class="card">
+              <div style="font-weight:700;color:#cfe6ff">Return &amp; Movement</div>
+              <label class="muted" style="margin-top:8px">Return consistency % (0–100)</label>
+              <input id="statReturnPct" type="number" min="0" max="100" placeholder="e.g. 72">
+              <label class="muted" style="margin-top:8px">Return aggressiveness (1–10)</label>
+              <input id="statReturnAggression" type="number" min="1" max="10" placeholder="1-10">
+              <label class="muted" style="margin-top:8px">Footwork (1–10)</label>
+              <input id="statFootwork" type="number" min="1" max="10" placeholder="1-10">
+              <label class="muted" style="margin-top:8px">Speed / Agility (1–10)</label>
+              <input id="statSpeedAgility" type="number" min="1" max="10" placeholder="1-10">
+            </div>
+
+            <!-- Mental -->
+            <div class="card full-width">
+              <div style="font-weight:700;color:#cfe6ff">Mental Game</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:8px">
+                <div>
+                  <label class="muted">Pressure handling (1–10)</label>
+                  <input id="statPressureHandling" type="number" min="1" max="10" placeholder="1-10">
+                </div>
+                <div>
+                  <label class="muted">Consistency under pressure (1–10)</label>
+                  <input id="statMentalConsistency" type="number" min="1" max="10" placeholder="1-10">
+                </div>
+                <div style="grid-column:1/-1">
+                  <label class="muted">Notes (additional observations)</label>
+                  <input id="statGamesPlayed" placeholder="e.g. strongest in short rallies, struggles under pressure" style="display:none">
+                </div>
+              </div>
+            </div>
+
+            <!-- Player Profile -->
             <div class="card full-width">
               <div style="font-weight:700;color:#cfe6ff">Player Profile</div>
               <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:8px">
@@ -388,7 +488,7 @@
                   <input id="statPrimaryWeapon" placeholder="e.g. FH loop, serve">
                 </div>
                 <div style="grid-column:1/-1">
-                  <label class="muted">Weaknesses / Notes</label>
+                  <label class="muted">Weaknesses / Scouting Notes</label>
                   <textarea id="statWeaknessNotes" rows="2" placeholder="Tactical notes, coach observations…" style="resize:vertical"></textarea>
                 </div>
               </div>
@@ -477,9 +577,36 @@
       <p class="note">Required to save data. Create a fine-grained PAT with <code>Contents: Read &amp; Write</code> for the <code>Harley-RBG/Tournie-Tracker</code> repo only. Stored in this browser&rsquo;s localStorage &mdash; do not share this device.</p>
       <label>Logged in as</label>
       <input id="settingsUser" placeholder="Not logged in" readonly style="opacity:0.6;cursor:default">
+      <label style="margin-top:12px">Admin Emails <span style="opacity:.6;font-weight:400">(comma-separated)</span></label>
+      <input id="settingsAdmins" placeholder="email@company.com, email2@...">
+      <p class="note">Admins can edit and delete match records. Enter work email addresses that should have admin access.</p>
       <div class="modal-actions">
         <button id="settingsClose" class="ghost">Cancel</button>
         <button id="settingsSave" class="primary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Match Modal -->
+  <div id="editMatchModal" class="modal-overlay" style="display:none">
+    <div class="modal">
+      <h2>Edit Match</h2>
+      <div id="editMatchInfo" class="muted" style="margin:6px 0 10px;font-size:12px"></div>
+      <input type="hidden" id="editMatchId">
+      <label>Score — Side A</label>
+      <input id="editScoreA" type="number" min="0" max="99">
+      <label>Score — Side B</label>
+      <input id="editScoreB" type="number" min="0" max="99">
+      <label>Mode</label>
+      <select id="editMode">
+        <option value="casual">Casual</option>
+        <option value="ranked">Ranked</option>
+        <option value="tournament">Tournament</option>
+      </select>
+      <p class="note">Saving will recalculate all Elo ratings and player stats from scratch.</p>
+      <div class="modal-actions">
+        <button id="editMatchClose" class="ghost">Cancel</button>
+        <button id="editMatchSave" class="primary">Save &amp; Recalculate</button>
       </div>
     </div>
   </div>
@@ -502,7 +629,7 @@ const LS_USER  = 'tt_user';
 const LS_PAT   = 'tt_gh_pat';
 
 /* ---------- In-memory state ---------- */
-const EMPTY_DATA = () => ({ players: [], matches: [], sessions: [], points: [], tournaments: [], rankings: { singles: [], doubles: [] }, player_stats: [] });
+const EMPTY_DATA = () => ({ players: [], matches: [], sessions: [], points: [], tournaments: [], rankings: { singles: [], doubles: [] }, player_stats: [], settings: { admins: [] } });
 let appData     = EMPTY_DATA();
 let _dbSha      = null;
 let currentUser = null;   // { email, displayName }
@@ -530,6 +657,7 @@ const tabs        = Array.from(document.querySelectorAll('nav button[data-tab]')
 const tabSections = {
   leaderboard: $('tab-leaderboard'),
   tournaments:  $('tab-tournaments'),
+  history:      $('tab-history'),
   recorder:     $('tab-recorder'),
   stats:        $('tab-stats'),
   profile:      $('tab-profile')
@@ -540,6 +668,7 @@ tabs.forEach(btn => btn.addEventListener('click', () => {
   btn.classList.add('active');
   const tab = btn.dataset.tab;
   for (const k in tabSections) tabSections[k].style.display = (k === tab) ? 'block' : 'none';
+  if (tab === 'history') renderHistory();
 }));
 
 /* ---------- Theme toggle ---------- */
@@ -565,6 +694,8 @@ async function readData() {
     appData.rankings.doubles ??= [];
     appData.sessions         ??= [];
     appData.points           ??= [];
+    appData.settings         ??= { admins: [] };
+    appData.settings.admins  ??= [];
   } catch (e) {
     console.error('readData failed', e);
   }
@@ -677,10 +808,11 @@ $('signOutBtn').onclick = () => {
 
 /* ---------- Settings modal ---------- */
 $('openSettingsBtn').onclick = () => {
-  $('settingsPat').value  = localStorage.getItem(LS_PAT) || '';
-  $('settingsUser').value = currentUser
+  $('settingsPat').value    = localStorage.getItem(LS_PAT) || '';
+  $('settingsUser').value   = currentUser
     ? `${currentUser.displayName} (${currentUser.email})`
     : 'Not logged in';
+  $('settingsAdmins').value = (appData.settings?.admins || []).join(', ');
   $('settingsModal').style.display = 'flex';
 };
 
@@ -690,11 +822,17 @@ $('settingsModal').addEventListener('click', e => {
 
 $('settingsClose').onclick = () => { $('settingsModal').style.display = 'none'; };
 
-$('settingsSave').onclick = () => {
+$('settingsSave').onclick = async () => {
   const pat = $('settingsPat').value.trim();
   if (pat) localStorage.setItem(LS_PAT, pat);
   else     localStorage.removeItem(LS_PAT);
+  // Save admin list to shared data
+  const admins = $('settingsAdmins').value
+    .split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
+  appData.settings ??= {};
+  appData.settings.admins = admins;
   $('settingsModal').style.display = 'none';
+  if (pat) await writeData('Update settings');
 };
 
 /* ---------- Refresh buttons ---------- */
@@ -790,6 +928,156 @@ window.deletePlayer = async function(id) {
   await writeData(`Delete player ${p.display_name}`);
   renderPlayersList();
   populatePlayerSelectors();
+};
+
+/* ============================================================
+   Admin helpers
+   ============================================================ */
+function isAdmin() {
+  return currentUser && (appData.settings?.admins || []).includes(currentUser.email);
+}
+
+/* ============================================================
+   Recalculate all stats from match history (used after edit/delete)
+   ============================================================ */
+function recalculateAllStats() {
+  // Reset computed fields
+  appData.players.forEach(p => {
+    p.games_played  = 0;
+    p.points        = 0;
+    p.rating        = 1500;
+    p.best_rating   = 1500;
+    p.rating_change = null;
+  });
+  // Replay in chronological order
+  [...appData.matches]
+    .sort((a, b) => a.created_at.localeCompare(b.created_at))
+    .forEach(m => {
+      const pa = appData.players.find(p => p.id === m.player_a);
+      const pb = appData.players.find(p => p.id === m.player_b);
+      const pc = m.player_c ? appData.players.find(p => p.id === m.player_c) : null;
+      const pd = m.player_d ? appData.players.find(p => p.id === m.player_d) : null;
+      if (!pa || !pb) return;
+      [pa, pb, pc, pd].filter(Boolean).forEach(p => { p.games_played++; });
+      if (m.mode === 'ranked' && m.type !== 'doubles') {
+        const sideAWon = m.winner === m.player_a;
+        applyEloUpdate(pa, pb, sideAWon);
+        pa.points = (pa.points || 0) + (sideAWon ? 3 : 1);
+        pb.points = (pb.points || 0) + (sideAWon ? 1 : 3);
+      }
+    });
+  rebuildSinglesRankings();
+}
+
+/* ============================================================
+   Match History Runsheet
+   ============================================================ */
+function renderHistory() {
+  const pf   = $('historyFilter').value;
+  const mf   = $('historyModeFilter').value;
+  const admin = isAdmin();
+
+  let rows = [...appData.matches].sort((a, b) => b.created_at.localeCompare(a.created_at));
+  if (pf) rows = rows.filter(m =>
+    m.player_a===pf||m.player_b===pf||m.player_c===pf||m.player_d===pf);
+  if (mf) rows = rows.filter(m => m.mode === mf);
+
+  $('historyCount').textContent = `${rows.length} game${rows.length!==1?'s':''} shown`;
+  const el = $('historyList');
+  el.innerHTML = '';
+
+  if (!rows.length) { el.innerHTML = '<div class="muted">No matches found.</div>'; return; }
+
+  rows.forEach(m => {
+    const pa = appData.players.find(p=>p.id===m.player_a);
+    const pb = appData.players.find(p=>p.id===m.player_b);
+    const pc = m.player_c ? appData.players.find(p=>p.id===m.player_c) : null;
+    const pd = m.player_d ? appData.players.find(p=>p.id===m.player_d) : null;
+    const sideA = m.type==='doubles' ? `${pa?.display_name||'?'}/${pc?.display_name||'?'}` : (pa?.display_name||'?');
+    const sideB = m.type==='doubles' ? `${pb?.display_name||'?'}/${pd?.display_name||'?'}` : (pb?.display_name||'?');
+    const wonA  = m.winner === m.player_a;
+    const pts   = appData.points.filter(pt=>pt.game_id===m.id).length;
+    const sessLabel = m.session_id ? `<span class="muted" style="font-size:10px;margin-left:4px">G${m.game_number}</span>` : '';
+
+    const row = document.createElement('div');
+    row.className = 'player-row';
+    row.style.cssText = 'flex-wrap:wrap;gap:4px';
+    row.innerHTML = `
+      <div style="flex:1;min-width:180px">
+        <strong style="color:${wonA?'#4ade80':'#e6eef6'}">${sideA}</strong>
+        <span class="muted" style="padding:0 6px">${m.score_a}\u2013${m.score_b}</span>
+        <strong style="color:${!wonA?'#4ade80':'#e6eef6'}">${sideB}</strong>
+        ${sessLabel}
+        ${pts>0?`<span class="muted" style="font-size:10px;margin-left:4px">\u2022 ${pts}pts tracked</span>`:''}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="muted" style="font-size:11px">${m.mode}${m.type==='doubles'?' \u00b7 dbl':''} \u00b7 ${new Date(m.created_at).toLocaleDateString()}</span>
+        ${admin ? `<button class="ghost" style="font-size:11px;padding:3px 8px" onclick="showEditMatch('${m.id}')">Edit</button>
+        <button class="ghost" style="font-size:11px;padding:3px 8px;color:#f87171;border-color:rgba(248,113,113,.3)" onclick="confirmDeleteMatch('${m.id}')">Delete</button>` : ''}
+      </div>`;
+    el.appendChild(row);
+  });
+}
+
+$('historyFilter').addEventListener('change', renderHistory);
+$('historyModeFilter').addEventListener('change', renderHistory);
+
+/* ---------- Edit Match ---------- */
+let _editMatchId = null;
+
+window.showEditMatch = function(id) {
+  const m = appData.matches.find(x => x.id === id);
+  if (!m) return;
+  const pa = appData.players.find(p => p.id === m.player_a)?.display_name || '?';
+  const pb = appData.players.find(p => p.id === m.player_b)?.display_name || '?';
+  _editMatchId = id;
+  $('editMatchInfo').textContent = `${pa} vs ${pb} \u00b7 ${new Date(m.created_at).toLocaleDateString()}`;
+  $('editScoreA').value = m.score_a;
+  $('editScoreB').value = m.score_b;
+  $('editMode').value   = m.mode;
+  $('editMatchModal').style.display = 'flex';
+};
+
+$('editMatchModal').addEventListener('click', e => {
+  if (e.target === $('editMatchModal')) $('editMatchModal').style.display = 'none';
+});
+$('editMatchClose').onclick = () => { $('editMatchModal').style.display = 'none'; };
+
+$('editMatchSave').onclick = async () => {
+  const m = appData.matches.find(x => x.id === _editMatchId);
+  if (!m) return;
+  const newSA = Number($('editScoreA').value);
+  const newSB = Number($('editScoreB').value);
+  const newMode = $('editMode').value;
+
+  m.score_a = newSA;
+  m.score_b = newSB;
+  m.mode    = newMode;
+  m.winner  = newSA > newSB ? m.player_a : m.player_b;
+
+  recalculateAllStats();
+  $('editMatchModal').style.display = 'none';
+  const ok = await writeData(`Edit match ${_editMatchId.slice(0,8)}`);
+  if (ok) { renderHistory(); renderLeaderboard(); }
+  else    alert('Save failed. Check your PAT in \u2699 Settings.');
+};
+
+/* ---------- Delete Match ---------- */
+window.confirmDeleteMatch = function(id) {
+  const m = appData.matches.find(x => x.id === id);
+  if (!m) return;
+  const pa = appData.players.find(p => p.id === m.player_a)?.display_name || '?';
+  const pb = appData.players.find(p => p.id === m.player_b)?.display_name || '?';
+  if (!confirm(`Delete match: ${pa} ${m.score_a}\u2013${m.score_b} ${pb}?\n\nAll ratings and stats will be recalculated.`)) return;
+
+  appData.matches = appData.matches.filter(x => x.id !== id);
+  appData.points  = appData.points.filter(pt => pt.game_id !== id);
+  recalculateAllStats();
+
+  writeData(`Delete match ${id.slice(0,8)}`).then(ok => {
+    if (ok) { renderHistory(); renderLeaderboard(); }
+    else alert('Save failed. Check your PAT in \u2699 Settings.');
+  });
 };
 
 /* ============================================================
@@ -1009,13 +1297,38 @@ function renderProfile(playerId) {
   }
 
   // Stats cards
-  const skillsHtml = ps ? [
-    ps.serve_style       ?`<div class="muted" style="margin-bottom:3px">Serve style: <strong style="color:#cfe6ff">${ps.serve_style}</strong></div>`:'',
-    ps.serve_consistency ?`<div class="muted" style="margin-bottom:3px">Serve consistency: <strong style="color:#cfe6ff">${ps.serve_consistency}/10</strong></div>`:'',
-    ps.forehand_power    ?`<div class="muted" style="margin-bottom:3px">Forehand power: <strong style="color:#cfe6ff">${ps.forehand_power}/10</strong></div>`:'',
-    ps.backhand_consistency?`<div class="muted" style="margin-bottom:3px">Backhand: <strong style="color:#cfe6ff">${ps.backhand_consistency}/10</strong></div>`:'',
-    ps.return_pct        ?`<div class="muted" style="margin-bottom:3px">Return %: <strong style="color:#cfe6ff">${ps.return_pct}%</strong></div>`:''
-  ].filter(Boolean).join('') : '<div class="muted">No skill ratings entered yet.</div>';
+  function skillVal(v) { return v ? `<strong style="color:#cfe6ff">${v}${typeof v==='number'&&v<=10?'/10':''}</strong>` : `<span style="opacity:.35">—</span>`; }
+  function skillRow(label, val) { return `<div class="muted" style="margin-bottom:3px">${label}: ${skillVal(val)}</div>`; }
+  const skillsHtml = ps ? `
+    ${skillRow('Style', ps.serve_style)}
+    ${skillRow('Spin type', ps.serve_primary_type)}
+    ${ps.serve_power        ? skillRow('Power', ps.serve_power)         : ''}
+    ${ps.serve_spin_rating  ? skillRow('Spin', ps.serve_spin_rating)    : ''}
+    ${ps.serve_consistency  ? skillRow('Consistency', ps.serve_consistency) : ''}
+  ` : '<div class="muted">No ratings entered yet.</div>';
+
+  const fhHtml = ps ? `
+    ${skillRow('Style', ps.fh_style||null)}
+    ${ps.forehand_power ? skillRow('Power', ps.forehand_power) : ''}
+    ${ps.fh_spin        ? skillRow('Spin',  ps.fh_spin)        : ''}
+    ${ps.fh_accuracy    ? skillRow('Accuracy', ps.fh_accuracy) : ''}
+  ` : '';
+
+  const bhHtml = ps ? `
+    ${skillRow('Style', ps.bh_style||null)}
+    ${ps.bh_power             ? skillRow('Power',       ps.bh_power)             : ''}
+    ${ps.bh_spin              ? skillRow('Spin',        ps.bh_spin)              : ''}
+    ${ps.backhand_consistency ? skillRow('Consistency', ps.backhand_consistency) : ''}
+  ` : '';
+
+  const movHtml = ps ? `
+    ${ps.return_pct        ? skillRow('Return %',    ps.return_pct)        : ''}
+    ${ps.return_aggression ? skillRow('Return aggression', ps.return_aggression) : ''}
+    ${ps.footwork          ? skillRow('Footwork',    ps.footwork)          : ''}
+    ${ps.speed_agility     ? skillRow('Speed/Agility', ps.speed_agility)   : ''}
+    ${ps.pressure_handling ? skillRow('Pressure handling', ps.pressure_handling) : ''}
+    ${ps.mental_consistency? skillRow('Mental consistency', ps.mental_consistency) : ''}
+  ` : '';
 
   el.insertAdjacentHTML('beforeend', `
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-bottom:12px">
@@ -1040,9 +1353,21 @@ function renderProfile(playerId) {
         <div class="muted" style="margin-bottom:3px">Best rating: <strong style="color:#cfe6ff">${player.best_rating||1500}</strong></div>
       </div>
       <div class="card" style="padding:10px">
-        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Skills</div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Serve</div>
         ${skillsHtml}
       </div>
+      ${fhHtml.trim() ? `<div class="card" style="padding:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Forehand</div>
+        ${fhHtml}
+      </div>` : ''}
+      ${bhHtml.trim() ? `<div class="card" style="padding:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Backhand</div>
+        ${bhHtml}
+      </div>` : ''}
+      ${movHtml.trim() ? `<div class="card" style="padding:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Movement &amp; Mental</div>
+        ${movHtml}
+      </div>` : ''}
       ${stats.total_pts_tracked > 0 ? `
       <div class="card" style="padding:10px">
         <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Point Stats <span style="font-weight:400;opacity:.6">(${stats.total_pts_tracked} pts tracked)</span></div>
@@ -1171,15 +1496,17 @@ function populatePlayerSelectors() {
   const selC  = $('playerC'), selD  = $('playerD');
   const selSt = $('statsPlayerSelect');
   const selPr = $('profilePlayerSelect');
+  const selHi = $('historyFilter');
   const sorted = [...appData.players].sort((a, b) => a.display_name.localeCompare(b.display_name));
 
   [selA, selB, selC, selD].forEach(s => { s.innerHTML = '<option value="">Select player</option>'; });
   selSt.innerHTML = '<option value="">Select player\u2026</option>';
   selPr.innerHTML = '<option value="">Select player\u2026</option>';
+  selHi.innerHTML = '<option value="">All players</option>';
 
   sorted.forEach(p => {
     const opt = `<option value="${p.id}">${p.display_name}</option>`;
-    [selA, selB, selC, selD, selSt, selPr].forEach(s => s.insertAdjacentHTML('beforeend', opt));
+    [selA, selB, selC, selD, selSt, selPr, selHi].forEach(s => s.insertAdjacentHTML('beforeend', opt));
   });
 
   if (currentPlayer) {
@@ -1194,12 +1521,31 @@ function populatePlayerSelectors() {
 function loadStatsForPlayer(playerId) {
   const s = appData.player_stats.find(x => x.player_id === playerId);
   const p = appData.players.find(x => x.id === playerId);
+  // Serve
   $('statServeStyle').value          = s?.serve_style          || '';
-  $('statReturnPct').value           = s?.return_pct           || '';
-  $('statGamesPlayed').value         = s?.games_played         || '';
+  $('statServePrimaryType').value    = s?.serve_primary_type   || '';
+  $('statServePower').value          = s?.serve_power          || '';
+  $('statServeSpinRating').value     = s?.serve_spin_rating    || '';
   $('statServeConsistency').value    = s?.serve_consistency    || '';
+  // Forehand
+  $('statFhStyle').value             = s?.fh_style             || '';
   $('statForehandPower').value       = s?.forehand_power       || '';
+  $('statFhSpin').value              = s?.fh_spin              || '';
+  $('statFhAccuracy').value          = s?.fh_accuracy          || '';
+  // Backhand
+  $('statBhStyle').value             = s?.bh_style             || '';
+  $('statBhPower').value             = s?.bh_power             || '';
+  $('statBhSpin').value              = s?.bh_spin              || '';
   $('statBackhandConsistency').value = s?.backhand_consistency || '';
+  // Return & Movement
+  $('statReturnPct').value           = s?.return_pct           || '';
+  $('statReturnAggression').value    = s?.return_aggression    || '';
+  $('statFootwork').value            = s?.footwork             || '';
+  $('statSpeedAgility').value        = s?.speed_agility        || '';
+  // Mental
+  $('statPressureHandling').value    = s?.pressure_handling    || '';
+  $('statMentalConsistency').value   = s?.mental_consistency   || '';
+  // Profile fields (on player record)
   $('statHandedness').value    = p?.handedness     || '';
   $('statGrip').value          = p?.grip           || '';
   $('statPlayStyle').value     = p?.play_style     || '';
@@ -1597,14 +1943,32 @@ $('saveStats').onclick = async () => {
   if (!target) return alert('Select a player from the dropdown above before saving.');
   const payload = {
     player_id:            target.id,
+    // Serve
     serve_style:          $('statServeStyle').value,
-    return_pct:           Number($('statReturnPct').value   || 0),
-    games_played:         Number($('statGamesPlayed').value || 0),
-    serve_consistency:    Number($('statServeConsistency').value || 0),
-    forehand_power:       Number($('statForehandPower').value    || 0),
-    backhand_consistency: Number($('statBackhandConsistency').value || 0)
+    serve_primary_type:   $('statServePrimaryType').value,
+    serve_power:          Number($('statServePower').value          || 0),
+    serve_spin_rating:    Number($('statServeSpinRating').value     || 0),
+    serve_consistency:    Number($('statServeConsistency').value    || 0),
+    // Forehand
+    fh_style:             $('statFhStyle').value,
+    forehand_power:       Number($('statForehandPower').value       || 0),
+    fh_spin:              Number($('statFhSpin').value              || 0),
+    fh_accuracy:          Number($('statFhAccuracy').value          || 0),
+    // Backhand
+    bh_style:             $('statBhStyle').value,
+    bh_power:             Number($('statBhPower').value             || 0),
+    bh_spin:              Number($('statBhSpin').value              || 0),
+    backhand_consistency: Number($('statBackhandConsistency').value || 0),
+    // Return & Movement
+    return_pct:           Number($('statReturnPct').value           || 0),
+    return_aggression:    Number($('statReturnAggression').value    || 0),
+    footwork:             Number($('statFootwork').value            || 0),
+    speed_agility:        Number($('statSpeedAgility').value        || 0),
+    // Mental
+    pressure_handling:    Number($('statPressureHandling').value    || 0),
+    mental_consistency:   Number($('statMentalConsistency').value   || 0)
   };
-  // Save profile fields directly on the player record
+  // Profile fields saved directly on the player record
   target.handedness     = $('statHandedness').value    || null;
   target.grip           = $('statGrip').value          || null;
   target.play_style     = $('statPlayStyle').value     || null;
