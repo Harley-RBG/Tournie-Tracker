@@ -28,7 +28,12 @@
   .layout{display:grid;grid-template-columns:1fr 360px;gap:12px}
   .panel{padding:12px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent)}
   .muted{color:var(--muted);font-size:13px}
-  input,select,textarea{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+  input,select,textarea{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:#111418;color:#e6eef6;box-sizing:border-box}
+  input::placeholder{color:var(--muted)}
+  option{background:#111418;color:#e6eef6}
+  input[type="checkbox"]{width:auto;accent-color:var(--accent)}
+  .serve-tag{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:600;padding:2px 10px;border-radius:10px;margin-top:4px;letter-spacing:.03em}
+  .serve-tag-empty{display:inline-block;height:20px;margin-top:4px}
   button.primary{background:var(--accent);border:none;color:white;padding:8px 12px;border-radius:8px;cursor:pointer}
   button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 10px;border-radius:8px}
   .flex{display:flex;gap:8px;align-items:center}
@@ -187,6 +192,13 @@
           <div class="recorder-layout">
             <div class="recorder-setup card">
               <div style="font-weight:700;color:#cfe6ff">Match Setup</div>
+
+              <label class="muted" style="margin-top:8px">Match type</label>
+              <select id="matchType">
+                <option value="singles">Singles</option>
+                <option value="doubles">Doubles</option>
+              </select>
+
               <label class="muted" style="margin-top:8px">Mode</label>
               <select id="matchMode">
                 <option value="casual">Casual</option>
@@ -199,12 +211,30 @@
               <label class="muted" style="margin-top:8px">Player B</label>
               <select id="playerB"></select>
 
+              <div id="doublesSection" style="display:none">
+                <label class="muted" style="margin-top:8px">Player A Partner</label>
+                <select id="playerC"></select>
+                <label class="muted" style="margin-top:8px">Player B Partner</label>
+                <select id="playerD"></select>
+              </div>
+
               <label class="muted" style="margin-top:8px">Game type</label>
               <select id="gameType">
                 <option value="5">First to 5</option>
-                <option value="11">First to 11</option>
+                <option value="11" selected>First to 11</option>
                 <option value="21">First to 21</option>
               </select>
+
+              <label class="muted" style="margin-top:8px">First server</label>
+              <select id="firstServerSelect">
+                <option value="A">Side A serves first</option>
+                <option value="B">Side B serves first</option>
+              </select>
+
+              <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
+                <input type="checkbox" id="winBy2Check" checked>
+                <label for="winBy2Check" class="muted" style="margin-top:0;cursor:pointer">Win by 2</label>
+              </div>
 
               <label class="muted" style="margin-top:8px">Tournament (optional)</label>
               <select id="matchTournament"><option value="">None</option></select>
@@ -225,6 +255,7 @@
               <div style="display:flex;gap:12px;margin-top:12px;align-items:center">
                 <div class="side">
                   <div id="sideAName" class="muted">Player A</div>
+                  <div id="serveTagA" class="serve-tag-empty"></div>
                   <div id="scoreA" class="score">0</div>
                   <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
                     <button id="addPointA" class="btn-large primary">+1</button>
@@ -236,6 +267,7 @@
 
                 <div class="side">
                   <div id="sideBName" class="muted">Player B</div>
+                  <div id="serveTagB" class="serve-tag-empty"></div>
                   <div id="scoreB" class="score">0</div>
                   <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
                     <button id="addPointB" class="btn-large primary">+1</button>
@@ -400,7 +432,17 @@ let appData     = EMPTY_DATA();
 let _dbSha      = null;
 let currentUser = null;   // { email, displayName }
 let currentPlayer = null; // entry in appData.players matching currentUser.email
-let currentMatch  = { a: null, b: null, scoreA: 0, scoreB: 0, mode: 'casual', gameType: 11, tournament: null };
+let currentMatch  = {
+  a: null, b: null, c: null, d: null, // c,d = doubles partners
+  scoreA: 0, scoreB: 0,
+  mode: 'casual',
+  type: 'singles',       // 'singles' | 'doubles'
+  gameType: 11,
+  winBy2: true,
+  tournament: null,
+  serveOrder: [],        // player ids in rotation order
+  firstServer: 'A'
+};
 
 /* ---------- Navigation ---------- */
 const tabs        = Array.from(document.querySelectorAll('nav button[data-tab]'));
@@ -757,20 +799,17 @@ window.viewTournament = function(id) {
    Match Recorder
    ============================================================ */
 function populatePlayerSelectors() {
-  const selA   = $('playerA');
-  const selB   = $('playerB');
-  const selSt  = $('statsPlayerSelect');
+  const selA  = $('playerA'), selB  = $('playerB');
+  const selC  = $('playerC'), selD  = $('playerD');
+  const selSt = $('statsPlayerSelect');
   const sorted = [...appData.players].sort((a, b) => a.display_name.localeCompare(b.display_name));
 
-  selA.innerHTML  = '<option value="">Select player</option>';
-  selB.innerHTML  = '<option value="">Select player</option>';
+  [selA, selB, selC, selD].forEach(s => { s.innerHTML = '<option value="">Select player</option>'; });
   selSt.innerHTML = '<option value="">Select player\u2026</option>';
 
   sorted.forEach(p => {
     const opt = `<option value="${p.id}">${p.display_name}</option>`;
-    selA.insertAdjacentHTML('beforeend', opt);
-    selB.insertAdjacentHTML('beforeend', opt);
-    selSt.insertAdjacentHTML('beforeend', opt);
+    [selA, selB, selC, selD, selSt].forEach(s => s.insertAdjacentHTML('beforeend', opt));
   });
 
   // pre-select logged-in player in stats dropdown
@@ -796,27 +835,66 @@ $('statsPlayerSelect').addEventListener('change', () => {
   if (id) loadStatsForPlayer(id);
 });
 
+/* ---------- Match type toggle ---------- */
+$('matchType').addEventListener('change', () => {
+  $('doublesSection').style.display = $('matchType').value === 'doubles' ? 'block' : 'none';
+});
+
 $('startMatchBtn').onclick = () => {
-  currentMatch.mode       = $('matchMode').value;
-  currentMatch.a          = $('playerA').value   || null;
-  currentMatch.b          = $('playerB').value   || null;
-  currentMatch.gameType   = Number($('gameType').value);
-  currentMatch.tournament = $('matchTournament').value || null;
-  if (!currentMatch.a || !currentMatch.b) return alert('Select both players.');
-  if (currentMatch.a === currentMatch.b)  return alert('Players must be different.');
-  const pa = appData.players.find(p => p.id === currentMatch.a);
-  const pb = appData.players.find(p => p.id === currentMatch.b);
-  $('sideAName').textContent = pa ? pa.display_name : 'Player A';
-  $('sideBName').textContent = pb ? pb.display_name : 'Player B';
-  currentMatch.scoreA = 0;
-  currentMatch.scoreB = 0;
+  const type = $('matchType').value;
+  const a    = $('playerA').value || null;
+  const b    = $('playerB').value || null;
+  const c    = type === 'doubles' ? ($('playerC').value || null) : null;
+  const d    = type === 'doubles' ? ($('playerD').value || null) : null;
+
+  if (!a || !b) return alert('Select both players.');
+  if (a === b)  return alert('Players must be different.');
+  if (type === 'doubles') {
+    if (!c || !d) return alert('Select all four players for doubles.');
+    if (new Set([a, b, c, d]).size !== 4) return alert('All four players must be different.');
+  }
+
+  const firstSrv = $('firstServerSelect').value; // 'A' | 'B'
+
+  Object.assign(currentMatch, {
+    a, b, c, d,
+    scoreA: 0, scoreB: 0,
+    mode:        $('matchMode').value,
+    type,
+    gameType:    Number($('gameType').value),
+    winBy2:      $('winBy2Check').checked,
+    firstServer: firstSrv,
+    tournament:  $('matchTournament').value || null,
+    // Serve rotation: singles [a,b] or doubles [a,b,c,d], shifted if B serves first
+    serveOrder: type === 'doubles'
+      ? (firstSrv === 'A' ? [a, b, c, d] : [b, a, d, c])
+      : (firstSrv === 'A' ? [a, b]       : [b, a])
+  });
+
+  const pa = appData.players.find(p => p.id === a);
+  const pb = appData.players.find(p => p.id === b);
+  const pc = c ? appData.players.find(p => p.id === c) : null;
+  const pd = d ? appData.players.find(p => p.id === d) : null;
+
+  $('sideAName').textContent = type === 'doubles'
+    ? `${pa?.display_name || 'A'} / ${pc?.display_name || 'C'}`
+    : (pa?.display_name || 'Player A');
+  $('sideBName').textContent = type === 'doubles'
+    ? `${pb?.display_name || 'B'} / ${pd?.display_name || 'D'}`
+    : (pb?.display_name || 'Player B');
+
   $('matchActions').textContent = '';
   updateScoreUI();
-  $('matchStatus').textContent = `${currentMatch.mode} \u2014 first to ${currentMatch.gameType}`;
+  $('matchStatus').textContent = `${currentMatch.mode} \u00b7 ${type} \u00b7 first to ${currentMatch.gameType}${currentMatch.winBy2 ? ' (W+2)' : ''}`;
 };
 
 $('resetMatchBtn').onclick = () => {
-  currentMatch = { a: null, b: null, scoreA: 0, scoreB: 0, mode: 'casual', gameType: 11, tournament: null };
+  Object.assign(currentMatch, {
+    a: null, b: null, c: null, d: null,
+    scoreA: 0, scoreB: 0,
+    mode: 'casual', type: 'singles', gameType: 11, winBy2: true,
+    tournament: null, serveOrder: [], firstServer: 'A'
+  });
   $('sideAName').textContent    = 'Player A';
   $('sideBName').textContent    = 'Player B';
   $('matchActions').textContent = '';
@@ -827,6 +905,54 @@ $('resetMatchBtn').onclick = () => {
 function updateScoreUI() {
   $('scoreA').textContent = currentMatch.scoreA;
   $('scoreB').textContent = currentMatch.scoreB;
+  updateServeIndicator();
+}
+
+/* ---------- Serve logic (TT standard rules) ----------
+   Singles: 2 serves each (5 for game-to-21), alternate every point at deuce.
+   Doubles: 2 serves each in a 4-player rotation (A1→B1→A2→B2→…), alternate at deuce.
+*/
+function getServingPlayerId(scoreA, scoreB) {
+  if (!currentMatch.serveOrder.length) return null;
+  const total    = scoreA + scoreB;
+  const serveLen = currentMatch.gameType === 21 ? 5 : 2;
+  const deuceAt  = currentMatch.gameType - 1;
+  let block;
+  if (scoreA >= deuceAt && scoreB >= deuceAt) {
+    // At deuce: each block = 1 point (alternate every serve)
+    const blockAtDeuceStart = Math.floor((deuceAt * 2) / serveLen);
+    block = blockAtDeuceStart + (total - deuceAt * 2);
+  } else {
+    block = Math.floor(total / serveLen);
+  }
+  return currentMatch.serveOrder[block % currentMatch.serveOrder.length];
+}
+
+function updateServeIndicator() {
+  const serverId = getServingPlayerId(currentMatch.scoreA, currentMatch.scoreB);
+  const tagA = $('serveTagA'), tagB = $('serveTagB');
+
+  if (!serverId) {
+    tagA.className = 'serve-tag-empty';
+    tagA.textContent = '';
+    tagB.className = 'serve-tag-empty';
+    tagB.textContent = '';
+    return;
+  }
+
+  const isOnSideA = serverId === currentMatch.a || serverId === currentMatch.c;
+  const server    = appData.players.find(p => p.id === serverId);
+  const label     = currentMatch.type === 'doubles' && server
+    ? `\u25cf ${server.display_name} serving`
+    : '\u25cf Serving';
+
+  if (isOnSideA) {
+    tagA.className = 'serve-tag'; tagA.textContent = label;
+    tagB.className = 'serve-tag-empty'; tagB.textContent = '';
+  } else {
+    tagB.className = 'serve-tag'; tagB.textContent = label;
+    tagA.className = 'serve-tag-empty'; tagA.textContent = '';
+  }
 }
 
 $('addPointA').onclick = () => { currentMatch.scoreA++; updateScoreUI(); checkAutoComplete(); };
@@ -835,17 +961,27 @@ $('subPointA').onclick = () => { if (currentMatch.scoreA > 0) { currentMatch.sco
 $('subPointB').onclick = () => { if (currentMatch.scoreB > 0) { currentMatch.scoreB--; updateScoreUI(); } };
 
 $('switchSides').onclick = () => {
-  [currentMatch.a, currentMatch.b]           = [currentMatch.b, currentMatch.a];
+  // Swap side assignments and scores
+  [currentMatch.a, currentMatch.b] = [currentMatch.b, currentMatch.a];
+  [currentMatch.c, currentMatch.d] = [currentMatch.d, currentMatch.c];
   [currentMatch.scoreA, currentMatch.scoreB] = [currentMatch.scoreB, currentMatch.scoreA];
+
   const pa = appData.players.find(p => p.id === currentMatch.a);
   const pb = appData.players.find(p => p.id === currentMatch.b);
-  $('sideAName').textContent = pa ? pa.display_name : 'Player A';
-  $('sideBName').textContent = pb ? pb.display_name : 'Player B';
+  const pc = currentMatch.c ? appData.players.find(p => p.id === currentMatch.c) : null;
+  const pd = currentMatch.d ? appData.players.find(p => p.id === currentMatch.d) : null;
+  $('sideAName').textContent = currentMatch.type === 'doubles'
+    ? `${pa?.display_name || 'A'} / ${pc?.display_name || 'C'}`
+    : (pa?.display_name || 'Player A');
+  $('sideBName').textContent = currentMatch.type === 'doubles'
+    ? `${pb?.display_name || 'B'} / ${pd?.display_name || 'D'}`
+    : (pb?.display_name || 'Player B');
   updateScoreUI();
 };
 
 function checkAutoComplete() {
-  if (currentMatch.scoreA >= currentMatch.gameType || currentMatch.scoreB >= currentMatch.gameType) {
+  const { scoreA: a, scoreB: b, gameType: t, winBy2 } = currentMatch;
+  if ((a >= t || b >= t) && (!winBy2 || Math.abs(a - b) >= 2)) {
     $('matchStatus').textContent = 'Game complete!';
     setTimeout(completeGame, 300);
   }
@@ -858,42 +994,54 @@ async function completeGame() {
   const pb = appData.players.find(p => p.id === currentMatch.b);
   if (!pa || !pb) return alert('Players not set. Use \u201cStart Match\u201d first.');
 
-  const winnerId   = currentMatch.scoreA >= currentMatch.scoreB ? currentMatch.a : currentMatch.b;
-  const winnerName = winnerId === currentMatch.a ? pa.display_name : pb.display_name;
-  const isRanked   = currentMatch.mode === 'ranked';
+  const pc       = currentMatch.c ? appData.players.find(p => p.id === currentMatch.c) : null;
+  const pd       = currentMatch.d ? appData.players.find(p => p.id === currentMatch.d) : null;
+  const sideAWon = currentMatch.scoreA > currentMatch.scoreB;
+  const isRanked = currentMatch.mode === 'ranked';
+  const isDbl    = currentMatch.type === 'doubles';
+
+  const winnerName = isDbl
+    ? (sideAWon ? `${pa.display_name}/${pc?.display_name}` : `${pb.display_name}/${pd?.display_name}`)
+    : (sideAWon ? pa.display_name : pb.display_name);
 
   const matchRecord = {
     id:            crypto.randomUUID(),
     tournament_id: currentMatch.tournament || null,
     mode:          currentMatch.mode,
+    type:          currentMatch.type,
     player_a:      currentMatch.a,
     player_b:      currentMatch.b,
+    player_c:      currentMatch.c || null,
+    player_d:      currentMatch.d || null,
     score_a:       currentMatch.scoreA,
     score_b:       currentMatch.scoreB,
-    winner:        winnerId,
+    winner:        sideAWon ? currentMatch.a : currentMatch.b,
+    win_by_2:      currentMatch.winBy2,
     created_at:    new Date().toISOString()
   };
   appData.matches.push(matchRecord);
 
-  // Update player stats inline
-  pa.games_played = (pa.games_played || 0) + 1;
-  pb.games_played = (pb.games_played || 0) + 1;
-  if (isRanked) {
-    pa.points = (pa.points || 0) + (winnerId === pa.id ? 3 : 1);
-    pb.points = (pb.points || 0) + (winnerId === pb.id ? 3 : 1);
+  // Update games_played for all participants
+  [pa, pb, pc, pd].filter(Boolean).forEach(p => { p.games_played = (p.games_played || 0) + 1; });
+
+  // Ranked singles: 3 pts for win, 1 pt for loss
+  if (isRanked && !isDbl) {
+    pa.points = (pa.points || 0) + (sideAWon ? 3 : 1);
+    pb.points = (pb.points || 0) + (sideAWon ? 1 : 3);
     rebuildSinglesRankings();
   }
 
   $('matchActions').textContent = 'Saving\u2026';
-  const ok = await writeData(`Record match: ${pa.display_name} vs ${pb.display_name}`);
+  const label = isDbl
+    ? `${pa.display_name}/${pc?.display_name} vs ${pb.display_name}/${pd?.display_name}`
+    : `${pa.display_name} vs ${pb.display_name}`;
+  const ok = await writeData(`Record match: ${label}`);
   if (!ok) {
-    // rollback
     appData.matches.pop();
-    pa.games_played--;
-    pb.games_played--;
-    if (isRanked) {
-      pa.points -= (winnerId === pa.id ? 3 : 1);
-      pb.points -= (winnerId === pb.id ? 3 : 1);
+    [pa, pb, pc, pd].filter(Boolean).forEach(p => { p.games_played--; });
+    if (isRanked && !isDbl) {
+      pa.points -= sideAWon ? 3 : 1;
+      pb.points -= sideAWon ? 1 : 3;
     }
     $('matchActions').textContent = 'Failed to save. Check your PAT in \u2699 Settings.';
     return;
@@ -907,7 +1055,7 @@ async function completeGame() {
       currentMatch.scoreA = 0;
       currentMatch.scoreB = 0;
       updateScoreUI();
-      $('matchStatus').textContent  = `${currentMatch.mode} \u2014 rematch`;
+      $('matchStatus').textContent  = `${currentMatch.mode} \u00b7 ${currentMatch.type} \u00b7 rematch`;
       $('matchActions').textContent = '';
     } else {
       $('resetMatchBtn').click();
@@ -969,7 +1117,7 @@ $('viewMyMatches').onclick = () => {
   if (!currentPlayer) return alert('Log in first.');
   const pid = currentPlayer.id;
   const myMatches = appData.matches
-    .filter(g => g.player_a === pid || g.player_b === pid)
+    .filter(g => g.player_a === pid || g.player_b === pid || g.player_c === pid || g.player_d === pid)
     .sort((a, b) => b.created_at.localeCompare(a.created_at))
     .slice(0, 50);
 
@@ -982,14 +1130,20 @@ $('viewMyMatches').onclick = () => {
     return;
   }
   myMatches.forEach(g => {
-    const pa  = appData.players.find(x => x.id === g.player_a);
-    const pb  = appData.players.find(x => x.id === g.player_b);
-    const won = g.winner === pid;
+    const pa = appData.players.find(x => x.id === g.player_a);
+    const pb = appData.players.find(x => x.id === g.player_b);
+    const pc = g.player_c ? appData.players.find(x => x.id === g.player_c) : null;
+    const pd = g.player_d ? appData.players.find(x => x.id === g.player_d) : null;
+    const isDbl = g.type === 'doubles';
+    const sideA = isDbl ? `${pa?.display_name ?? '?'}/${pc?.display_name ?? '?'}` : (pa?.display_name ?? '?');
+    const sideB = isDbl ? `${pb?.display_name ?? '?'}/${pd?.display_name ?? '?'}` : (pb?.display_name ?? '?');
+    const myOnSideA = g.player_a === pid || g.player_c === pid;
+    const won = myOnSideA ? g.winner === g.player_a : g.winner === g.player_b;
     const row = document.createElement('div');
     row.style.cssText = 'padding:8px;border-bottom:1px solid rgba(255,255,255,0.04);margin-top:4px';
     row.innerHTML = `<strong style="color:${won ? '#4ade80' : '#f87171'}">${won ? 'W' : 'L'}</strong>
-      <span class="small"> ${pa?.display_name ?? '?'} ${g.score_a}\u2013${g.score_b} ${pb?.display_name ?? '?'}</span>
-      <div class="muted">${g.mode} &middot; ${new Date(g.created_at).toLocaleString()}</div>`;
+      <span class="small"> ${sideA} ${g.score_a}\u2013${g.score_b} ${sideB}</span>
+      <div class="muted">${g.mode}${isDbl ? ' doubles' : ''} &middot; ${new Date(g.created_at).toLocaleString()}</div>`;
     el.appendChild(row);
   });
 };
