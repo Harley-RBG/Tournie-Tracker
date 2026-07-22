@@ -42,10 +42,39 @@
   .btn-large{padding:12px 18px;border-radius:10px}
   .toggle{display:inline-flex;align-items:center;gap:8px}
   footer{color:var(--muted);font-size:12px;text-align:center;margin-top:12px}
-  @media(max-width:980px){.layout{grid-template-columns:1fr;padding:8px}}
+  /* Recorder & stats layouts */
+  .recorder-layout{display:flex;gap:12px;margin-top:12px}
+  .recorder-setup{flex:1}
+  .live-score-panel{width:420px;flex-shrink:0}
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  /* Desktop breakpoint */
+  @media(max-width:980px){.layout{grid-template-columns:1fr}}
+  /* Mobile */
+  @media(max-width:700px){
+    .app{margin:0;padding:8px}
+    header{flex-direction:column;align-items:stretch;gap:8px}
+    .topbar{flex-wrap:wrap;gap:6px;justify-content:flex-start}
+    nav{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:4px;padding-bottom:2px;scrollbar-width:none}
+    nav::-webkit-scrollbar{display:none}
+    nav button{white-space:nowrap;padding:7px 10px;font-size:13px}
+    .recorder-layout{flex-direction:column}
+    .live-score-panel{width:auto}
+    .stats-grid{grid-template-columns:1fr}
+    .score{font-size:56px}
+    .btn-large{padding:18px 0;font-size:20px;width:72px;text-align:center}
+    .card{padding:10px}
+    .panel{padding:6px}
+    .layout{gap:8px}
+    #authArea{padding:6px 10px!important}
+    button.ghost,button.primary{padding:7px 10px;font-size:13px}
+  }
+  @media(max-width:400px){
+    .brand h1{font-size:16px}
+    .score{font-size:48px}
+  }
   /* Modals */
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:1000}
-  .modal{background:#1a1f26;border-radius:14px;padding:24px;width:380px;box-shadow:var(--card-shadow);border:1px solid rgba(255,255,255,0.08)}
+  .modal{background:#1a1f26;border-radius:14px;padding:24px;width:380px;max-width:calc(100vw - 32px);box-shadow:var(--card-shadow);border:1px solid rgba(255,255,255,0.08)}
   .modal h2{margin:0 0 4px;color:#fff;font-size:16px}
   .modal label{display:block;margin-top:12px;font-size:13px;color:var(--muted)}
   .modal input{margin-top:4px;box-sizing:border-box}
@@ -155,8 +184,8 @@
           </div>
 
           <!-- Match setup -->
-          <div style="display:flex;gap:12px;margin-top:12px">
-            <div style="flex:1" class="card">
+          <div class="recorder-layout">
+            <div class="recorder-setup card">
               <div style="font-weight:700;color:#cfe6ff">Match Setup</div>
               <label class="muted" style="margin-top:8px">Mode</label>
               <select id="matchMode">
@@ -187,7 +216,7 @@
             </div>
 
             <!-- Live score -->
-            <div style="width:420px" class="card">
+            <div class="live-score-panel card">
               <div style="display:flex;justify-content:space-between;align-items:center">
                 <div style="font-weight:700;color:#cfe6ff">Live Score</div>
                 <div class="muted" id="matchStatus">Idle</div>
@@ -227,17 +256,18 @@
 
         <!-- Player Stats -->
         <section id="tab-stats" class="panel card" style="display:none">
-          <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
             <div>
               <div style="font-weight:700;color:var(--accent)">Player Stat Recorder</div>
-              <div class="muted">Only player or admin can edit</div>
+              <div class="muted">Select a player then fill in their stats</div>
             </div>
-            <div class="flex">
+            <div class="flex" style="flex-wrap:wrap;gap:8px">
+              <select id="statsPlayerSelect" style="min-width:160px"><option value="">Select player…</option></select>
               <button id="saveStats" class="primary">Save Stats</button>
             </div>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+          <div class="stats-grid">
             <div class="card">
               <div style="font-weight:700;color:#cfe6ff">Serve & Return</div>
               <label class="muted" style="margin-top:8px">Serve Style</label>
@@ -465,6 +495,11 @@ function updateAuthUI() {
     if (currentPlayer) {
       $('profileTab').style.display = 'inline-block';
       $('profileTab').textContent   = `Profile (${currentPlayer.display_name})`;
+      // pre-select in stats dropdown if it exists
+      if ($('statsPlayerSelect').value === '' || $('statsPlayerSelect').value !== currentPlayer.id) {
+        $('statsPlayerSelect').value = currentPlayer.id;
+        loadStatsForPlayer(currentPlayer.id);
+      }
     } else {
       $('profileTab').style.display = 'none';
     }
@@ -722,18 +757,44 @@ window.viewTournament = function(id) {
    Match Recorder
    ============================================================ */
 function populatePlayerSelectors() {
-  const selA = $('playerA');
-  const selB = $('playerB');
-  selA.innerHTML = '<option value="">Select player</option>';
-  selB.innerHTML = '<option value="">Select player</option>';
-  [...appData.players]
-    .sort((a, b) => a.display_name.localeCompare(b.display_name))
-    .forEach(p => {
-      const opt = `<option value="${p.id}">${p.display_name}</option>`;
-      selA.insertAdjacentHTML('beforeend', opt);
-      selB.insertAdjacentHTML('beforeend', opt);
-    });
+  const selA   = $('playerA');
+  const selB   = $('playerB');
+  const selSt  = $('statsPlayerSelect');
+  const sorted = [...appData.players].sort((a, b) => a.display_name.localeCompare(b.display_name));
+
+  selA.innerHTML  = '<option value="">Select player</option>';
+  selB.innerHTML  = '<option value="">Select player</option>';
+  selSt.innerHTML = '<option value="">Select player\u2026</option>';
+
+  sorted.forEach(p => {
+    const opt = `<option value="${p.id}">${p.display_name}</option>`;
+    selA.insertAdjacentHTML('beforeend', opt);
+    selB.insertAdjacentHTML('beforeend', opt);
+    selSt.insertAdjacentHTML('beforeend', opt);
+  });
+
+  // pre-select logged-in player in stats dropdown
+  if (currentPlayer) {
+    selSt.value = currentPlayer.id;
+    loadStatsForPlayer(currentPlayer.id);
+  }
 }
+
+/* Load existing stats into the form for the selected player */
+function loadStatsForPlayer(playerId) {
+  const s = appData.player_stats.find(x => x.player_id === playerId);
+  $('statServeStyle').value          = s?.serve_style         || '';
+  $('statReturnPct').value           = s?.return_pct          || '';
+  $('statGamesPlayed').value         = s?.games_played        || '';
+  $('statServeConsistency').value    = s?.serve_consistency   || '';
+  $('statForehandPower').value       = s?.forehand_power      || '';
+  $('statBackhandConsistency').value = s?.backhand_consistency || '';
+}
+
+$('statsPlayerSelect').addEventListener('change', () => {
+  const id = $('statsPlayerSelect').value;
+  if (id) loadStatsForPlayer(id);
+});
 
 $('startMatchBtn').onclick = () => {
   currentMatch.mode       = $('matchMode').value;
@@ -882,9 +943,11 @@ $('challengeBtn').onclick = () => {
    Player Stats editor
    ============================================================ */
 $('saveStats').onclick = async () => {
-  if (!currentPlayer) return alert('Log in and ensure your player profile exists to edit stats.');
+  const statsId = $('statsPlayerSelect').value;
+  const target  = statsId ? appData.players.find(p => p.id === statsId) : null;
+  if (!target) return alert('Select a player from the dropdown above before saving.');
   const payload = {
-    player_id:            currentPlayer.id,
+    player_id:            target.id,
     serve_style:          $('statServeStyle').value,
     return_pct:           Number($('statReturnPct').value   || 0),
     games_played:         Number($('statGamesPlayed').value || 0),
@@ -892,11 +955,11 @@ $('saveStats').onclick = async () => {
     forehand_power:       Number($('statForehandPower').value    || 0),
     backhand_consistency: Number($('statBackhandConsistency').value || 0)
   };
-  const idx = appData.player_stats.findIndex(s => s.player_id === currentPlayer.id);
+  const idx = appData.player_stats.findIndex(s => s.player_id === target.id);
   if (idx >= 0) appData.player_stats[idx] = payload;
   else          appData.player_stats.push(payload);
-  const ok = await writeData(`Update stats for ${currentPlayer.display_name}`);
-  if (ok) alert('Stats saved.');
+  const ok = await writeData(`Update stats for ${target.display_name}`);
+  if (ok) alert(`Stats saved for ${target.display_name}.`);
 };
 
 /* ============================================================
