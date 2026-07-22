@@ -132,5 +132,8 @@
       "forehand_power": 6,
       "backhand_consistency": 8
     }
-  ]
+  ],
+  "settings": {
+    "admins": []
+  }
 }
