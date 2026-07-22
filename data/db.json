@@ -61,7 +61,12 @@
       "notes": "",
       "games_played": 1,
       "points": 0,
-      "created_at": "2026-07-22T11:37:42.700Z"
+      "created_at": "2026-07-22T11:37:42.700Z",
+      "handedness": "Right",
+      "grip": "Shakehand",
+      "play_style": "All-round",
+      "primary_weapon": "Slice Serve, Backhand Topspin",
+      "weakness_notes": ""
     },
     {
       "id": "766d094a-ec35-4bd3-b3e8-b0183cc55bcc",
@@ -110,6 +115,8 @@
       "created_at": "2026-07-22T12:01:00.698Z"
     }
   ],
+  "sessions": [],
+  "points": [],
   "tournaments": [],
   "rankings": {
     "singles": [],
