@@ -1,0 +1,20 @@
+{
+  "players": [
+    {
+      "id": "4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
+      "email": "tyler.smith@robertbird.com.au",
+      "display_name": "Tyler Smith",
+      "notes": "",
+      "games_played": 0,
+      "points": 0,
+      "created_at": "2026-07-22T10:49:58.478Z"
+    }
+  ],
+  "matches": [],
+  "tournaments": [],
+  "rankings": {
+    "singles": [],
+    "doubles": []
+  },
+  "player_stats": []
+}
