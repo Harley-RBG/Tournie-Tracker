@@ -134,6 +134,8 @@
     }
   ],
   "settings": {
-    "admins": []
+    "admins": [
+      "harley.trappitt@robertbird.com.au"
+    ]
   }
 }
