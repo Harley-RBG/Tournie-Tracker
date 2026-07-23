@@ -2,6 +2,14 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    if (url.pathname === "/") {
+      return corsJson({
+        ok: true,
+        service: "rbg-tt-api",
+        routes: ["/health", "/debug-env", "/github-whoami", "/github-auth-test", "/data", "/save-match"]
+      }, env);
+    }
+
     if (request.method === "OPTIONS") {
       return corsResponse(null, 204, env);
     }
@@ -34,6 +42,21 @@ export default {
         const testUrl = `https://api.github.com/repos/${env.GH_OWNER}/${env.GH_REPO}`;
 
         const res = await fetch(testUrl, {
+          method: "GET",
+          headers: githubHeaders(env)
+        });
+
+        const body = await res.text();
+
+        return corsJson({
+          ok: res.ok,
+          status: res.status,
+          response: safeJson(body)
+        }, env, res.ok ? 200 : res.status);
+      }
+
+      if (url.pathname === "/github-whoami") {
+        const res = await fetch("https://api.github.com/user", {
           method: "GET",
           headers: githubHeaders(env)
         });
