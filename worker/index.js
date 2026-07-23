@@ -89,6 +89,29 @@ export default {
         return corsJson({ ok: true, result }, env);
       }
 
+      if (url.pathname === "/save-db" && request.method === "POST") {
+        const payload = await request.json();
+
+        if (!payload || typeof payload !== "object" || !payload.data) {
+          return corsJson({ ok: false, error: "Missing data object." }, env, 400);
+        }
+
+        const current = await getDb(env);
+        const db = normaliseDb(payload.data);
+
+        const result = await putDb(
+          env,
+          db,
+          current.sha,
+          payload.message || "Update RBG-TT data"
+        );
+
+        return corsJson({
+          ok: true,
+          commit: result.commit?.sha || null
+        }, env);
+      }
+
       return corsJson({ ok: false, error: "Not found" }, env, 404);
     } catch (err) {
       return corsJson(
@@ -152,6 +175,24 @@ function safeJson(text) {
   } catch {
     return text;
   }
+}
+
+function normaliseDb(data) {
+  const db = data && typeof data === "object" ? data : {};
+
+  db.players ??= [];
+  db.matches ??= [];
+  db.sessions ??= [];
+  db.points ??= [];
+  db.tournaments ??= [];
+  db.rankings ??= { singles: [], doubles: [] };
+  db.rankings.singles ??= [];
+  db.rankings.doubles ??= [];
+  db.player_stats ??= [];
+  db.settings ??= { admins: [] };
+  db.settings.admins ??= [];
+
+  return db;
 }
 
 async function getDb(env) {
