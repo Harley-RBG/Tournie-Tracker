@@ -12,15 +12,22 @@ export default {
       }
 
       if (url.pathname === "/debug-env") {
+        const owner = env.GH_OWNER;
+        const repo = env.GH_REPO;
+        const file = env.GH_FILE || "db.json";
+        const branch = env.GH_BRANCH || "main";
+
         return corsJson({
           ok: true,
           has_gh_token: Boolean(env.GH_TOKEN),
           gh_token_length: env.GH_TOKEN ? env.GH_TOKEN.length : 0,
           gh_token_prefix: env.GH_TOKEN ? env.GH_TOKEN.slice(0, 10) : null,
-          gh_owner: env.GH_OWNER,
-          gh_repo: env.GH_REPO,
-          gh_branch: env.GH_BRANCH,
-          gh_file: env.GH_FILE
+          gh_owner: owner,
+          gh_repo: repo,
+          gh_branch: branch,
+          gh_file: file,
+          repo_test_url: `https://api.github.com/repos/${owner}/${repo}`,
+          file_test_url: `https://api.github.com/repos/${owner}/${repo}/contents/${file}?ref=${branch}`
         }, env);
       }
       if (url.pathname === "/github-auth-test") {
