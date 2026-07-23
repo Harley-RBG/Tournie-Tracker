@@ -123,7 +123,10 @@
       "name": "Test",
       "start_date": "2026-07-22",
       "status": "scheduled",
-      "created_at": "2026-07-22T23:39:15.938Z"
+      "created_at": "2026-07-22T23:39:15.938Z",
+      "participant_ids": [
+        "4145bacb-cc0f-4b92-bcfd-1aadaa613e58"
+      ]
     }
   ],
   "rankings": {
