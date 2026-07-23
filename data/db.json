@@ -125,7 +125,8 @@
       "status": "scheduled",
       "created_at": "2026-07-22T23:39:15.938Z",
       "participant_ids": [
-        "4145bacb-cc0f-4b92-bcfd-1aadaa613e58"
+        "4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
+        "2cbec020-0561-4b16-81b5-40b9d3b66973"
       ]
     }
   ],
