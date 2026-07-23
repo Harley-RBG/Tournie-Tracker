@@ -102,6 +102,23 @@
       "primary_weapon": null,
       "weakness_notes": "",
       "created_at": "2026-07-23T00:08:29.358Z"
+    },
+    {
+      "id": "f8567bb2-f80c-4c8a-b6ef-b02cd81faa3d",
+      "email": "paul.roos@robertbird.com.au",
+      "display_name": "paul.roos",
+      "notes": "",
+      "games_played": 0,
+      "points": 0,
+      "rating": 1500,
+      "best_rating": 1500,
+      "rating_change": null,
+      "handedness": null,
+      "grip": null,
+      "play_style": null,
+      "primary_weapon": null,
+      "weakness_notes": "",
+      "created_at": "2026-07-23T00:44:38.050Z"
     }
   ],
   "matches": [
