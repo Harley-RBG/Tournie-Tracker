@@ -14,17 +14,8 @@
     --card-shadow: 0 8px 24px rgba(0,0,0,0.6);
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   }
-  *{box-sizing:border-box}
-  html{width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
-  body{width:100%;overflow-x:hidden}
-  button,input,select,textarea{font:inherit}
-  button{touch-action:manipulation;min-height:40px}
-  .setup-header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
-  .setup-toggle{display:none}
-  .live-controls{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
-  #startMatchBtn.is-complete{background:#0f766e}
   html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg),#050607);color:#e6eef6}
-  .app{width:min(1200px,100%);margin:18px auto;padding:18px;display:grid;grid-template-rows:auto 1fr;gap:12px}
+  .app{max-width:1200px;margin:18px auto;padding:18px;display:grid;grid-template-rows:auto 1fr;gap:12px}
   header{display:flex;justify-content:space-between;align-items:center;gap:12px}
   .brand{display:flex;flex-direction:column}
   .brand h1{margin:0;color:var(--accent);font-size:18px}
@@ -34,7 +25,7 @@
   nav{display:flex;gap:8px}
   nav button{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#cfe6ff;padding:8px 12px;border-radius:8px;cursor:pointer}
   nav button.active{background:var(--accent);color:#fff}
-  .layout{display:grid;grid-template-columns:1fr;gap:12px}
+  .layout{display:grid;grid-template-columns:1fr 360px;gap:12px}
   .panel{padding:12px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent)}
   .muted{color:var(--muted);font-size:13px}
   input,select,textarea{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:#111418;color:#e6eef6;box-sizing:border-box}
@@ -57,44 +48,30 @@
   .toggle{display:inline-flex;align-items:center;gap:8px}
   footer{color:var(--muted);font-size:12px;text-align:center;margin-top:12px}
   /* Recorder & stats layouts */
-  .recorder-layout{display:grid;grid-template-columns:minmax(280px,0.9fr) minmax(320px,1.1fr);gap:12px;margin-top:12px;align-items:start}
-  .recorder-setup{min-width:0}
-  .live-score-panel{width:auto;min-width:0}
+  .recorder-layout{display:flex;gap:12px;margin-top:12px}
+  .recorder-setup{flex:1}
+  .live-score-panel{width:420px;flex-shrink:0}
   .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
   /* Desktop breakpoint */
-  @media(max-width:980px){.layout{grid-template-columns:1fr}.recorder-layout{grid-template-columns:1fr}}
+  @media(max-width:980px){.layout{grid-template-columns:1fr}}
   /* Mobile */
   @media(max-width:700px){
-    :root{font-size:16px}
-    .app{margin:0;padding:10px;width:100%;max-width:none}
-    header{flex-direction:column;align-items:stretch;gap:10px}
-    .brand h1{font-size:20px}
-    .brand .muted{font-size:13px;line-height:1.35}
-    .topbar{flex-direction:column;align-items:stretch;gap:8px}
-    .topbar>div[style*="width:1px"]{display:none!important}
-    nav{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:8px;padding:2px 0 6px;scrollbar-width:none;width:100%}
+    .app{margin:0;padding:8px}
+    header{flex-direction:column;align-items:stretch;gap:8px}
+    .topbar{flex-wrap:wrap;gap:6px;justify-content:flex-start}
+    nav{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:4px;padding-bottom:2px;scrollbar-width:none}
     nav::-webkit-scrollbar{display:none}
-    nav button{white-space:nowrap;padding:12px 14px;font-size:15px;min-height:46px;border-radius:10px;flex:0 0 auto}
-    .recorder-layout{display:flex;flex-direction:column;gap:10px}
-    .live-score-panel{width:100%}
+    nav button{white-space:nowrap;padding:7px 10px;font-size:13px}
+    .recorder-layout{flex-direction:column}
+    .live-score-panel{width:auto}
     .stats-grid{grid-template-columns:1fr}
-    .score{font-size:64px;line-height:1.05}
-    .btn-large{padding:18px 0;font-size:22px;width:76px;text-align:center;min-height:56px}
-    .card{padding:12px;border-radius:12px}
-    .panel{padding:8px}
+    .score{font-size:56px}
+    .btn-large{padding:18px 0;font-size:20px;width:72px;text-align:center}
+    .card{padding:10px}
+    .panel{padding:6px}
     .layout{gap:8px}
-    #authArea{padding:8px 10px!important;width:100%;justify-content:space-between}
-    #authArea .small{font-size:14px}
-    input,select,textarea{padding:12px 12px;font-size:16px;min-height:46px}
-    label,.muted{font-size:14px}
-    button.ghost,button.primary{padding:11px 14px;font-size:15px;min-height:44px}
-    .setup-toggle{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:6px 10px;font-size:13px}
-    .recorder-setup.collapsed .setup-body{display:none}
-    .live-controls button{flex:1 1 130px}
-    .side{min-width:0}
-    .stat-pill{min-width:46%;padding:10px}
-    .stat-pill .val{font-size:19px}
-    .stat-pill .lbl{font-size:11px}
+    #authArea{padding:6px 10px!important}
+    button.ghost,button.primary{padding:7px 10px;font-size:13px}
   }
   @media(max-width:400px){
     .brand h1{font-size:16px}
@@ -125,6 +102,88 @@
   .modal-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
   .modal .note{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
   .modal .note code{background:rgba(255,255,255,0.06);padding:1px 4px;border-radius:4px}
+
+
+/* ============================================================
+   Mobile-first responsive refactor - added by Copilot
+   ============================================================ */
+*{box-sizing:border-box}
+html{width:100%;-webkit-text-size-adjust:100%}
+body{width:100%;overflow-x:hidden}
+button,input,select,textarea{font:inherit}
+button{touch-action:manipulation;min-height:40px}
+.app{width:min(1200px,100%);max-width:none}
+.layout{display:flex;flex-direction:column;gap:12px;width:100%;min-width:0}
+main{width:100%;min-width:0}
+.topbar{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;min-width:0}
+nav{display:flex;gap:8px;min-width:0;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;max-width:100%}
+nav button{flex:0 0 auto;white-space:nowrap}
+.recorder-layout{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;align-items:flex-start;width:100%;min-width:0}
+.recorder-setup{flex:1 1 320px;min-width:280px;width:auto}
+.live-score-panel{flex:2 1 420px;width:auto;min-width:300px}
+.setup-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.setup-toggle{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:6px 12px;font-size:13px}
+.recorder-setup.collapsed .setup-body{display:none}
+.live-controls{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+#startMatchBtn.is-complete{background:#0f766e}
+#tab-admin{width:100%}
+
+@media(max-width:980px){
+  .app{margin:0 auto;padding:12px;width:100%}
+  header{flex-direction:column;align-items:stretch;gap:10px}
+  .topbar{justify-content:flex-start}
+  nav{order:1;flex:1 1 100%;width:100%;padding-bottom:4px}
+  #authArea{order:2;flex:1 1 auto}
+  #openSettingsBtn{order:3;flex:0 0 auto}
+  .toggle.card{order:4;flex:0 0 auto}
+  .topbar>div[style*="width:1px"]{display:none!important}
+  .recorder-layout{flex-direction:column;flex-wrap:nowrap}
+  .recorder-setup,.live-score-panel{width:100%;min-width:0;flex:1 1 auto}
+  .stats-grid{grid-template-columns:1fr}
+}
+
+@media(max-width:700px){
+  :root{font-size:16px}
+  html,body{min-width:0;overflow-x:hidden}
+  .app{margin:0;padding:10px;width:100%;max-width:none}
+  header{gap:10px}
+  .brand h1{font-size:20px;line-height:1.1}
+  .brand .muted{font-size:13px;line-height:1.35}
+  .topbar{display:flex;flex-direction:row;align-items:center;gap:8px;width:100%}
+  nav{display:flex;gap:8px;width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;padding:0 0 6px 0}
+  nav button{padding:12px 14px;font-size:15px;min-height:46px;border-radius:10px}
+  #authArea{padding:8px 10px!important;flex:1 1 auto;min-width:150px}
+  #openSettingsBtn{min-width:46px;min-height:46px;padding:8px 12px!important}
+  .toggle.card{min-height:46px;padding:8px 12px!important;display:flex;align-items:center;gap:8px}
+  .card{padding:12px;border-radius:12px}
+  .panel{padding:10px;border-radius:12px;width:100%;min-width:0}
+  input,select,textarea{padding:12px;font-size:16px;min-height:46px;border-radius:10px}
+  label,.muted{font-size:14px}
+  button.ghost,button.primary{padding:11px 14px;font-size:15px;min-height:44px;border-radius:10px}
+  .recorder-layout{gap:10px;margin-top:10px}
+  .recorder-setup{order:1}
+  .live-score-panel{order:2}
+  .setup-header{margin-bottom:6px}
+  .setup-toggle{min-height:40px;padding:8px 12px;font-size:14px}
+  .score{font-size:58px;line-height:1.05;margin:6px 0}
+  .btn-large{width:76px;min-height:56px;padding:16px 0;font-size:20px;text-align:center;border-radius:9px}
+  .live-controls{display:flex;gap:8px;width:100%}
+  .live-controls button{flex:1 1 135px;min-height:48px}
+  .side{min-width:0}
+  .serve-tag{font-size:10px;padding:2px 8px;max-width:100%;white-space:normal}
+  .player-row{align-items:flex-start;gap:8px;flex-wrap:wrap}
+  footer{white-space:normal;overflow-wrap:anywhere;line-height:1.4;padding:8px 4px}
+}
+
+@media(max-width:420px){
+  .app{padding:8px}
+  .brand .muted{font-size:12px}
+  nav button{font-size:14px;padding:11px 13px}
+  .score{font-size:52px}
+  .btn-large{width:72px;min-height:54px}
+  .live-controls button{flex-basis:120px}
+}
+
 </style>
 </head>
 <body>
@@ -311,9 +370,10 @@
               <label class="muted" style="margin-top:8px">Tournament (optional)</label>
               <select id="matchTournament"><option value="">None</option></select>
 
-              <div style="margin-top:10px;display:flex;gap:8px">
+              <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
                 <button id="addGuestBtn" class="ghost">Add Guest</button>
                 <button id="challengeBtn" class="ghost">Challenge (ranked)</button>
+              </div>
               </div>
             </div>
 
@@ -1986,10 +2046,8 @@ $('startMatchBtn').onclick = () => {
   updateScoreUI();
   $('startMatchBtn').textContent = 'Complete Game';
   $('startMatchBtn').classList.add('is-complete');
-  if (window.matchMedia('(max-width: 700px)').matches) {
-    $('matchSetupCard')?.classList.add('collapsed');
-    if ($('toggleSetupBtn')) { $('toggleSetupBtn').textContent = 'Expand'; $('toggleSetupBtn').setAttribute('aria-expanded','false'); }
-  }
+  $('matchSetupCard')?.classList.add('collapsed');
+  if ($('toggleSetupBtn')) { $('toggleSetupBtn').textContent = 'Expand'; $('toggleSetupBtn').setAttribute('aria-expanded','false'); }
 };
 
 $('resetMatchBtn').onclick = () => {
@@ -2009,6 +2067,8 @@ $('resetMatchBtn').onclick = () => {
   $('matchStatus').textContent = 'Idle';
   $('startMatchBtn').textContent = 'Start Match';
   $('startMatchBtn').classList.remove('is-complete');
+  $('matchSetupCard')?.classList.remove('collapsed');
+  if ($('toggleSetupBtn')) { $('toggleSetupBtn').textContent = 'Collapse'; $('toggleSetupBtn').setAttribute('aria-expanded','true'); }
 };
 
 function updateScoreUI() {
@@ -2352,7 +2412,8 @@ $('editProfile').onclick = () => {
   loadStatsForPlayer(pid);
 };
 
-/* ---------- Mobile match setup collapse ---------- */
+
+/* ---------- Match setup collapse ---------- */
 if ($('toggleSetupBtn')) {
   $('toggleSetupBtn').onclick = () => {
     const card = $('matchSetupCard');
@@ -2373,10 +2434,6 @@ if ($('toggleSetupBtn')) {
   renderLeaderboard();
   loadTournaments();
   populatePlayerSelectors();
-  if (window.matchMedia('(max-width: 700px)').matches) {
-    $('matchSetupCard')?.classList.add('collapsed');
-    if ($('toggleSetupBtn')) { $('toggleSetupBtn').textContent = 'Expand'; $('toggleSetupBtn').setAttribute('aria-expanded','false'); }
-  }
 })();
 </script>
 </body>
