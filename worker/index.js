@@ -22,7 +22,7 @@ export default {
       if (url.pathname === "/debug-env") {
         const owner = env.GH_OWNER || "Harley-RBG";
         const repo = env.GH_REPO || "Tournie-Tracker";
-        const file = env.GH_FILE || "db.json";
+        const file = env.GH_FILE || "data/db.json";
         const branch = env.GH_BRANCH || "main";
 
         return corsJson({
@@ -141,7 +141,7 @@ function githubHeaders(env) {
 function githubFileUrl(env) {
   const owner = env.GH_OWNER || "Harley-RBG";
   const repo = env.GH_REPO || "Tournie-Tracker";
-  const file = env.GH_FILE || "db.json";
+  const file = env.GH_FILE || "data/db.json";
 
   return `https://api.github.com/repos/${owner}/${repo}/contents/${file}`;
 }
