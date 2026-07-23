@@ -14,8 +14,17 @@
     --card-shadow: 0 8px 24px rgba(0,0,0,0.6);
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   }
+  *{box-sizing:border-box}
+  html{width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
+  body{width:100%;overflow-x:hidden}
+  button,input,select,textarea{font:inherit}
+  button{touch-action:manipulation;min-height:40px}
+  .setup-header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+  .setup-toggle{display:none}
+  .live-controls{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+  #startMatchBtn.is-complete{background:#0f766e}
   html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg),#050607);color:#e6eef6}
-  .app{max-width:1200px;margin:18px auto;padding:18px;display:grid;grid-template-rows:auto 1fr;gap:12px}
+  .app{width:min(1200px,100%);margin:18px auto;padding:18px;display:grid;grid-template-rows:auto 1fr;gap:12px}
   header{display:flex;justify-content:space-between;align-items:center;gap:12px}
   .brand{display:flex;flex-direction:column}
   .brand h1{margin:0;color:var(--accent);font-size:18px}
@@ -25,7 +34,7 @@
   nav{display:flex;gap:8px}
   nav button{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#cfe6ff;padding:8px 12px;border-radius:8px;cursor:pointer}
   nav button.active{background:var(--accent);color:#fff}
-  .layout{display:grid;grid-template-columns:1fr 360px;gap:12px}
+  .layout{display:grid;grid-template-columns:1fr;gap:12px}
   .panel{padding:12px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent)}
   .muted{color:var(--muted);font-size:13px}
   input,select,textarea{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:#111418;color:#e6eef6;box-sizing:border-box}
@@ -48,30 +57,44 @@
   .toggle{display:inline-flex;align-items:center;gap:8px}
   footer{color:var(--muted);font-size:12px;text-align:center;margin-top:12px}
   /* Recorder & stats layouts */
-  .recorder-layout{display:flex;gap:12px;margin-top:12px}
-  .recorder-setup{flex:1}
-  .live-score-panel{width:420px;flex-shrink:0}
+  .recorder-layout{display:grid;grid-template-columns:minmax(280px,0.9fr) minmax(320px,1.1fr);gap:12px;margin-top:12px;align-items:start}
+  .recorder-setup{min-width:0}
+  .live-score-panel{width:auto;min-width:0}
   .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
   /* Desktop breakpoint */
-  @media(max-width:980px){.layout{grid-template-columns:1fr}}
+  @media(max-width:980px){.layout{grid-template-columns:1fr}.recorder-layout{grid-template-columns:1fr}}
   /* Mobile */
   @media(max-width:700px){
-    .app{margin:0;padding:8px}
-    header{flex-direction:column;align-items:stretch;gap:8px}
-    .topbar{flex-wrap:wrap;gap:6px;justify-content:flex-start}
-    nav{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:4px;padding-bottom:2px;scrollbar-width:none}
+    :root{font-size:16px}
+    .app{margin:0;padding:10px;width:100%;max-width:none}
+    header{flex-direction:column;align-items:stretch;gap:10px}
+    .brand h1{font-size:20px}
+    .brand .muted{font-size:13px;line-height:1.35}
+    .topbar{flex-direction:column;align-items:stretch;gap:8px}
+    .topbar>div[style*="width:1px"]{display:none!important}
+    nav{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:8px;padding:2px 0 6px;scrollbar-width:none;width:100%}
     nav::-webkit-scrollbar{display:none}
-    nav button{white-space:nowrap;padding:7px 10px;font-size:13px}
-    .recorder-layout{flex-direction:column}
-    .live-score-panel{width:auto}
+    nav button{white-space:nowrap;padding:12px 14px;font-size:15px;min-height:46px;border-radius:10px;flex:0 0 auto}
+    .recorder-layout{display:flex;flex-direction:column;gap:10px}
+    .live-score-panel{width:100%}
     .stats-grid{grid-template-columns:1fr}
-    .score{font-size:56px}
-    .btn-large{padding:18px 0;font-size:20px;width:72px;text-align:center}
-    .card{padding:10px}
-    .panel{padding:6px}
+    .score{font-size:64px;line-height:1.05}
+    .btn-large{padding:18px 0;font-size:22px;width:76px;text-align:center;min-height:56px}
+    .card{padding:12px;border-radius:12px}
+    .panel{padding:8px}
     .layout{gap:8px}
-    #authArea{padding:6px 10px!important}
-    button.ghost,button.primary{padding:7px 10px;font-size:13px}
+    #authArea{padding:8px 10px!important;width:100%;justify-content:space-between}
+    #authArea .small{font-size:14px}
+    input,select,textarea{padding:12px 12px;font-size:16px;min-height:46px}
+    label,.muted{font-size:14px}
+    button.ghost,button.primary{padding:11px 14px;font-size:15px;min-height:44px}
+    .setup-toggle{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:6px 10px;font-size:13px}
+    .recorder-setup.collapsed .setup-body{display:none}
+    .live-controls button{flex:1 1 130px}
+    .side{min-width:0}
+    .stat-pill{min-width:46%;padding:10px}
+    .stat-pill .val{font-size:19px}
+    .stat-pill .lbl{font-size:11px}
   }
   @media(max-width:400px){
     .brand h1{font-size:16px}
@@ -114,11 +137,12 @@
 
       <div class="topbar">
         <nav id="mainNav" aria-label="Main navigation">
-          <button data-tab="leaderboard" class="active">Leaderboard</button>
+          <button data-tab="recorder" class="active">Match Recorder</button>
+          <button data-tab="leaderboard">Leaderboard</button>
           <button data-tab="tournaments">Tournaments</button>
           <button data-tab="history">History</button>
-          <button data-tab="recorder">Match Recorder</button>
           <button data-tab="stats">Player Stats</button>
+          <button data-tab="admin" id="adminTab" style="display:none">Admin</button>
           <button data-tab="profile" id="profileTab">Profile</button>
         </nav>
 
@@ -151,7 +175,7 @@
       <!-- Main column -->
       <main>
         <!-- Leaderboard -->
-        <section id="tab-leaderboard" class="panel card">
+        <section id="tab-leaderboard" class="panel card" style="display:none">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
               <div style="font-weight:700;color:var(--accent)">Leaderboard</div>
@@ -213,22 +237,25 @@
         </section>
 
         <!-- Match Recorder -->
-        <section id="tab-recorder" class="panel card" style="display:none">
+        <section id="tab-recorder" class="panel card">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
               <div style="font-weight:700;color:var(--accent)">Match Recorder</div>
               <div class="muted">Record casual, ranked, or tournament matches</div>
             </div>
             <div class="flex">
-              <button id="startMatchBtn" class="primary">Start Match</button>
               <button id="resetMatchBtn" class="ghost">Reset</button>
             </div>
           </div>
 
           <!-- Match setup -->
           <div class="recorder-layout">
-            <div class="recorder-setup card">
-              <div style="font-weight:700;color:#cfe6ff">Match Setup</div>
+            <div class="recorder-setup card" id="matchSetupCard">
+              <div class="setup-header">
+                <div style="font-weight:700;color:#cfe6ff">Match Setup</div>
+                <button id="toggleSetupBtn" type="button" class="ghost setup-toggle" aria-expanded="true">Collapse</button>
+              </div>
+              <div id="matchSetupBody" class="setup-body">
 
               <label class="muted" style="margin-top:8px">Match type</label>
               <select id="matchType">
@@ -331,9 +358,9 @@
                 </div>
               </div>
 
-              <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+              <div class="live-controls">
                 <button id="switchSides" class="ghost">Switch Sides</button>
-                <button id="completeGame" class="primary">Complete Game</button>
+                <button id="startMatchBtn" class="primary">Start Match</button>
               </div>
 
               <div id="matchActions" style="margin-top:12px" class="muted"></div>
@@ -517,8 +544,8 @@
         </section>
       </main>
 
-      <!-- Right column (admin & quick lists) -->
-      <aside>
+      <!-- Admin tab -->
+      <section id="tab-admin" class="panel card" style="display:none">
         <div class="card" id="adminActionsCard">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
@@ -550,7 +577,7 @@
           <div style="font-weight:700;color:#cfe6ff">Notifications</div>
           <div id="notificationsList" class="list muted" style="margin-top:8px">No notifications</div>
         </div>
-      </aside>
+      </section>
     </div>
 
     <footer>Built for internal office tournaments &middot; Data synced via GitHub &middot; RBG-TT</footer>
@@ -690,7 +717,8 @@ const tabSections = {
   history:      $('tab-history'),
   recorder:     $('tab-recorder'),
   stats:        $('tab-stats'),
-  profile:      $('tab-profile')
+  profile:      $('tab-profile'),
+  admin:        $('tab-admin')
 };
 
 tabs.forEach(btn => btn.addEventListener('click', () => {
@@ -778,12 +806,18 @@ function updateAuthUI() {
 
   // Admin-only elements
   const admin = isAdmin();
+  if ($('adminTab')) $('adminTab').style.display = admin ? 'inline-block' : 'none';
   ['adminActionsCard', 'adminPlayersCard'].forEach(id => {
     const el = $(id); if (el) el.style.display = admin ? '' : 'none';
   });
   if ($('createTournamentWrap'))
     $('createTournamentWrap').style.display = admin ? '' : 'none';
 
+  if (!admin && document.querySelector('nav button[data-tab="admin"]')?.classList.contains('active')) {
+    tabs.forEach(b => b.classList.remove('active'));
+    tabs.find(b => b.dataset.tab === 'recorder')?.classList.add('active');
+    for (const k in tabSections) tabSections[k].style.display = k === 'recorder' ? 'block' : 'none';
+  }
   if (currentUser) {
     $('signInArea').style.display     = 'none';
     $('loginIndicator').style.display = 'flex';
@@ -1893,6 +1927,7 @@ function updateSessionScoreUI() {
 }
 
 $('startMatchBtn').onclick = () => {
+  if (currentMatch.serveOrder.length) { completeGame(); return; }
   const type = $('matchType').value;
   const a    = $('playerA').value || null;
   const b    = $('playerB').value || null;
@@ -1949,6 +1984,12 @@ $('startMatchBtn').onclick = () => {
     $('matchStatus').textContent = `${currentMatch.mode} \u00b7 ${type} \u00b7 first to ${currentMatch.gameType}${currentMatch.winBy2 ? ' (W+2)' : ''}`;
   }
   updateScoreUI();
+  $('startMatchBtn').textContent = 'Complete Game';
+  $('startMatchBtn').classList.add('is-complete');
+  if (window.matchMedia('(max-width: 700px)').matches) {
+    $('matchSetupCard')?.classList.add('collapsed');
+    if ($('toggleSetupBtn')) { $('toggleSetupBtn').textContent = 'Expand'; $('toggleSetupBtn').setAttribute('aria-expanded','false'); }
+  }
 };
 
 $('resetMatchBtn').onclick = () => {
@@ -1966,6 +2007,8 @@ $('resetMatchBtn').onclick = () => {
   $('sessionScore').style.display = 'none';
   updateScoreUI();
   $('matchStatus').textContent = 'Idle';
+  $('startMatchBtn').textContent = 'Start Match';
+  $('startMatchBtn').classList.remove('is-complete');
 };
 
 function updateScoreUI() {
@@ -2094,7 +2137,7 @@ function checkAutoComplete() {
   }
 }
 
-$('completeGame').onclick = completeGame;
+// Manual completion is handled by #startMatchBtn after the match has started.
 
 async function completeGame() {
   const pa = appData.players.find(p => p.id === currentMatch.a);
@@ -2309,6 +2352,16 @@ $('editProfile').onclick = () => {
   loadStatsForPlayer(pid);
 };
 
+/* ---------- Mobile match setup collapse ---------- */
+if ($('toggleSetupBtn')) {
+  $('toggleSetupBtn').onclick = () => {
+    const card = $('matchSetupCard');
+    const collapsed = card.classList.toggle('collapsed');
+    $('toggleSetupBtn').textContent = collapsed ? 'Expand' : 'Collapse';
+    $('toggleSetupBtn').setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  };
+}
+
 /* ============================================================
    Init
    ============================================================ */
@@ -2320,6 +2373,10 @@ $('editProfile').onclick = () => {
   renderLeaderboard();
   loadTournaments();
   populatePlayerSelectors();
+  if (window.matchMedia('(max-width: 700px)').matches) {
+    $('matchSetupCard')?.classList.add('collapsed');
+    if ($('toggleSetupBtn')) { $('toggleSetupBtn').textContent = 'Expand'; $('toggleSetupBtn').setAttribute('aria-expanded','false'); }
+  }
 })();
 </script>
 </body>
