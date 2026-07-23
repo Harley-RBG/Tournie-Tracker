@@ -11,6 +11,19 @@ export default {
         return corsJson({ ok: true, service: "rbg-tt-api" }, env);
       }
 
+      if (url.pathname === "/debug-env") {
+        return corsJson({
+          ok: true,
+          has_gh_token: Boolean(env.GH_TOKEN),
+          gh_token_length: env.GH_TOKEN ? env.GH_TOKEN.length : 0,
+          gh_token_prefix: env.GH_TOKEN ? env.GH_TOKEN.slice(0, 10) : null,
+          gh_owner: env.GH_OWNER,
+          gh_repo: env.GH_REPO,
+          gh_branch: env.GH_BRANCH,
+          gh_file: env.GH_FILE
+        }, env);
+      }
+
       if (url.pathname === "/data" && request.method === "GET") {
         const db = await getDb(env);
         return corsJson(db.data, env);
