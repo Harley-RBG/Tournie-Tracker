@@ -105,38 +105,39 @@
 
 
 /* ============================================================
-   Mobile-first responsive refactor - added by Copilot
+   RBG-TT Mobile Layout Refactor v2
+   Intent: eliminate horizontal clipping, create a true mobile flow,
+   use flex/grid responsively, and separate Match Setup from Live Score.
    ============================================================ */
 *{box-sizing:border-box}
-html{width:100%;-webkit-text-size-adjust:100%}
-body{width:100%;overflow-x:hidden}
-button,input,select,textarea{font:inherit}
+html{width:100%;max-width:100%;-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{width:100%;max-width:100%;overflow-x:hidden}
+button,input,select,textarea{font:inherit;max-width:100%}
 button{touch-action:manipulation;min-height:40px}
-.app{width:min(1200px,100%);max-width:none}
+.app{width:min(1200px,100%);max-width:100%;min-width:0}
 .layout{display:flex;flex-direction:column;gap:12px;width:100%;min-width:0}
 main{width:100%;min-width:0}
-.topbar{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;min-width:0}
-nav{display:flex;gap:8px;min-width:0;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;max-width:100%}
+.card,.panel{min-width:0;max-width:100%}
+.topbar{min-width:0;max-width:100%}
+nav{min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
 nav button{flex:0 0 auto;white-space:nowrap}
-.recorder-layout{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;align-items:flex-start;width:100%;min-width:0}
+.recorder-layout{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;width:100%;min-width:0;margin-top:12px}
 .recorder-setup{flex:1 1 320px;min-width:280px;width:auto}
-.live-score-panel{flex:2 1 420px;width:auto;min-width:300px}
-.setup-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
-.setup-toggle{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:6px 12px;font-size:13px}
-.recorder-setup.collapsed .setup-body{display:none}
-.live-controls{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.live-score-panel{flex:2 1 440px;width:auto;min-width:320px}
+.recorder-mobile-tabs{display:none}
+.live-controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
 #startMatchBtn.is-complete{background:#0f766e}
 #tab-admin{width:100%}
 
 @media(max-width:980px){
-  .app{margin:0 auto;padding:12px;width:100%}
-  header{flex-direction:column;align-items:stretch;gap:10px}
-  .topbar{justify-content:flex-start}
-  nav{order:1;flex:1 1 100%;width:100%;padding-bottom:4px}
-  #authArea{order:2;flex:1 1 auto}
-  #openSettingsBtn{order:3;flex:0 0 auto}
-  .toggle.card{order:4;flex:0 0 auto}
+  .app{margin:0 auto;padding:12px;width:100%;max-width:100%}
+  header{display:flex;flex-direction:column;align-items:stretch;gap:10px}
+  .topbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-start;width:100%}
   .topbar>div[style*="width:1px"]{display:none!important}
+  nav{flex:1 1 100%;display:flex;gap:8px;padding-bottom:5px}
+  #authArea{flex:1 1 180px}
+  #openSettingsBtn{flex:0 0 46px}
+  .toggle.card{flex:0 0 auto}
   .recorder-layout{flex-direction:column;flex-wrap:nowrap}
   .recorder-setup,.live-score-panel{width:100%;min-width:0;flex:1 1 auto}
   .stats-grid{grid-template-columns:1fr}
@@ -144,44 +145,58 @@ nav button{flex:0 0 auto;white-space:nowrap}
 
 @media(max-width:700px){
   :root{font-size:16px}
-  html,body{min-width:0;overflow-x:hidden}
-  .app{margin:0;padding:10px;width:100%;max-width:none}
-  header{gap:10px}
+  html,body{min-width:0;max-width:100%;overflow-x:hidden}
+  .app{margin:0;padding:8px;width:100%;max-width:100%;gap:10px}
+  header{gap:8px}
+  .brand{padding:0 2px}
   .brand h1{font-size:20px;line-height:1.1}
-  .brand .muted{font-size:13px;line-height:1.35}
-  .topbar{display:flex;flex-direction:row;align-items:center;gap:8px;width:100%}
-  nav{display:flex;gap:8px;width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;padding:0 0 6px 0}
-  nav button{padding:12px 14px;font-size:15px;min-height:46px;border-radius:10px}
-  #authArea{padding:8px 10px!important;flex:1 1 auto;min-width:150px}
-  #openSettingsBtn{min-width:46px;min-height:46px;padding:8px 12px!important}
-  .toggle.card{min-height:46px;padding:8px 12px!important;display:flex;align-items:center;gap:8px}
+  .brand .muted{font-size:12px;line-height:1.35;white-space:normal}
+
+  /* Compact mobile top controls */
+  .topbar{display:grid;grid-template-columns:minmax(0,1fr) 48px auto;gap:8px;width:100%;align-items:center}
+  nav{grid-column:1/-1;display:flex;gap:8px;width:100%;overflow-x:auto;overscroll-behavior-x:contain;padding:0 0 5px 0;scroll-snap-type:x proximity}
+  nav button{padding:11px 13px;font-size:14px;min-height:46px;border-radius:10px;scroll-snap-align:start}
+  #authArea{grid-column:1/2;width:100%;padding:8px 10px!important;min-height:48px;display:flex!important;align-items:center;justify-content:flex-start}
+  #openSettingsBtn{grid-column:2/3;width:48px;min-width:48px;min-height:48px;padding:8px!important}
+  .toggle.card{grid-column:3/4;min-height:48px;padding:8px 10px!important;display:flex;align-items:center;gap:6px;white-space:nowrap}
+
   .card{padding:12px;border-radius:12px}
   .panel{padding:10px;border-radius:12px;width:100%;min-width:0}
-  input,select,textarea{padding:12px;font-size:16px;min-height:46px;border-radius:10px}
+  .layout{gap:10px;width:100%;min-width:0}
+  input,select,textarea{width:100%;padding:12px;font-size:16px;min-height:48px;border-radius:10px}
   label,.muted{font-size:14px}
-  button.ghost,button.primary{padding:11px 14px;font-size:15px;min-height:44px;border-radius:10px}
-  .recorder-layout{gap:10px;margin-top:10px}
-  .recorder-setup{order:1}
-  .live-score-panel{order:2}
-  .setup-header{margin-bottom:6px}
-  .setup-toggle{min-height:40px;padding:8px 12px;font-size:14px}
-  .score{font-size:58px;line-height:1.05;margin:6px 0}
-  .btn-large{width:76px;min-height:56px;padding:16px 0;font-size:20px;text-align:center;border-radius:9px}
-  .live-controls{display:flex;gap:8px;width:100%}
-  .live-controls button{flex:1 1 135px;min-height:48px}
+  button.ghost,button.primary{padding:11px 14px;font-size:15px;min-height:46px;border-radius:10px}
+
+  /* Match recorder becomes a two-panel mobile workflow. */
+  .recorder-mobile-tabs{display:flex;gap:8px;margin:12px 0 10px;width:100%}
+  .recorder-mobile-tabs button{flex:1 1 0;min-height:46px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:#111418;color:#cfe6ff}
+  .recorder-mobile-tabs button.active{background:var(--accent);color:#fff;border-color:transparent}
+  .recorder-layout{display:flex;flex-direction:column;gap:10px;margin-top:0;width:100%;min-width:0}
+  #tab-recorder.mobile-show-setup .live-score-panel{display:none}
+  #tab-recorder.mobile-show-score .recorder-setup{display:none}
+  #tab-recorder:not(.mobile-show-score):not(.mobile-show-setup) .live-score-panel{display:none}
+  .recorder-setup,.live-score-panel{width:100%;max-width:100%;min-width:0;flex:1 1 auto}
+
+  .score{font-size:56px;line-height:1.05;margin:7px 0}
   .side{min-width:0}
-  .serve-tag{font-size:10px;padding:2px 8px;max-width:100%;white-space:normal}
+  .btn-large{width:74px;min-height:56px;padding:16px 0;font-size:20px;text-align:center;border-radius:9px}
+  .live-controls{display:flex;gap:8px;width:100%;margin-top:12px}
+  .live-controls button{flex:1 1 125px;min-height:48px}
+  #sessionScore{width:100%;overflow:hidden}
+  .serve-tag{font-size:10px;padding:2px 8px;white-space:normal;max-width:100%}
   .player-row{align-items:flex-start;gap:8px;flex-wrap:wrap}
+  .list{max-width:100%;overflow:auto}
   footer{white-space:normal;overflow-wrap:anywhere;line-height:1.4;padding:8px 4px}
 }
 
 @media(max-width:420px){
-  .app{padding:8px}
+  .app{padding:7px}
+  .brand h1{font-size:19px}
   .brand .muted{font-size:12px}
-  nav button{font-size:14px;padding:11px 13px}
-  .score{font-size:52px}
-  .btn-large{width:72px;min-height:54px}
-  .live-controls button{flex-basis:120px}
+  nav button{font-size:13px;padding:10px 12px}
+  .score{font-size:50px}
+  .btn-large{width:70px;min-height:54px}
+  .live-controls button{flex-basis:112px}
 }
 
 </style>
@@ -296,7 +311,7 @@ nav button{flex:0 0 auto;white-space:nowrap}
         </section>
 
         <!-- Match Recorder -->
-        <section id="tab-recorder" class="panel card">
+        <section id="tab-recorder" class="panel card mobile-show-setup">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
               <div style="font-weight:700;color:var(--accent)">Match Recorder</div>
@@ -307,14 +322,15 @@ nav button{flex:0 0 auto;white-space:nowrap}
             </div>
           </div>
 
+          <div class="recorder-mobile-tabs" aria-label="Match recorder sections">
+            <button id="recorderSetupTab" type="button" class="active">Setup</button>
+            <button id="recorderScoreTab" type="button">Live Score</button>
+          </div>
+
           <!-- Match setup -->
           <div class="recorder-layout">
-            <div class="recorder-setup card" id="matchSetupCard">
-              <div class="setup-header">
-                <div style="font-weight:700;color:#cfe6ff">Match Setup</div>
-                <button id="toggleSetupBtn" type="button" class="ghost setup-toggle" aria-expanded="true">Collapse</button>
-              </div>
-              <div id="matchSetupBody" class="setup-body">
+            <div class="recorder-setup card">
+              <div style="font-weight:700;color:#cfe6ff">Match Setup</div>
 
               <label class="muted" style="margin-top:8px">Match type</label>
               <select id="matchType">
@@ -370,10 +386,9 @@ nav button{flex:0 0 auto;white-space:nowrap}
               <label class="muted" style="margin-top:8px">Tournament (optional)</label>
               <select id="matchTournament"><option value="">None</option></select>
 
-              <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+              <div style="margin-top:10px;display:flex;gap:8px">
                 <button id="addGuestBtn" class="ghost">Add Guest</button>
                 <button id="challengeBtn" class="ghost">Challenge (ranked)</button>
-              </div>
               </div>
             </div>
 
@@ -787,6 +802,7 @@ tabs.forEach(btn => btn.addEventListener('click', () => {
   const tab = btn.dataset.tab;
   for (const k in tabSections) tabSections[k].style.display = (k === tab) ? 'block' : 'none';
   if (tab === 'history') renderHistory();
+  if (tab === 'recorder' && !$('tab-recorder').classList.contains('mobile-show-score')) showRecorderPane('setup');
 }));
 
 /* ---------- Theme toggle ---------- */
@@ -877,6 +893,7 @@ function updateAuthUI() {
     tabs.forEach(b => b.classList.remove('active'));
     tabs.find(b => b.dataset.tab === 'recorder')?.classList.add('active');
     for (const k in tabSections) tabSections[k].style.display = k === 'recorder' ? 'block' : 'none';
+    showRecorderPane('setup');
   }
   if (currentUser) {
     $('signInArea').style.display     = 'none';
@@ -2046,8 +2063,7 @@ $('startMatchBtn').onclick = () => {
   updateScoreUI();
   $('startMatchBtn').textContent = 'Complete Game';
   $('startMatchBtn').classList.add('is-complete');
-  $('matchSetupCard')?.classList.add('collapsed');
-  if ($('toggleSetupBtn')) { $('toggleSetupBtn').textContent = 'Expand'; $('toggleSetupBtn').setAttribute('aria-expanded','false'); }
+  showRecorderPane('score');
 };
 
 $('resetMatchBtn').onclick = () => {
@@ -2067,8 +2083,7 @@ $('resetMatchBtn').onclick = () => {
   $('matchStatus').textContent = 'Idle';
   $('startMatchBtn').textContent = 'Start Match';
   $('startMatchBtn').classList.remove('is-complete');
-  $('matchSetupCard')?.classList.remove('collapsed');
-  if ($('toggleSetupBtn')) { $('toggleSetupBtn').textContent = 'Collapse'; $('toggleSetupBtn').setAttribute('aria-expanded','true'); }
+  showRecorderPane('setup');
 };
 
 function updateScoreUI() {
@@ -2413,15 +2428,17 @@ $('editProfile').onclick = () => {
 };
 
 
-/* ---------- Match setup collapse ---------- */
-if ($('toggleSetupBtn')) {
-  $('toggleSetupBtn').onclick = () => {
-    const card = $('matchSetupCard');
-    const collapsed = card.classList.toggle('collapsed');
-    $('toggleSetupBtn').textContent = collapsed ? 'Expand' : 'Collapse';
-    $('toggleSetupBtn').setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-  };
+/* ---------- Mobile recorder pane toggle ---------- */
+function showRecorderPane(pane) {
+  const rec = $('tab-recorder');
+  if (!rec) return;
+  rec.classList.toggle('mobile-show-setup', pane === 'setup');
+  rec.classList.toggle('mobile-show-score', pane === 'score');
+  $('recorderSetupTab')?.classList.toggle('active', pane === 'setup');
+  $('recorderScoreTab')?.classList.toggle('active', pane === 'score');
 }
+if ($('recorderSetupTab')) $('recorderSetupTab').onclick = () => showRecorderPane('setup');
+if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPane('score');
 
 /* ============================================================
    Init
@@ -2434,6 +2451,7 @@ if ($('toggleSetupBtn')) {
   renderLeaderboard();
   loadTournaments();
   populatePlayerSelectors();
+  showRecorderPane('setup');
 })();
 </script>
 </body>
