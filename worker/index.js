@@ -23,6 +23,22 @@ export default {
           gh_file: env.GH_FILE
         }, env);
       }
+      if (url.pathname === "/github-auth-test") {
+        const testUrl = `https://api.github.com/repos/${env.GH_OWNER}/${env.GH_REPO}`;
+
+        const res = await fetch(testUrl, {
+          method: "GET",
+          headers: githubHeaders(env)
+        });
+
+        const body = await res.text();
+
+        return corsJson({
+          ok: res.ok,
+          status: res.status,
+          response: safeJson(body)
+        }, env, res.ok ? 200 : res.status);
+      }
 
       if (url.pathname === "/data" && request.method === "GET") {
         const db = await getDb(env);
@@ -96,6 +112,14 @@ function githubFileUrl(env) {
   const file = env.GH_FILE || "db.json";
 
   return `https://api.github.com/repos/${owner}/${repo}/contents/${file}`;
+}
+
+function safeJson(text) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
 }
 
 async function getDb(env) {
