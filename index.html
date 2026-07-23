@@ -765,6 +765,7 @@ const LS_PAT = 'tt_gh_pat';
 const EMPTY_DATA = () => ({ players: [], matches: [], sessions: [], points: [], tournaments: [], rankings: { singles: [], doubles: [] }, player_stats: [], settings: { admins: [] } });
 let appData     = EMPTY_DATA();
 let _dbSha      = null;
+let saveInProgress = false;
 let currentUser = null;   // { email, displayName }
 let currentPlayer = null; // entry in appData.players matching currentUser.email
 let currentMatch  = {
@@ -2221,6 +2222,9 @@ function checkAutoComplete() {
 // Manual completion is handled by #startMatchBtn after the match has started.
 
 async function completeGame() {
+  if (saveInProgress) return;
+    saveInProgress = true;
+    if ($('startMatchBtn')) $('startMatchBtn').disabled = true;
   const pa = appData.players.find(p => p.id === currentMatch.a);
   const pb = appData.players.find(p => p.id === currentMatch.b);
   if (!pa || !pb) return alert('Players not set. Use \u201cStart Match\u201d first.');
@@ -2279,11 +2283,16 @@ async function completeGame() {
     appData.matches.pop();
     if (pointCount > 0) appData.points.splice(appData.points.length - pointCount, pointCount);
     [pa, pb, pc, pd].filter(Boolean).forEach(p => { p.games_played--; });
+
     if (isRanked && !isDbl) {
       pa.points -= sideAWon ? 3 : 1;
       pb.points -= sideAWon ? 1 : 3;
     }
-    $('matchActions').textContent = 'Failed to save. Check your PAT in \u2699 Settings.';
+
+    saveInProgress = false;
+    if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
+
+    $('matchActions').textContent = 'Failed to save through Cloudflare Worker.';
     return;
   }
 
@@ -2318,6 +2327,8 @@ async function completeGame() {
         `Session complete \u2014 ${currentMatch.gamesA >= needed ? sideAName : sideBName} wins ${currentMatch.gamesA}\u2013${currentMatch.gamesB}!`;
       $('sessionScore').style.display = 'none';
       setTimeout(() => $('resetMatchBtn').click(), 3000);
+      saveInProgress = false;
+      if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
     } else {
       // Next game — TT rule: first server alternates each game
       currentMatch.firstServer = currentMatch.firstServer === 'A' ? 'B' : 'A';

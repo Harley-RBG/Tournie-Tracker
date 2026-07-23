@@ -221,22 +221,44 @@ async function putDb(env, db, sha, message) {
   const json = JSON.stringify(db, null, 2);
   const encoded = btoa(unescape(encodeURIComponent(json)));
 
-  const res = await fetch(githubFileUrl(env), {
-    method: "PUT",
-    headers: githubHeaders(env),
-    body: JSON.stringify({
-      message,
-      content: encoded,
-      sha,
-      branch: env.GH_BRANCH || "main"
-    })
-  });
+  let nextSha = sha;
+  let lastErrorText = "";
 
-  if (!res.ok) {
-    throw new Error(`GitHub write failed: ${res.status} ${await res.text()}`);
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const res = await fetch(githubFileUrl(env), {
+      method: "PUT",
+      headers: githubHeaders(env),
+      body: JSON.stringify({
+        message,
+        content: encoded,
+        sha: nextSha,
+        branch: env.GH_BRANCH || "main"
+      })
+    });
+
+    if (res.ok) {
+      return await res.json();
+    }
+
+    lastErrorText = await res.text();
+
+    // GitHub 409 usually means the file changed after we fetched its SHA.
+    // Re-fetch latest SHA, wait briefly, and retry.
+    if (res.status === 409) {
+      await sleep(250 * (attempt + 1));
+      const fresh = await getDb(env);
+      nextSha = fresh.sha;
+      continue;
+    }
+
+    throw new Error(`GitHub write failed: ${res.status} ${lastErrorText}`);
   }
 
-  return await res.json();
+  throw new Error(`GitHub write failed after retrying SHA conflict: ${lastErrorText}`);
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function validateMatchPayload(payload) {
