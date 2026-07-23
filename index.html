@@ -199,6 +199,121 @@ nav button{flex:0 0 auto;white-space:nowrap}
   .live-controls button{flex-basis:112px}
 }
 
+/* ============================================================
+   Mobile-friendly leaderboard
+   ============================================================ */
+
+.leaderboard-grid {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+}
+
+.leaderboard-card {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.leaderboard-doubles-card {
+  flex: 0 0 320px;
+}
+
+.leaderboard-card-title {
+  font-weight: 700;
+  color: #cfe6ff;
+}
+
+.leaderboard-list {
+  margin-top: 8px;
+}
+
+.lb-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  min-width: 0;
+}
+
+.lb-row:last-child {
+  border-bottom: 0;
+}
+
+.lb-main {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.lb-name {
+  cursor: pointer;
+  color: #e6eef6;
+  overflow-wrap: anywhere;
+}
+
+.lb-meta {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.lb-rank {
+  flex: 0 0 auto;
+  font-weight: 700;
+  color: var(--accent-2);
+}
+
+.lb-change {
+  flex: 0 0 auto;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+@media(max-width:700px) {
+  .leaderboard-grid {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .leaderboard-card,
+  .leaderboard-doubles-card {
+    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .leaderboard-card {
+    padding: 12px;
+  }
+
+  .leaderboard-card-title {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+
+  .leaderboard-list {
+    margin-top: 6px;
+  }
+
+  .lb-row {
+    padding: 11px 6px;
+    align-items: flex-start;
+  }
+
+  .lb-name {
+    font-size: 15px;
+    line-height: 1.25;
+  }
+
+  .lb-meta {
+    font-size: 13px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -260,14 +375,15 @@ nav button{flex:0 0 auto;white-space:nowrap}
             </div>
           </div>
 
-          <div style="display:flex;gap:12px;margin-top:12px">
-            <div style="flex:1" class="card">
-              <div style="font-weight:700;color:#cfe6ff">Singles</div>
-              <div id="singlesList" class="list muted" style="margin-top:8px">Loading...</div>
+          <div class="leaderboard-grid">
+            <div class="leaderboard-card card">
+              <div class="leaderboard-card-title">Singles</div>
+              <div id="singlesList" class="list leaderboard-list muted">Loading...</div>
             </div>
-            <div style="width:320px" class="card">
-              <div style="font-weight:700;color:#cfe6ff">Doubles</div>
-              <div id="doublesList" class="list muted" style="margin-top:8px">Loading...</div>
+
+            <div class="leaderboard-card card leaderboard-doubles-card">
+              <div class="leaderboard-card-title">Doubles</div>
+              <div id="doublesList" class="list leaderboard-list muted">Loading...</div>
             </div>
           </div>
         </section>
@@ -1259,15 +1375,30 @@ function renderLeaderboard() {
       const rc = p.rating_change;
       const rcHtml = rc!=null ? ` <span style="font-size:11px;color:${rc>=0?'#4ade80':'#f87171'}">${rc>=0?'+':''}${rc}</span>` : '';
       const el = document.createElement('div');
-      el.style.padding = '6px';
-      el.innerHTML = `<strong>#${r.rank} <span class="lb-name" onclick="openPlayerProfile('${p.id||r.player_id}')">${p.display_name}</span></strong>${rcHtml}<div class="muted">${r.rating||1500} Elo &middot; ${r.games||p.games_played||0} games</div>`;
+      el.className = 'lb-row';
+      el.innerHTML = `
+        <div class="lb-rank">#${r.rank}</div>
+        <div class="lb-main">
+          <div class="lb-name" onclick="openPlayerProfile('${p.id || r.player_id}')">${p.display_name}</div>
+          <div class="muted lb-meta">${r.rating || 1500} Elo &middot; ${r.games || p.games_played || 0} games</div>
+        </div>
+        ${rc != null ? `<div class="lb-change" style="color:${rc >= 0 ? '#4ade80' : '#f87171'}">${rc >= 0 ? '+' : ''}${rc}</div>` : ''}
+      `;
       sEl.appendChild(el);
     });
   }
 
   const doubles = appData.rankings.doubles;
   dEl.innerHTML = doubles.length
-    ? doubles.map(r=>`<div style="padding:6px"><strong>#${r.rank} ${r.team_name||'Team'}</strong><div class="muted">${r.points||0} pts</div></div>`).join('')
+  ? doubles.map(r => `
+    <div class="lb-row">
+      <div class="lb-rank">#${r.rank}</div>
+      <div class="lb-main">
+        <div class="lb-name">${r.team_name || 'Team'}</div>
+        <div class="muted lb-meta">${r.points || 0} pts</div>
+      </div>
+    </div>
+  `).join('')
     : '<div class="muted">No doubles rankings yet.</div>';
 }
 
