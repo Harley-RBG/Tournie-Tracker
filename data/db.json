@@ -94,7 +94,7 @@
       "email": "guest_1784720773657@guest.local",
       "display_name": "Guest1",
       "notes": "Guest (session only)",
-      "games_played": 1,
+      "games_played": 0,
       "points": 0,
       "created_at": "2026-07-22T11:46:13.657Z",
       "rating": 1500,
@@ -106,7 +106,7 @@
       "email": "guest_1784720782417@guest.local",
       "display_name": "Guest2",
       "notes": "Guest (session only)",
-      "games_played": 1,
+      "games_played": 0,
       "points": 0,
       "created_at": "2026-07-22T11:46:22.417Z",
       "rating": 1500,
@@ -149,17 +149,6 @@
     }
   ],
   "matches": [
-    {
-      "id": "a4612810-6685-4b67-a450-9a482f42c85d",
-      "tournament_id": null,
-      "mode": "casual",
-      "player_a": "766d094a-ec35-4bd3-b3e8-b0183cc55bcc",
-      "player_b": "8fe8cf4d-ec35-4da8-8283-d1c06d280c4c",
-      "score_a": 10,
-      "score_b": 11,
-      "winner": "8fe8cf4d-ec35-4da8-8283-d1c06d280c4c",
-      "created_at": "2026-07-22T11:46:46.528Z"
-    },
     {
       "id": "1b68c694-71fb-49be-8237-8ae70f37c62d",
       "tournament_id": null,
@@ -770,23 +759,9 @@
         "games": 2
       },
       {
-        "player_id": "766d094a-ec35-4bd3-b3e8-b0183cc55bcc",
-        "player_name": "Guest1",
-        "rank": 2,
-        "rating": 1500,
-        "games": 1
-      },
-      {
-        "player_id": "8fe8cf4d-ec35-4da8-8283-d1c06d280c4c",
-        "player_name": "Guest2",
-        "rank": 3,
-        "rating": 1500,
-        "games": 1
-      },
-      {
         "player_id": "2cbec020-0561-4b16-81b5-40b9d3b66973",
         "player_name": "Shane Chicharo",
-        "rank": 4,
+        "rank": 2,
         "rating": 1498,
         "games": 2
       }
