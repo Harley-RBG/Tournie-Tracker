@@ -17,7 +17,7 @@
       "email": "shane.chicharo@robertbird.com.au",
       "display_name": "Shane Chicharo",
       "notes": "",
-      "games_played": 3,
+      "games_played": 2,
       "points": 4,
       "created_at": "2026-07-22T10:50:28.917Z",
       "rating_change": -22,
@@ -29,7 +29,7 @@
       "email": "virginia.martineznavarro@robertbird.com.au",
       "display_name": "virginia.martineznavarro",
       "notes": "",
-      "games_played": 1,
+      "games_played": 0,
       "points": 0,
       "created_at": "2026-07-22T10:50:50.253Z",
       "rating": 1500,
@@ -65,7 +65,7 @@
       "email": "lorna.li@robertbird.com.au",
       "display_name": "lorna.li",
       "notes": "",
-      "games_played": 1,
+      "games_played": 0,
       "points": 0,
       "created_at": "2026-07-22T10:51:54.648Z",
       "rating": 1500,
@@ -77,7 +77,7 @@
       "email": "harley.trappitt@robertbird.com.au",
       "display_name": "Harley Trappitt",
       "notes": "",
-      "games_played": 3,
+      "games_played": 2,
       "points": 4,
       "created_at": "2026-07-22T11:37:42.700Z",
       "handedness": "Right",
@@ -159,21 +159,6 @@
       "score_b": 11,
       "winner": "8fe8cf4d-ec35-4da8-8283-d1c06d280c4c",
       "created_at": "2026-07-22T11:46:46.528Z"
-    },
-    {
-      "id": "caec2c6a-ad75-44fd-959f-b6b792512404",
-      "tournament_id": null,
-      "mode": "casual",
-      "type": "doubles",
-      "player_a": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
-      "player_b": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
-      "player_c": "6dfe21eb-7a7c-4926-a791-b135a287b301",
-      "player_d": "2cbec020-0561-4b16-81b5-40b9d3b66973",
-      "score_a": 11,
-      "score_b": 8,
-      "winner": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
-      "win_by_2": true,
-      "created_at": "2026-07-22T12:01:00.698Z"
     },
     {
       "id": "1b68c694-71fb-49be-8237-8ae70f37c62d",
@@ -782,42 +767,28 @@
         "player_name": "Harley Trappitt",
         "rank": 1,
         "rating": 1502,
-        "games": 3
-      },
-      {
-        "player_id": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
-        "player_name": "virginia.martineznavarro",
-        "rank": 2,
-        "rating": 1500,
-        "games": 1
-      },
-      {
-        "player_id": "6dfe21eb-7a7c-4926-a791-b135a287b301",
-        "player_name": "lorna.li",
-        "rank": 3,
-        "rating": 1500,
-        "games": 1
+        "games": 2
       },
       {
         "player_id": "766d094a-ec35-4bd3-b3e8-b0183cc55bcc",
         "player_name": "Guest1",
-        "rank": 4,
+        "rank": 2,
         "rating": 1500,
         "games": 1
       },
       {
         "player_id": "8fe8cf4d-ec35-4da8-8283-d1c06d280c4c",
         "player_name": "Guest2",
-        "rank": 5,
+        "rank": 3,
         "rating": 1500,
         "games": 1
       },
       {
         "player_id": "2cbec020-0561-4b16-81b5-40b9d3b66973",
         "player_name": "Shane Chicharo",
-        "rank": 6,
+        "rank": 4,
         "rating": 1498,
-        "games": 3
+        "games": 2
       }
     ],
     "doubles": []
