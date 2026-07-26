@@ -316,17 +316,17 @@ nav button{flex:0 0 auto;white-space:nowrap}
 
 
 
-/* INTEROFFICE_TOURNAMENT_PATCH_V1 */
-.tournie-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
-.tournie-grid label{display:block;margin-top:0!important}
-.tournie-hint{font-size:12px;color:var(--muted);line-height:1.45;margin-top:8px;padding:8px;border-radius:8px;background:rgba(255,255,255,.035)}
-.tournie-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.06);color:#cfe6ff;font-size:12px;margin:2px 4px 2px 0}
-.tournie-event-card{border:1px solid rgba(255,255,255,.055);background:rgba(255,255,255,.025);border-radius:10px;padding:10px;margin-top:10px}
-.tournie-event-title{font-weight:700;color:#cfe6ff;margin-bottom:6px}
-.tournie-meta{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
-.tournie-warning{font-size:12px;color:#fbbf24;margin-top:8px;background:rgba(251,191,36,.075);padding:8px;border-radius:8px}
-.tournie-format-panel{border:1px dashed rgba(255,255,255,.12);padding:10px;border-radius:10px;background:rgba(255,255,255,.025);margin-top:8px}
-@media(max-width:700px){.tournie-grid{grid-template-columns:1fr}.tournie-pill{font-size:11px}.tournie-event-card{padding:9px}}
+/* DOUBLES_TEAMS_PATCH_V1 */
+.doubles-team-admin-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr auto;gap:8px;align-items:end;margin-top:10px}
+.doubles-team-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px;border-bottom:1px solid rgba(255,255,255,.04)}
+.doubles-team-row:last-child{border-bottom:0}
+.doubles-team-players{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.35}
+.doubles-team-empty{padding:8px;color:var(--muted);font-size:13px}
+@media(max-width:700px){
+  .doubles-team-admin-grid{grid-template-columns:1fr;align-items:stretch}
+  .doubles-team-row{align-items:flex-start;flex-direction:column}
+  .doubles-team-row button{align-self:flex-start}
+}
 
 </style>
 </head>
@@ -2618,333 +2618,274 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
 </script>
 
 <script>
-/* INTEROFFICE_TOURNAMENT_PATCH_V1
-   Inter-office tournament/category/format extension.
-   Removes age/mixed/novice presets and adds Open, Rating Band and Team options.
+/* DOUBLES_TEAMS_PATCH_V1
+   Explicit Doubles Teams for leaderboard.
+   Teams are admin-created with custom names and two players.
+   Team rankings are calculated from ranked doubles matches only.
 */
 (function(){
-  const $ = id => document.getElementById(id);
-  const categoryLabels = {
-    open_singles: 'Open Singles',
-    open_doubles: 'Open Doubles',
-    rating_singles: 'Rating Band Singles',
-    rating_doubles: 'Rating Band Doubles',
-    team_event: 'Team Event'
-  };
-  const formatLabels = {
-    groups_to_knockout: 'Groups into Knockout',
-    single_elimination: 'Single Elimination',
-    round_robin: 'Round Robin',
-    swiss: 'Swiss',
-    consolation_bracket: 'Consolation Bracket',
-    team_fixture: 'Team Fixture'
-  };
-  const matchFormatLabels = { best_of_1:'Best of 1', best_of_3:'Best of 3', best_of_5:'Best of 5', best_of_7:'Best of 7' };
+  const byId = id => document.getElementById(id);
+  const teamKey = ids => [...ids].filter(Boolean).sort().join('|');
+  const safePlayers = () => Array.isArray(window.appData?.players) ? window.appData.players : (appData.players || []);
 
-  function getValue(id, fallback='') { const el=$(id); return el ? el.value : fallback; }
-  function getNumber(id, fallback=0) { const n = Number(getValue(id,'')); return Number.isFinite(n) ? n : fallback; }
-  function getChecked(id) { const el=$(id); return !!(el && el.checked); }
-  function label(map, key) { return map[key] || key || '-'; }
-
-  function insertAfter(ref, html) {
-    if (!ref || !ref.insertAdjacentHTML) return;
-    ref.insertAdjacentHTML('afterend', html);
+  function ensureDoublesTeams(){
+    appData.doubles_teams ??= [];
+    appData.rankings ??= { singles: [], doubles: [] };
+    appData.rankings.doubles ??= [];
   }
 
-  function enhanceTournamentModal() {
-    if (!$('tournamentModal') || $('tournamentCategory')) return;
-    const format = $('tournamentFormat');
-    const maxPlayers = $('tournamentMaxPlayers');
-    if (format) {
-      format.innerHTML = `
-        <option value="groups_to_knockout">Groups into Knockout</option>
-        <option value="single_elimination">Single Elimination</option>
-        <option value="round_robin">Round Robin</option>
-        <option value="swiss">Swiss System</option>
-        <option value="consolation_bracket">Consolation Bracket</option>
-        <option value="team_fixture">Team Fixture</option>`;
-    }
-    insertAfter(maxPlayers || format, `
-      <div class="tournie-hint">Inter-office setup: Open Doubles is mixed by default, with no age groups or beginner/novice split. Use Rating Bands for skill-level events and Team Events for office-vs-office formats.</div>
-      <div class="tournie-grid">
-        <label class="muted">Category / event
-          <select id="tournamentCategory">
-            <option value="open_singles">Open Singles</option>
-            <option value="open_doubles">Open Doubles</option>
-            <option value="rating_singles">Rating Band Singles</option>
-            <option value="rating_doubles">Rating Band Doubles</option>
-            <option value="team_event">Team Event</option>
-          </select>
-        </label>
-        <label class="muted">Match format
-          <select id="tournamentMatchFormat">
-            <option value="best_of_5">Best of 5</option>
-            <option value="best_of_3">Best of 3</option>
-            <option value="best_of_7">Best of 7</option>
-            <option value="best_of_1">Best of 1</option>
-          </select>
-        </label>
-        <label class="muted">Tables allocated
-          <input id="tournamentTables" type="number" min="1" value="2">
-        </label>
-        <label class="muted">Seeding method
-          <select id="tournamentSeedingMethod">
-            <option value="rating">Rating / Elo</option>
-            <option value="manual">Manual</option>
-            <option value="random">Random</option>
-          </select>
-        </label>
-        <label class="muted">Group size
-          <select id="tournamentGroupSize">
-            <option value="4">4</option>
-            <option value="3">3</option>
-            <option value="5">5</option>
-          </select>
-        </label>
-        <label class="muted">Advance per group
-          <select id="tournamentAdvancePerGroup">
-            <option value="2">Top 2</option>
-            <option value="1">Top 1</option>
-          </select>
-        </label>
-        <label class="muted">Rating minimum
-          <input id="tournamentRatingMin" type="number" placeholder="e.g. 0">
-        </label>
-        <label class="muted">Rating maximum
-          <input id="tournamentRatingMax" type="number" placeholder="e.g. 1499">
-        </label>
-        <label class="muted">Team size
-          <select id="tournamentTeamSize">
-            <option value="3">3 players</option>
-            <option value="4">4 players</option>
-            <option value="5">5 players</option>
-          </select>
-        </label>
-        <label class="muted">Doubles pair mode
-          <select id="tournamentDoublesPairing">
-            <option value="manual">Manual pairs</option>
-            <option value="random">Random pairs</option>
-          </select>
-        </label>
-      </div>
-      <label class="muted" style="display:flex;align-items:center;gap:8px;margin-top:10px">
-        <input id="tournamentConsolation" type="checkbox" style="width:auto;min-height:auto"> Include consolation / plate where applicable
-      </label>`);
-
-    const cat = $('tournamentCategory');
-    const fmt = $('tournamentFormat');
-    const updateVisibility = () => {
-      const c = getValue('tournamentCategory');
-      const f = getValue('tournamentFormat');
-      ['tournamentRatingMin','tournamentRatingMax'].forEach(id => { const el=$(id); if (el) el.closest('label').style.display = c.startsWith('rating_') ? 'block' : 'none'; });
-      const team = $('tournamentTeamSize'); if (team) team.closest('label').style.display = (c === 'team_event' || f === 'team_fixture') ? 'block' : 'none';
-      const dbl = $('tournamentDoublesPairing'); if (dbl) dbl.closest('label').style.display = c.includes('doubles') ? 'block' : 'none';
-      const groupShow = f === 'groups_to_knockout';
-      ['tournamentGroupSize','tournamentAdvancePerGroup'].forEach(id => { const el=$(id); if (el) el.closest('label').style.display = groupShow ? 'block' : 'none'; });
-    };
-    cat && cat.addEventListener('change', updateVisibility);
-    fmt && fmt.addEventListener('change', updateVisibility);
-    updateVisibility();
+  function playerName(id){
+    return safePlayers().find(p => p.id === id)?.display_name || 'Unknown player';
   }
 
-  function eventSettingsFromModal() {
-    const category = getValue('tournamentCategory','open_singles');
-    const format = getValue('tournamentFormat','groups_to_knockout');
-    return {
-      category_type: category,
-      entry_type: category === 'team_event' ? 'team' : (category.includes('doubles') ? 'doubles' : 'singles'),
-      format,
-      match_rules: {
-        match_format: getValue('tournamentMatchFormat','best_of_5'),
-        game_to: 11,
-        win_by_2: true
-      },
-      scheduling: {
-        tables_allocated: getNumber('tournamentTables',2),
-        slot_minutes: ({ best_of_1:10, best_of_3:15, best_of_5:25, best_of_7:35 })[getValue('tournamentMatchFormat','best_of_5')] || 25
-      },
-      seeding: {
-        method: getValue('tournamentSeedingMethod','rating'),
-        serpentine_groups: true
-      },
-      format_settings: {
-        group_size: getNumber('tournamentGroupSize',4),
-        advance_per_group: getNumber('tournamentAdvancePerGroup',2),
-        consolation_enabled: getChecked('tournamentConsolation'),
-        team_size: getNumber('tournamentTeamSize',3),
-        doubles_pairing: getValue('tournamentDoublesPairing','manual')
-      },
-      eligibility: {
-        min_rating: getValue('tournamentRatingMin','') === '' ? null : getNumber('tournamentRatingMin',0),
-        max_rating: getValue('tournamentRatingMax','') === '' ? null : getNumber('tournamentRatingMax',9999),
-        allow_unrated: true
-      }
-    };
+  function teamPlayersLabel(team){
+    return (team.player_ids || []).map(playerName).join(' / ');
   }
 
-  function eventSummaryHtml(t) {
-    const ev = t.event_settings || { category_type: 'open_singles', format: t.format || 'single_elimination', match_rules:{}, scheduling:{}, seeding:{}, format_settings:{}, eligibility:{} };
-    const bits = [
-      label(categoryLabels, ev.category_type),
-      label(formatLabels, ev.format || t.format),
-      label(matchFormatLabels, ev.match_rules?.match_format || 'best_of_5'),
-      `${ev.scheduling?.tables_allocated || t.tables_allocated || 1} table${(ev.scheduling?.tables_allocated||1)!==1?'s':''}`,
-      `${ev.scheduling?.slot_minutes || 25} min slots`,
-      `Seed: ${label({rating:'Rating',manual:'Manual',random:'Random'}, ev.seeding?.method || 'rating')}`
-    ];
-    if (ev.category_type?.startsWith('rating_')) {
-      bits.push(`${ev.eligibility?.min_rating ?? 0}-${ev.eligibility?.max_rating ?? 'open'} rating`);
-    }
-    if (ev.format === 'groups_to_knockout') {
-      bits.push(`Groups of ${ev.format_settings?.group_size || 4}`);
-      bits.push(`Top ${ev.format_settings?.advance_per_group || 2} advance`);
-    }
-    if (ev.format_settings?.consolation_enabled || ev.format === 'consolation_bracket') bits.push('Plate/consolation enabled');
-    return `<div class="tournie-meta">${bits.map(b=>`<span class="tournie-pill">${b}</span>`).join('')}</div>`;
+  function exactTeamForSide(a, b){
+    ensureDoublesTeams();
+    const key = teamKey([a,b]);
+    return appData.doubles_teams.find(t => teamKey(t.player_ids || []) === key) || null;
   }
 
-  function estimateMatches(t) {
-    const n = (t.participant_ids || []).length;
-    const ev = t.event_settings || {}; const f = ev.format || t.format;
-    if (n < 2) return 0;
-    if (f === 'single_elimination' || f === 'consolation_bracket') return n - 1 + (ev.format_settings?.consolation_enabled ? Math.max(0, Math.floor(n/2)-1) : 0);
-    if (f === 'round_robin') return n * (n - 1) / 2;
-    if (f === 'swiss') return Math.ceil(Math.log2(Math.max(n,2))) + 1;
-    if (f === 'groups_to_knockout') {
-      const g = ev.format_settings?.group_size || 4;
-      const groupCount = Math.ceil(n / g);
-      const groupMatches = groupCount * (g * (g - 1) / 2);
-      const adv = Math.min(n, groupCount * (ev.format_settings?.advance_per_group || 2));
-      return Math.round(groupMatches + Math.max(0, adv - 1));
+  function rebuildDoublesTeamRankings(){
+    ensureDoublesTeams();
+    const stats = new Map();
+    appData.doubles_teams.forEach(t => stats.set(t.id, {
+      team: t,
+      rating: Number(t.rating || 1500),
+      points: 0,
+      games: 0,
+      wins: 0,
+      losses: 0,
+      rating_change: 0
+    }));
+
+    const rankedDoubles = [...(appData.matches || [])]
+      .filter(m => m.mode === 'ranked' && m.type === 'doubles' && m.player_a && m.player_b && m.player_c && m.player_d)
+      .sort((a,b) => String(a.created_at || '').localeCompare(String(b.created_at || '')));
+
+    for (const m of rankedDoubles){
+      const teamA = exactTeamForSide(m.player_a, m.player_c);
+      const teamB = exactTeamForSide(m.player_b, m.player_d);
+      if (!teamA || !teamB || teamA.id === teamB.id) continue;
+      const a = stats.get(teamA.id), b = stats.get(teamB.id);
+      if (!a || !b) continue;
+      const aWon = m.winner === m.player_a;
+      const ra = a.rating || 1500, rb = b.rating || 1500;
+      const ea = 1 / (1 + Math.pow(10, (rb - ra) / 400));
+      const kA = a.games < 30 ? 40 : 20;
+      const kB = b.games < 30 ? 40 : 20;
+      const newRa = Math.round(ra + kA * ((aWon ? 1 : 0) - ea));
+      const newRb = Math.round(rb + kB * ((aWon ? 0 : 1) - (1 - ea)));
+      a.rating_change = newRa - ra;
+      b.rating_change = newRb - rb;
+      a.rating = newRa;
+      b.rating = newRb;
+      a.games++; b.games++;
+      if (aWon){ a.wins++; b.losses++; a.points += 3; b.points += 1; }
+      else { b.wins++; a.losses++; b.points += 3; a.points += 1; }
     }
-    return n - 1;
+
+    const rankings = [...stats.values()]
+      .sort((a,b) => (b.rating - a.rating) || (b.points - a.points) || (b.wins - a.wins) || a.team.team_name.localeCompare(b.team.team_name))
+      .map((r,i) => ({
+        rank: i + 1,
+        team_id: r.team.id,
+        team_name: r.team.team_name,
+        player_ids: r.team.player_ids,
+        player_names: (r.team.player_ids || []).map(playerName),
+        rating: r.rating,
+        points: r.points,
+        games: r.games,
+        wins: r.wins,
+        losses: r.losses,
+        rating_change: r.rating_change
+      }));
+    appData.rankings.doubles = rankings;
+    return rankings;
   }
 
-  const oldCreate = $('createTournamentBtn')?.onclick;
-  if ($('createTournamentBtn')) $('createTournamentBtn').onclick = () => {
-    enhanceTournamentModal();
-    $('tournamentName').value = '';
-    $('tournamentDate').value = new Date().toISOString().slice(0,10);
-    $('tournamentFormat').value = 'groups_to_knockout';
-    $('tournamentMaxPlayers').value = '16';
-    $('tournamentCategory').value = 'open_singles';
-    $('tournamentMatchFormat').value = 'best_of_5';
-    $('tournamentTables').value = '2';
-    $('tournamentModal').style.display = 'flex';
-  };
-
-  if ($('tournamentModalSave')) $('tournamentModalSave').onclick = async () => {
-    const name = $('tournamentName').value.trim();
-    const start = $('tournamentDate').value;
-    const max = Number($('tournamentMaxPlayers').value);
-    if (!name) return alert('Enter a tournament name.');
-    const event_settings = eventSettingsFromModal();
-    const t = {
-      id: crypto.randomUUID(), name, start_date: start,
-      format: event_settings.format,
-      category_type: event_settings.category_type,
-      max_players: max, status: 'scheduled',
-      participant_ids: [], bracket_data: null,
-      event_settings,
-      events: [{ id: crypto.randomUUID(), name: label(categoryLabels, event_settings.category_type), ...event_settings, status: 'entries_open' }],
-      created_at: new Date().toISOString()
-    };
-    appData.tournaments.push(t);
-    const ok = await writeData(`Create tournament ${name}`);
-    if (!ok) { appData.tournaments.pop(); return; }
-    $('tournamentModal').style.display = 'none';
-    loadTournaments();
-  };
-
-  const oldLoad = window.loadTournaments;
-  window.loadTournaments = function(){
-    oldLoad && oldLoad();
-    document.querySelectorAll('#tournamentList > div').forEach((row, idx) => {
-      const t = [...appData.tournaments].sort((a,b)=>a.start_date.localeCompare(b.start_date))[idx];
-      if (!t || row.querySelector('.tournie-meta')) return;
-      row.querySelector('div > div')?.insertAdjacentHTML('beforeend', eventSummaryHtml(t));
-    });
-  };
-
-  const oldView = window.viewTournament;
-  window.viewTournament = function(id){
-    oldView && oldView(id);
-    const t = appData.tournaments.find(x=>x.id===id);
-    const area = $('bracketArea');
-    if (!t || !area) return;
-    const matchEstimate = estimateMatches(t);
-    const ev = t.event_settings || {};
-    const info = `<div class="tournie-event-card">
-      <div class="tournie-event-title">Inter-office Event Settings</div>
-      ${eventSummaryHtml(t)}
-      <div class="tournie-hint">Estimated match workload: <strong>${matchEstimate}</strong> match${matchEstimate!==1?'es':''}. Use table allocation and match format to tune timing.</div>
-      ${(ev.format === 'swiss' || ev.format === 'team_fixture') ? '<div class="tournie-warning">This format is configured and tracked in settings. Detailed automated pairings/fixtures can be added as the next implementation step.</div>' : ''}
-    </div>`;
-    area.insertAdjacentHTML('afterbegin', info);
-  };
-
-  const oldGenerate = window.generateBracket;
-  window.generateBracket = async function(id){
-    const t = appData.tournaments.find(x=>x.id===id);
-    if (!t) return;
-    const ev = t.event_settings || {};
-    if (['single_elimination','round_robin','consolation_bracket'].includes(ev.format || t.format)) {
-      return oldGenerate ? oldGenerate(id) : undefined;
-    }
-    const ps = [...(t.participant_ids || [])];
-    if (ps.length < 2) return alert('Need at least 2 players.');
-    if ((ev.format || t.format) === 'groups_to_knockout') {
-      const groupSize = ev.format_settings?.group_size || 4;
-      const seeded = ps.map(pid=>appData.players.find(p=>p.id===pid)).filter(Boolean).sort((a,b)=>(b.rating||1500)-(a.rating||1500)).map(p=>p.id);
-      const groupCount = Math.ceil(seeded.length / groupSize);
-      const groups = Array.from({length: groupCount}, (_,i)=>({ id: crypto.randomUUID(), name: `Group ${String.fromCharCode(65+i)}`, player_ids: [], matches: [] }));
-      seeded.forEach((pid,i)=>{ const wave=Math.floor(i/groupCount), base=i%groupCount, gi=wave%2===0?base:groupCount-1-base; groups[gi].player_ids.push(pid); });
-      groups.forEach(g=>{ for(let i=0;i<g.player_ids.length;i++) for(let j=i+1;j<g.player_ids.length;j++) g.matches.push({id:crypto.randomUUID(), player_a:g.player_ids[i], player_b:g.player_ids[j], winner:null, status:'pending'}); });
-      t.bracket_data = { type:'groups_to_knockout', groups, advance_per_group: ev.format_settings?.advance_per_group || 2, knockout_rounds:null };
-      t.status = 'in_progress';
-      await writeData(`Generate groups for ${t.name}`);
-      viewTournament(id);
+  function renderDoublesLeaderboard(){
+    ensureDoublesTeams();
+    const dEl = byId('doublesList');
+    if (!dEl) return;
+    const rankings = rebuildDoublesTeamRankings();
+    if (!rankings.length){
+      dEl.innerHTML = '<div class="muted">No doubles teams yet. Admins can add named teams in the Admin tab.</div>';
       return;
     }
-    if ((ev.format || t.format) === 'swiss') {
-      const seeded = ps.map(pid=>appData.players.find(p=>p.id===pid)).filter(Boolean).sort((a,b)=>(b.rating||1500)-(a.rating||1500)).map(p=>p.id);
-      const pairings=[]; for(let i=0;i<seeded.length;i+=2) pairings.push({id:crypto.randomUUID(), player_a:seeded[i], player_b:seeded[i+1]||null, winner: seeded[i+1]?null:seeded[i], status:seeded[i+1]?'pending':'bye'});
-      t.bracket_data = { type:'swiss', rounds:[pairings], target_rounds: Math.ceil(Math.log2(Math.max(ps.length,2)))+1 };
-      t.status='in_progress';
-      await writeData(`Generate Swiss round 1 for ${t.name}`);
-      viewTournament(id);
+    dEl.innerHTML = rankings.map(r => {
+      const rc = r.rating_change;
+      const rcHtml = rc ? `<div class="lb-change" style="color:${rc >= 0 ? '#4ade80' : '#f87171'}">${rc >= 0 ? '+' : ''}${rc}</div>` : '';
+      return `
+        <div class="lb-row">
+          <div class="lb-rank">#${r.rank}</div>
+          <div class="lb-main">
+            <div class="lb-name">${r.team_name || 'Unnamed Team'}</div>
+            <div class="muted lb-meta">${(r.player_names || []).join(' / ')}</div>
+            <div class="muted lb-meta">${r.rating || 1500} Elo &middot; ${r.points || 0} pts &middot; ${r.wins || 0}W ${r.losses || 0}L &middot; ${r.games || 0} ranked games</div>
+          </div>
+          ${rcHtml}
+        </div>`;
+    }).join('');
+  }
+
+  function createDoublesTeamAdminCard(){
+    if (byId('doublesTeamsCard')) return;
+    const anchor = byId('adminPlayersCard') || byId('adminActionsCard') || byId('tab-admin');
+    if (!anchor) return;
+    anchor.insertAdjacentHTML('afterend', `
+      <div class="card" id="doublesTeamsCard" style="margin-top:12px">
+        <div style="font-weight:700;color:#cfe6ff">Doubles Teams</div>
+        <div class="muted" style="margin-top:6px">Create named doubles teams for the Doubles leaderboard. Rankings use ranked doubles matches only.</div>
+        <div class="doubles-team-admin-grid">
+          <label class="muted">Team name
+            <input id="dtTeamName" placeholder="e.g. North Sydney A">
+          </label>
+          <label class="muted">Player 1
+            <select id="dtPlayerOne"></select>
+          </label>
+          <label class="muted">Player 2
+            <select id="dtPlayerTwo"></select>
+          </label>
+          <button id="dtAddTeamBtn" class="primary">Add Team</button>
+        </div>
+        <div id="doublesTeamsList" class="list" style="margin-top:10px;max-height:260px"></div>
+      </div>`);
+    byId('dtAddTeamBtn').onclick = addDoublesTeam;
+    populateDoublesTeamSelectors();
+    renderDoublesTeamsAdmin();
+  }
+
+  function populateDoublesTeamSelectors(){
+    const p1 = byId('dtPlayerOne'), p2 = byId('dtPlayerTwo');
+    if (!p1 || !p2) return;
+    const opts = ['<option value="">Select player</option>'].concat(
+      safePlayers().slice().sort((a,b)=>a.display_name.localeCompare(b.display_name)).map(p => `<option value="${p.id}">${p.display_name}</option>`)
+    ).join('');
+    p1.innerHTML = opts;
+    p2.innerHTML = opts;
+  }
+
+  async function addDoublesTeam(){
+    ensureDoublesTeams();
+    const name = (byId('dtTeamName')?.value || '').trim();
+    const p1 = byId('dtPlayerOne')?.value;
+    const p2 = byId('dtPlayerTwo')?.value;
+    if (!name) return alert('Enter a doubles team name.');
+    if (!p1 || !p2) return alert('Select both doubles team players.');
+    if (p1 === p2) return alert('A doubles team needs two different players.');
+    const key = teamKey([p1,p2]);
+    if (appData.doubles_teams.some(t => teamKey(t.player_ids || []) === key)) return alert('That player pairing already has a doubles team.');
+    if (appData.doubles_teams.some(t => String(t.team_name || '').toLowerCase() === name.toLowerCase())) return alert('A doubles team with that name already exists.');
+    const team = { id: crypto.randomUUID(), team_name: name, player_ids: [p1,p2], rating: 1500, points: 0, games: 0, wins: 0, losses: 0, created_at: new Date().toISOString() };
+    appData.doubles_teams.push(team);
+    rebuildDoublesTeamRankings();
+    const ok = await writeData(`Add doubles team ${name}`);
+    if (!ok){ appData.doubles_teams = appData.doubles_teams.filter(t => t.id !== team.id); }
+    byId('dtTeamName').value = '';
+    byId('dtPlayerOne').value = '';
+    byId('dtPlayerTwo').value = '';
+    renderDoublesTeamsAdmin();
+    renderDoublesLeaderboard();
+  }
+
+  window.deleteDoublesTeam = async function(id){
+    ensureDoublesTeams();
+    const team = appData.doubles_teams.find(t => t.id === id);
+    if (!team) return;
+    if (!confirm(`Delete doubles team "${team.team_name}"? Ranked match history will remain, but this team will be removed from the Doubles leaderboard.`)) return;
+    const old = [...appData.doubles_teams];
+    appData.doubles_teams = appData.doubles_teams.filter(t => t.id !== id);
+    rebuildDoublesTeamRankings();
+    const ok = await writeData(`Delete doubles team ${team.team_name}`);
+    if (!ok) appData.doubles_teams = old;
+    renderDoublesTeamsAdmin();
+    renderDoublesLeaderboard();
+  };
+
+  window.renameDoublesTeam = async function(id){
+    ensureDoublesTeams();
+    const team = appData.doubles_teams.find(t => t.id === id);
+    if (!team) return;
+    const newName = prompt('Team name', team.team_name || '');
+    if (newName === null) return;
+    const trimmed = newName.trim();
+    if (!trimmed) return alert('Team name cannot be blank.');
+    if (appData.doubles_teams.some(t => t.id !== id && String(t.team_name || '').toLowerCase() === trimmed.toLowerCase())) return alert('A doubles team with that name already exists.');
+    const old = team.team_name;
+    team.team_name = trimmed;
+    rebuildDoublesTeamRankings();
+    const ok = await writeData(`Rename doubles team ${old} to ${trimmed}`);
+    if (!ok) team.team_name = old;
+    renderDoublesTeamsAdmin();
+    renderDoublesLeaderboard();
+  };
+
+  function renderDoublesTeamsAdmin(){
+    ensureDoublesTeams();
+    const list = byId('doublesTeamsList');
+    if (!list) return;
+    const rankings = rebuildDoublesTeamRankings();
+    if (!appData.doubles_teams.length){
+      list.innerHTML = '<div class="doubles-team-empty">No doubles teams created yet.</div>';
       return;
     }
-    return oldGenerate ? oldGenerate(id) : undefined;
+    list.innerHTML = appData.doubles_teams
+      .slice()
+      .sort((a,b)=>a.team_name.localeCompare(b.team_name))
+      .map(team => {
+        const r = rankings.find(x => x.team_id === team.id) || {};
+        return `<div class="doubles-team-row">
+          <div>
+            <strong>${team.team_name}</strong>
+            <div class="doubles-team-players">${teamPlayersLabel(team)}</div>
+            <div class="doubles-team-players">${r.rating || 1500} Elo &middot; ${r.points || 0} pts &middot; ${r.wins || 0}W ${r.losses || 0}L &middot; ${r.games || 0} ranked games</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="ghost" style="font-size:12px;padding:4px 10px" onclick="renameDoublesTeam('${team.id}')">Rename</button>
+            <button class="ghost" style="font-size:12px;padding:4px 10px;color:#f87171;border-color:rgba(248,113,113,.3)" onclick="deleteDoublesTeam('${team.id}')">Delete</button>
+          </div>
+        </div>`;
+      }).join('');
+  }
+
+  const originalRenderLeaderboard = window.renderLeaderboard || renderLeaderboard;
+  window.renderLeaderboard = function(){
+    ensureDoublesTeams();
+    originalRenderLeaderboard && originalRenderLeaderboard();
+    renderDoublesLeaderboard();
   };
 
-  const oldRender = window.renderBracketHTML;
-  window.renderBracketHTML = function(t){
-    if (!t.bracket_data) return '';
-    if (['groups_to_knockout','swiss'].includes(t.bracket_data.type)) {
-      let html = `<div class="tournie-format-panel"><strong>${label(formatLabels, t.bracket_data.type)}</strong>`;
-      if (t.bracket_data.groups) {
-        t.bracket_data.groups.forEach(g=>{
-          html += `<div class="tournie-event-card"><div class="tournie-event-title">${g.name}</div>`;
-          html += g.player_ids.map(pid=>`<span class="tournie-pill">${appData.players.find(p=>p.id===pid)?.display_name||'Player'}</span>`).join('');
-          html += `<div style="margin-top:8px">${g.matches.map(m=>`${appData.players.find(p=>p.id===m.player_a)?.display_name||'?'} vs ${appData.players.find(p=>p.id===m.player_b)?.display_name||'?'}`).map(x=>`<div class="muted" style="padding:3px 0">${x}</div>`).join('')}</div></div>`;
-        });
-      }
-      if (t.bracket_data.rounds) {
-        t.bracket_data.rounds.forEach((round,i)=>{
-          html += `<div class="tournie-event-card"><div class="tournie-event-title">Round ${i+1}</div>`;
-          html += round.map(m=>`<div class="muted" style="padding:3px 0">${appData.players.find(p=>p.id===m.player_a)?.display_name||'?'} vs ${m.player_b ? (appData.players.find(p=>p.id===m.player_b)?.display_name||'?') : 'BYE'}</div>`).join('');
-          html += `</div>`;
-        });
-      }
-      html += `</div>`;
-      return html;
-    }
-    return oldRender ? oldRender(t) : '';
+  const originalPopulate = window.populatePlayerSelectors || populatePlayerSelectors;
+  window.populatePlayerSelectors = function(){
+    originalPopulate && originalPopulate();
+    createDoublesTeamAdminCard();
+    populateDoublesTeamSelectors();
+    renderDoublesTeamsAdmin();
   };
 
-  enhanceTournamentModal();
-  if (typeof loadTournaments === 'function') loadTournaments();
+  const originalUpdateAuth = window.updateAuthUI || updateAuthUI;
+  window.updateAuthUI = function(){
+    originalUpdateAuth && originalUpdateAuth();
+    createDoublesTeamAdminCard();
+    const card = byId('doublesTeamsCard');
+    if (card) card.style.display = (typeof isAdmin === 'function' && isAdmin()) ? '' : 'none';
+  };
+
+  window.rebuildDoublesTeamRankings = rebuildDoublesTeamRankings;
+  window.renderDoublesTeamsAdmin = renderDoublesTeamsAdmin;
+
+  // Let the main init finish first, then refresh the UI.
+  setTimeout(() => {
+    ensureDoublesTeams();
+    createDoublesTeamAdminCard();
+    populateDoublesTeamSelectors();
+    renderDoublesTeamsAdmin();
+    renderDoublesLeaderboard();
+    if (typeof updateAuthUI === 'function') updateAuthUI();
+  }, 0);
 })();
 </script>
 
