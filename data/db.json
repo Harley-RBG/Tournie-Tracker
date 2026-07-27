@@ -1780,7 +1780,27 @@
         "games": 3
       }
     ],
-    "doubles": []
+    "doubles": [
+      {
+        "rank": 1,
+        "team_id": "2fa740f7-8058-4775-adfb-8d6adf57ab27",
+        "team_name": "Bomb Squad",
+        "player_ids": [
+          "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
+          "4145bacb-cc0f-4b92-bcfd-1aadaa613e58"
+        ],
+        "player_names": [
+          "Harley Trappitt",
+          "Tyler Smith"
+        ],
+        "rating": 1500,
+        "points": 0,
+        "games": 0,
+        "wins": 0,
+        "losses": 0,
+        "rating_change": 0
+      }
+    ]
   },
   "player_stats": [
     {
@@ -1810,5 +1830,21 @@
     "admins": [
       "harley.trappitt@robertbird.com.au"
     ]
-  }
+  },
+  "doubles_teams": [
+    {
+      "id": "2fa740f7-8058-4775-adfb-8d6adf57ab27",
+      "team_name": "Bomb Squad",
+      "player_ids": [
+        "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
+        "4145bacb-cc0f-4b92-bcfd-1aadaa613e58"
+      ],
+      "rating": 1500,
+      "points": 0,
+      "games": 0,
+      "wins": 0,
+      "losses": 0,
+      "created_at": "2026-07-27T00:02:36.281Z"
+    }
+  ]
 }
