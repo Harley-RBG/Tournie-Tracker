@@ -1799,6 +1799,25 @@
         "wins": 0,
         "losses": 0,
         "rating_change": 0
+      },
+      {
+        "rank": 2,
+        "team_id": "af04282c-97a6-480c-b75d-e368e915228f",
+        "team_name": "Golden Flamenco Queens",
+        "player_ids": [
+          "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
+          "6dfe21eb-7a7c-4926-a791-b135a287b301"
+        ],
+        "player_names": [
+          "virginia.martineznavarro",
+          "lorna.li"
+        ],
+        "rating": 1500,
+        "points": 0,
+        "games": 0,
+        "wins": 0,
+        "losses": 0,
+        "rating_change": 0
       }
     ]
   },
@@ -1845,6 +1864,20 @@
       "wins": 0,
       "losses": 0,
       "created_at": "2026-07-27T00:02:36.281Z"
+    },
+    {
+      "id": "af04282c-97a6-480c-b75d-e368e915228f",
+      "team_name": "Golden Flamenco Queens",
+      "player_ids": [
+        "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
+        "6dfe21eb-7a7c-4926-a791-b135a287b301"
+      ],
+      "rating": 1500,
+      "points": 0,
+      "games": 0,
+      "wins": 0,
+      "losses": 0,
+      "created_at": "2026-07-27T00:03:01.369Z"
     }
   ]
 }
