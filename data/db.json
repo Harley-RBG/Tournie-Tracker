@@ -7,7 +7,10 @@
       "notes": "",
       "games_played": 0,
       "points": 0,
-      "created_at": "2026-07-22T10:49:58.478Z"
+      "created_at": "2026-07-22T10:49:58.478Z",
+      "rating": 1500,
+      "best_rating": 1500,
+      "rating_change": null
     },
     {
       "id": "2cbec020-0561-4b16-81b5-40b9d3b66973",
@@ -28,7 +31,10 @@
       "notes": "",
       "games_played": 2,
       "points": 0,
-      "created_at": "2026-07-22T10:50:50.253Z"
+      "created_at": "2026-07-22T10:50:50.253Z",
+      "rating": 1500,
+      "best_rating": 1500,
+      "rating_change": null
     },
     {
       "id": "737d2e34-85d4-4cbf-b8bf-89409b83f998",
@@ -37,7 +43,10 @@
       "notes": "",
       "games_played": 2,
       "points": 0,
-      "created_at": "2026-07-22T10:51:29.513Z"
+      "created_at": "2026-07-22T10:51:29.513Z",
+      "rating": 1500,
+      "best_rating": 1500,
+      "rating_change": null
     },
     {
       "id": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
@@ -46,7 +55,10 @@
       "notes": "",
       "games_played": 1,
       "points": 0,
-      "created_at": "2026-07-22T10:51:40.904Z"
+      "created_at": "2026-07-22T10:51:40.904Z",
+      "rating": 1500,
+      "best_rating": 1500,
+      "rating_change": null
     },
     {
       "id": "6dfe21eb-7a7c-4926-a791-b135a287b301",
@@ -55,7 +67,10 @@
       "notes": "",
       "games_played": 1,
       "points": 0,
-      "created_at": "2026-07-22T10:51:54.648Z"
+      "created_at": "2026-07-22T10:51:54.648Z",
+      "rating": 1500,
+      "best_rating": 1500,
+      "rating_change": null
     },
     {
       "id": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
@@ -79,18 +94,24 @@
       "email": "guest_1784720773657@guest.local",
       "display_name": "Guest1",
       "notes": "Guest (session only)",
-      "games_played": 5,
+      "games_played": 4,
       "points": 0,
-      "created_at": "2026-07-22T11:46:13.657Z"
+      "created_at": "2026-07-22T11:46:13.657Z",
+      "rating": 1500,
+      "best_rating": 1500,
+      "rating_change": null
     },
     {
       "id": "8fe8cf4d-ec35-4da8-8283-d1c06d280c4c",
       "email": "guest_1784720782417@guest.local",
       "display_name": "Guest2",
       "notes": "Guest (session only)",
-      "games_played": 4,
+      "games_played": 3,
       "points": 0,
-      "created_at": "2026-07-22T11:46:22.417Z"
+      "created_at": "2026-07-22T11:46:22.417Z",
+      "rating": 1500,
+      "best_rating": 1500,
+      "rating_change": null
     },
     {
       "id": "9a88653d-aab6-46b4-b55d-c75fb057fa61",
@@ -128,17 +149,6 @@
     }
   ],
   "matches": [
-    {
-      "id": "a4612810-6685-4b67-a450-9a482f42c85d",
-      "tournament_id": null,
-      "mode": "casual",
-      "player_a": "766d094a-ec35-4bd3-b3e8-b0183cc55bcc",
-      "player_b": "8fe8cf4d-ec35-4da8-8283-d1c06d280c4c",
-      "score_a": 10,
-      "score_b": 11,
-      "winner": "8fe8cf4d-ec35-4da8-8283-d1c06d280c4c",
-      "created_at": "2026-07-22T11:46:46.528Z"
-    },
     {
       "id": "caec2c6a-ad75-44fd-959f-b6b792512404",
       "tournament_id": null,
@@ -1742,42 +1752,49 @@
         "player_name": "virginia.martineznavarro",
         "rank": 2,
         "rating": 1500,
-        "games": 1
+        "games": 2
       },
       {
         "player_id": "737d2e34-85d4-4cbf-b8bf-89409b83f998",
         "player_name": "joshua.whiston",
         "rank": 3,
         "rating": 1500,
+        "games": 2
+      },
+      {
+        "player_id": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+        "player_name": "minh.nguyen",
+        "rank": 4,
+        "rating": 1500,
         "games": 1
       },
       {
         "player_id": "6dfe21eb-7a7c-4926-a791-b135a287b301",
         "player_name": "lorna.li",
-        "rank": 4,
+        "rank": 5,
         "rating": 1500,
         "games": 1
       },
       {
         "player_id": "766d094a-ec35-4bd3-b3e8-b0183cc55bcc",
         "player_name": "Guest1",
-        "rank": 5,
-        "rating": 1500,
-        "games": 5
-      },
-      {
-        "player_id": "8fe8cf4d-ec35-4da8-8283-d1c06d280c4c",
-        "player_name": "Guest2",
         "rank": 6,
         "rating": 1500,
         "games": 4
       },
       {
+        "player_id": "8fe8cf4d-ec35-4da8-8283-d1c06d280c4c",
+        "player_name": "Guest2",
+        "rank": 7,
+        "rating": 1500,
+        "games": 3
+      },
+      {
         "player_id": "2cbec020-0561-4b16-81b5-40b9d3b66973",
         "player_name": "Shane Chicharo",
-        "rank": 7,
+        "rank": 8,
         "rating": 1498,
-        "games": 3
+        "games": 4
       }
     ],
     "doubles": [
