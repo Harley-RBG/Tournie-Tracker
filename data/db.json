@@ -1802,6 +1802,25 @@
       },
       {
         "rank": 2,
+        "team_id": "c6996337-2e26-4445-a7f0-d884dd58ad5a",
+        "team_name": "Chop Suey",
+        "player_ids": [
+          "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+          "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
+        ],
+        "player_names": [
+          "minh.nguyen",
+          "Harley Trappitt"
+        ],
+        "rating": 1500,
+        "points": 0,
+        "games": 0,
+        "wins": 0,
+        "losses": 0,
+        "rating_change": 0
+      },
+      {
+        "rank": 3,
         "team_id": "af04282c-97a6-480c-b75d-e368e915228f",
         "team_name": "Golden Flamenco Queens",
         "player_ids": [
@@ -1878,6 +1897,20 @@
       "wins": 0,
       "losses": 0,
       "created_at": "2026-07-27T00:03:01.369Z"
+    },
+    {
+      "id": "c6996337-2e26-4445-a7f0-d884dd58ad5a",
+      "team_name": "Chop Suey",
+      "player_ids": [
+        "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+        "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
+      ],
+      "rating": 1500,
+      "points": 0,
+      "games": 0,
+      "wins": 0,
+      "losses": 0,
+      "created_at": "2026-07-27T00:03:46.921Z"
     }
   ]
 }
