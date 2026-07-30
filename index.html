@@ -343,23 +343,50 @@ nav button{flex:0 0 auto;white-space:nowrap}
 @media(max-width:700px){.tournie-grid{grid-template-columns:1fr}.tournie-pill{font-size:11px}.tournie-event-card{padding:9px}}
 
 
-/* QUICK_START_MATCH_RECORDER_PATCH_V1 */
+/* QUICK_START_MATCH_RECORDER_PATCH_V2 */
 .recorder-entry{margin-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .recorder-entry-card{padding:16px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);border-radius:12px}
 .recorder-entry-title{font-weight:800;color:#fff;font-size:16px;margin-bottom:5px}
 .recorder-entry-actions,.quick-format-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .quick-format-row button{flex:1 1 130px}
-#tab-recorder.recorder-choice-mode .recorder-layout,#tab-recorder.recorder-choice-mode .recorder-mobile-tabs{display:none}
-#tab-recorder.recorder-setup-mode .recorder-entry{display:none}
-#tab-recorder.recorder-live-mode .recorder-entry,#tab-recorder.recorder-live-mode .recorder-setup,#tab-recorder.recorder-live-mode .recorder-mobile-tabs{display:none}
-#tab-recorder.recorder-live-mode .live-score-panel{width:100%;flex:1 1 100%}
-.live-player-grid{display:grid;gap:6px;margin-bottom:8px}
-.live-player-select{font-size:14px;font-weight:700;color:#cfe6ff;text-align:center;text-align-last:center;background:#0d1116;border-color:rgba(255,255,255,.09);padding:7px 8px;min-height:38px}
+#tab-recorder.recorder-choice-mode .recorder-layout,#tab-recorder.recorder-choice-mode .recorder-mobile-tabs{display:none!important}
+#tab-recorder.recorder-setup-mode .recorder-entry{display:none!important}
+#tab-recorder.recorder-live-mode .recorder-entry,#tab-recorder.recorder-live-mode .recorder-setup,#tab-recorder.recorder-live-mode .recorder-mobile-tabs{display:none!important}
+#tab-recorder.recorder-live-mode .live-score-panel{width:100%;flex:1 1 100%;min-width:0}
+.live-player-grid{display:grid;grid-template-columns:1fr;gap:6px;margin-bottom:8px;min-width:0}
+.live-player-select{width:100%;font-size:14px;font-weight:700;color:#cfe6ff;text-align:center;text-align-last:center;background:#0d1116;border-color:rgba(255,255,255,.09);padding:7px 8px;min-height:38px;min-width:0}
 .live-score-panel.match-active-clean #switchSides{display:none}
-.rally-control{margin-top:14px;padding:10px;border-radius:10px;background:rgba(255,255,255,.035);display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
-.rally-stepper{display:flex;gap:6px;align-items:center}.rally-stepper input{width:74px;text-align:center;font-weight:800;font-size:20px;min-height:44px}.rally-stepper button{min-width:44px}
-.point-hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.35}
-@media(max-width:700px){.recorder-entry{grid-template-columns:1fr;gap:10px}.recorder-entry-card{padding:13px}.rally-control{grid-template-columns:1fr;gap:8px}.rally-stepper input{flex:1 1 auto;width:auto}.live-player-select{font-size:13px;min-height:42px}}
+.live-score-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.live-score-status{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.rally-control{margin-top:14px;padding:10px;border-radius:10px;background:rgba(255,255,255,.035);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;overflow:hidden}
+.rally-stepper{display:grid;grid-template-columns:48px minmax(70px,120px) 48px;gap:6px;align-items:center;max-width:100%}
+.rally-stepper input{width:100%;min-width:0;text-align:center;font-weight:800;font-size:20px;min-height:44px;padding-left:6px;padding-right:6px}
+.rally-stepper button{min-width:44px;padding-left:0;padding-right:0}
+.point-hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.35;white-space:normal}
+body.live-recorder-fullscreen{overflow:hidden;background:#050607}
+body.live-recorder-fullscreen header,body.live-recorder-fullscreen footer{display:none!important}
+body.live-recorder-fullscreen .app{width:100%;max-width:none;height:100dvh;margin:0;padding:8px;display:block}
+body.live-recorder-fullscreen .layout,body.live-recorder-fullscreen main{height:100%;display:block}
+body.live-recorder-fullscreen #tab-recorder{display:block!important;height:100%;border-radius:0;padding:8px;overflow:auto}
+body.live-recorder-fullscreen #tab-recorder>div:first-child{display:none!important}
+body.live-recorder-fullscreen #tab-recorder .recorder-layout{height:100%;margin-top:0}
+body.live-recorder-fullscreen #tab-recorder .live-score-panel{min-height:calc(100dvh - 16px);display:flex;flex-direction:column;justify-content:flex-start}
+body.live-recorder-fullscreen .live-controls{margin-top:auto}
+nav::-webkit-scrollbar{display:none} nav{scrollbar-width:none}
+@media(max-width:700px){
+  .topbar{grid-template-columns:auto 48px auto!important;align-items:center;justify-content:start;overflow:hidden}
+  nav{grid-column:1/-1!important;scrollbar-width:none!important;padding-bottom:0!important;max-width:100%}
+  nav::-webkit-scrollbar{display:none!important}
+  #authArea{grid-column:1/2!important;width:auto!important;min-width:0!important;max-width:100%!important;padding:8px!important;justify-content:flex-start!important}
+  #signInArea{min-width:0} #openLoginBtn{white-space:nowrap;padding:10px 14px!important}
+  #openSettingsBtn{grid-column:2/3!important}.toggle.card{grid-column:3/4!important;min-width:96px;justify-content:center}
+  .recorder-entry{grid-template-columns:1fr;gap:10px}.recorder-entry-card{padding:13px}
+  #tab-recorder{padding:10px!important;overflow:hidden}.live-score-panel{padding:12px!important;overflow:hidden}.live-score-head{align-items:flex-start}.live-score-status{font-size:12px;justify-content:flex-start}
+  .live-player-select{font-size:13px;min-height:42px;padding:7px 6px}.score{font-size:52px}.btn-large{width:84px;min-height:56px}
+  .rally-control{grid-template-columns:1fr;gap:8px;padding:10px;overflow:hidden}.rally-stepper{width:100%;grid-template-columns:56px minmax(0,1fr) 56px}.rally-stepper input{font-size:20px}.rally-stepper button{min-width:0;width:100%}
+  .live-controls{display:grid!important;grid-template-columns:1fr!important}.live-controls button{width:100%;flex-basis:auto!important}
+}
+@media(max-width:420px){.btn-large{width:80px}.rally-stepper{grid-template-columns:54px minmax(0,1fr) 54px}.score{font-size:50px}}
 
 </style>
 </head>
@@ -501,9 +528,7 @@ nav button{flex:0 0 auto;white-space:nowrap}
             <div class="recorder-entry-card">
               <div class="recorder-entry-title">Match Setup</div>
               <div class="muted">Use the standard match settings, then hit Start Match to switch to the live match screen.</div>
-              <div class="recorder-entry-actions">
-                <button id="openMatchSetup" type="button" class="ghost">Open Match Setup</button>
-              </div>
+              <div class="recorder-entry-actions"><button id="openMatchSetup" type="button" class="ghost">Open Match Setup</button></div>
             </div>
           </div>
 
@@ -574,9 +599,12 @@ nav button{flex:0 0 auto;white-space:nowrap}
 
             <!-- Live score -->
             <div class="live-score-panel card">
-              <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="live-score-head">
                 <div style="font-weight:700;color:#cfe6ff">Live Score</div>
-                <div class="muted" id="matchStatus">Idle</div>
+                <div class="live-score-status">
+                  <div class="muted" id="matchStatus">Idle</div>
+                  <button id="fullscreenRecorderBtn" type="button" class="ghost" title="Focus on live recorder">Fullscreen</button>
+                </div>
               </div>
 
               <div style="display:flex;gap:12px;margin-top:12px;align-items:center">
@@ -2255,7 +2283,7 @@ function startQuickMatch(type) {
   $('startMatchBtn').click();
 }
 function playerOptionsHtml(selectedId) {
-  return [...appData.players].sort((a,b)=>a.display_name.localeCompare(b.display_name)).map(p => `<option value="${p.id}" ${p.id === selectedId ? 'selected' : ''}>${p.display_name}</option>`).join('');
+  return [...appData.players].sort((a,b)=>(a.display_name||'').localeCompare(b.display_name||'')).map(p => `<option value="${p.id}" ${p.id === selectedId ? 'selected' : ''}>${p.display_name}</option>`).join('');
 }
 function renderLivePlayerSelectors() {
   if (!$('sideAName') || !$('sideBName')) return;
@@ -2282,13 +2310,30 @@ function setRallyHitsValue(v, applyToLast = true) {
   if ($('rallyHits')) $('rallyHits').value = next;
   if (applyToLast && currentMatch.pointLog.length) { const pt = currentMatch.pointLog[currentMatch.pointLog.length - 1]; pt.hits_per_rally = next; pt.rally_length = next; }
 }
+function resetRallyHitsForNextPoint() { setRallyHitsValue(0, false); }
 function adjustRallyHits(delta) { setRallyHitsValue(getRallyHitsValue() + delta, true); }
+function toggleRecorderFullscreen() {
+  const entering = !document.body.classList.contains('live-recorder-fullscreen');
+  document.body.classList.toggle('live-recorder-fullscreen', entering);
+  const btn = $('fullscreenRecorderBtn');
+  if (btn) btn.textContent = entering ? 'Exit Fullscreen' : 'Fullscreen';
+  const target = $('tab-recorder');
+  if (entering && target?.requestFullscreen) target.requestFullscreen().catch(() => {});
+  if (!entering && document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+}
 if ($('quickStartSingles')) $('quickStartSingles').onclick = () => startQuickMatch('singles');
 if ($('quickStartDoubles')) $('quickStartDoubles').onclick = () => startQuickMatch('doubles');
 if ($('openMatchSetup')) $('openMatchSetup').onclick = () => setRecorderMode('setup');
+if ($('fullscreenRecorderBtn')) $('fullscreenRecorderBtn').onclick = toggleRecorderFullscreen;
 if ($('rallyHitsUp')) $('rallyHitsUp').onclick = () => adjustRallyHits(1);
 if ($('rallyHitsDown')) $('rallyHitsDown').onclick = () => adjustRallyHits(-1);
 if ($('rallyHits')) $('rallyHits').addEventListener('change', () => setRallyHitsValue(getRallyHitsValue(), true));
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) {
+    document.body.classList.remove('live-recorder-fullscreen');
+    if ($('fullscreenRecorderBtn')) $('fullscreenRecorderBtn').textContent = 'Fullscreen';
+  }
+});
 document.addEventListener('keydown', e => {
   const tag = String(e.target?.tagName || '').toLowerCase();
   if (['input','select','textarea'].includes(tag) || !currentMatch.serveOrder.length) return;
@@ -2335,7 +2380,7 @@ $('startMatchBtn').onclick = () => {
 
   renderLivePlayerSelectors();
   document.querySelector('.live-score-panel')?.classList?.add('match-active-clean');
-  setRallyHitsValue(0, false);
+  resetRallyHitsForNextPoint();
 
   $('matchActions').textContent = '';
 
@@ -2365,6 +2410,8 @@ $('resetMatchBtn').onclick = () => {
   $('sideAName').innerHTML        = '';
   $('sideBName').innerHTML        = '';
   document.querySelector('.live-score-panel')?.classList?.remove('match-active-clean');
+  document.body.classList.remove('live-recorder-fullscreen');
+  if ($('fullscreenRecorderBtn')) $('fullscreenRecorderBtn').textContent = 'Fullscreen';
   $('matchActions').textContent   = '';
   $('sessionScore').style.display = 'none';
   updateScoreUI();
@@ -2455,23 +2502,29 @@ function logPoint(winnerSide) {
 $('addPointA').onclick = () => {
   if (currentMatch.serveOrder.length) logPoint('A');
   currentMatch.scoreA++; updateScoreUI(); checkAutoComplete();
+  resetRallyHitsForNextPoint();
 };
 $('addPointB').onclick = () => {
   if (currentMatch.serveOrder.length) logPoint('B');
   currentMatch.scoreB++; updateScoreUI(); checkAutoComplete();
+  resetRallyHitsForNextPoint();
 };
 $('subPointA').onclick = () => {
   if (currentMatch.scoreA > 0) {
     currentMatch.scoreA--;
-    updateScoreUI();
     if (currentMatch.pointLog.length) currentMatch.pointLog.pop(); // undo
+    updateScoreUI();
+    const last = currentMatch.pointLog[currentMatch.pointLog.length - 1];
+    setRallyHitsValue(last?.hits_per_rally ?? 0, false);
   }
 };
 $('subPointB').onclick = () => {
   if (currentMatch.scoreB > 0) {
     currentMatch.scoreB--;
-    updateScoreUI();
     if (currentMatch.pointLog.length) currentMatch.pointLog.pop(); // undo
+    updateScoreUI();
+    const last = currentMatch.pointLog[currentMatch.pointLog.length - 1];
+    setRallyHitsValue(last?.hits_per_rally ?? 0, false);
   }
 };
 
