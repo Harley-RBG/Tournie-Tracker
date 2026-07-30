@@ -41,7 +41,7 @@
       "email": "joshua.whiston@robertbird.com.au",
       "display_name": "joshua.whiston",
       "notes": "",
-      "games_played": 2,
+      "games_played": 3,
       "points": 0,
       "created_at": "2026-07-22T10:51:29.513Z",
       "rating": 1500,
@@ -118,7 +118,7 @@
       "email": "heru.gani@robertbird.com.au",
       "display_name": "heru.gani",
       "notes": "",
-      "games_played": 0,
+      "games_played": 1,
       "points": 0,
       "rating": 1500,
       "best_rating": 1500,
@@ -146,6 +146,30 @@
       "primary_weapon": null,
       "weakness_notes": "",
       "created_at": "2026-07-23T00:44:38.050Z"
+    },
+    {
+      "id": "38a15526-b61a-47fb-83df-5c7c13e8e65c",
+      "email": "guest_guest_a@guest.local",
+      "display_name": "Guest A",
+      "notes": "Quick-start guest player",
+      "games_played": 0,
+      "points": 0,
+      "rating": 1500,
+      "best_rating": 1500,
+      "created_at": "2026-07-30T22:48:42.183Z",
+      "is_guest": true
+    },
+    {
+      "id": "2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8",
+      "email": "guest_guest_b@guest.local",
+      "display_name": "Guest B",
+      "notes": "Quick-start guest player",
+      "games_played": 0,
+      "points": 0,
+      "rating": 1500,
+      "best_rating": 1500,
+      "created_at": "2026-07-30T22:48:42.183Z",
+      "is_guest": true
     }
   ],
   "matches": [
@@ -238,6 +262,24 @@
       "winner": "737d2e34-85d4-4cbf-b8bf-89409b83f998",
       "win_by_2": true,
       "created_at": "2026-07-24T07:09:21.439Z"
+    },
+    {
+      "id": "3737fb27-31d8-4340-bc1e-60c51169f5ef",
+      "tournament_id": null,
+      "mode": "casual",
+      "type": "singles",
+      "game_type": 11,
+      "session_id": null,
+      "game_number": null,
+      "player_a": "737d2e34-85d4-4cbf-b8bf-89409b83f998",
+      "player_b": "9a88653d-aab6-46b4-b55d-c75fb057fa61",
+      "player_c": null,
+      "player_d": null,
+      "score_a": 0,
+      "score_b": 0,
+      "winner": "9a88653d-aab6-46b4-b55d-c75fb057fa61",
+      "win_by_2": true,
+      "created_at": "2026-07-30T22:48:46.583Z"
     }
   ],
   "sessions": [],
