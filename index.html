@@ -342,6 +342,25 @@ nav button{flex:0 0 auto;white-space:nowrap}
 .tournie-format-panel{border:1px dashed rgba(255,255,255,.12);padding:10px;border-radius:10px;background:rgba(255,255,255,.025);margin-top:8px}
 @media(max-width:700px){.tournie-grid{grid-template-columns:1fr}.tournie-pill{font-size:11px}.tournie-event-card{padding:9px}}
 
+
+/* QUICK_START_MATCH_RECORDER_PATCH_V1 */
+.recorder-entry{margin-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.recorder-entry-card{padding:16px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);border-radius:12px}
+.recorder-entry-title{font-weight:800;color:#fff;font-size:16px;margin-bottom:5px}
+.recorder-entry-actions,.quick-format-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.quick-format-row button{flex:1 1 130px}
+#tab-recorder.recorder-choice-mode .recorder-layout,#tab-recorder.recorder-choice-mode .recorder-mobile-tabs{display:none}
+#tab-recorder.recorder-setup-mode .recorder-entry{display:none}
+#tab-recorder.recorder-live-mode .recorder-entry,#tab-recorder.recorder-live-mode .recorder-setup,#tab-recorder.recorder-live-mode .recorder-mobile-tabs{display:none}
+#tab-recorder.recorder-live-mode .live-score-panel{width:100%;flex:1 1 100%}
+.live-player-grid{display:grid;gap:6px;margin-bottom:8px}
+.live-player-select{font-size:14px;font-weight:700;color:#cfe6ff;text-align:center;text-align-last:center;background:#0d1116;border-color:rgba(255,255,255,.09);padding:7px 8px;min-height:38px}
+.live-score-panel.match-active-clean #switchSides{display:none}
+.rally-control{margin-top:14px;padding:10px;border-radius:10px;background:rgba(255,255,255,.035);display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.rally-stepper{display:flex;gap:6px;align-items:center}.rally-stepper input{width:74px;text-align:center;font-weight:800;font-size:20px;min-height:44px}.rally-stepper button{min-width:44px}
+.point-hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.35}
+@media(max-width:700px){.recorder-entry{grid-template-columns:1fr;gap:10px}.recorder-entry-card{padding:13px}.rally-control{grid-template-columns:1fr;gap:8px}.rally-stepper input{flex:1 1 auto;width:auto}.live-player-select{font-size:13px;min-height:42px}}
+
 </style>
 </head>
 <body>
@@ -455,7 +474,7 @@ nav button{flex:0 0 auto;white-space:nowrap}
         </section>
 
         <!-- Match Recorder -->
-        <section id="tab-recorder" class="panel card mobile-show-setup">
+        <section id="tab-recorder" class="panel card recorder-choice-mode mobile-show-setup">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
               <div style="font-weight:700;color:var(--accent)">Match Recorder</div>
@@ -469,6 +488,23 @@ nav button{flex:0 0 auto;white-space:nowrap}
           <div class="recorder-mobile-tabs" aria-label="Match recorder sections">
             <button id="recorderSetupTab" type="button" class="active">Setup</button>
             <button id="recorderScoreTab" type="button">Live Score</button>
+          </div>
+          <div class="recorder-entry" id="recorderEntryOptions">
+            <div class="recorder-entry-card">
+              <div class="recorder-entry-title">Quick-Start</div>
+              <div class="muted">Start immediately with guest players. You can swap any guest to a real player after the match starts.</div>
+              <div class="quick-format-row">
+                <button id="quickStartSingles" type="button" class="primary">Singles</button>
+                <button id="quickStartDoubles" type="button" class="primary">Doubles</button>
+              </div>
+            </div>
+            <div class="recorder-entry-card">
+              <div class="recorder-entry-title">Match Setup</div>
+              <div class="muted">Use the standard match settings, then hit Start Match to switch to the live match screen.</div>
+              <div class="recorder-entry-actions">
+                <button id="openMatchSetup" type="button" class="ghost">Open Match Setup</button>
+              </div>
+            </div>
           </div>
 
           <!-- Match setup -->
@@ -545,24 +581,24 @@ nav button{flex:0 0 auto;white-space:nowrap}
 
               <div style="display:flex;gap:12px;margin-top:12px;align-items:center">
                 <div class="side">
-                  <div id="sideAName" class="muted">Player A</div>
+                  <div id="sideAName" class="live-player-grid"></div>
                   <div id="serveTagA" class="serve-tag-empty"></div>
                   <div id="scoreA" class="score">0</div>
                   <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
-                    <button id="addPointA" class="btn-large primary">+1</button>
-                    <button id="subPointA" class="btn-large ghost">-1</button>
+                    <button id="addPointA" class="btn-large primary" title="Add point to Side A (ArrowUp)">↑</button>
+                    <button id="subPointA" class="btn-large ghost" title="Undo/subtract point from Side A (ArrowDown)">↓</button>
                   </div>
                 </div>
 
                 <div style="width:1px;background:rgba(255,255,255,0.03);height:120px"></div>
 
                 <div class="side">
-                  <div id="sideBName" class="muted">Player B</div>
+                  <div id="sideBName" class="live-player-grid"></div>
                   <div id="serveTagB" class="serve-tag-empty"></div>
                   <div id="scoreB" class="score">0</div>
                   <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
-                    <button id="addPointB" class="btn-large primary">+1</button>
-                    <button id="subPointB" class="btn-large ghost">-1</button>
+                    <button id="addPointB" class="btn-large primary" title="Add point to Side B (Shift+ArrowUp)">↑</button>
+                    <button id="subPointB" class="btn-large ghost" title="Undo/subtract point from Side B (Shift+ArrowDown)">↓</button>
                   </div>
                 </div>
               </div>
@@ -577,6 +613,17 @@ nav button{flex:0 0 auto;white-space:nowrap}
                 </div>
               </div>
 
+              <div class="rally-control" id="rallyControl">
+                <div>
+                  <div style="font-weight:700;color:#cfe6ff">Hits per rally</div>
+                  <div class="point-hint">0 = server fault, 1 = server ace. Numpad + / - edits the current point.</div>
+                </div>
+                <div class="rally-stepper">
+                  <button id="rallyHitsDown" type="button" class="ghost">−</button>
+                  <input id="rallyHits" type="number" min="0" step="1" value="0" inputmode="numeric">
+                  <button id="rallyHitsUp" type="button" class="ghost">+</button>
+                </div>
+              </div>
               <div class="live-controls">
                 <button id="switchSides" class="ghost">Switch Sides</button>
                 <button id="startMatchBtn" class="primary">Start Match</button>
@@ -2173,6 +2220,84 @@ function updateSessionScoreUI() {
   $('sessionInfo').textContent   = `Best of ${currentMatch.sessionFormat} \u00b7 First to ${needed} games`;
 }
 
+
+function setRecorderMode(mode) {
+  const rec = $('tab-recorder');
+  if (!rec) return;
+  rec.classList.toggle('recorder-choice-mode', mode === 'choice');
+  rec.classList.toggle('recorder-setup-mode', mode === 'setup');
+  rec.classList.toggle('recorder-live-mode', mode === 'live');
+  if (mode === 'setup') showRecorderPane('setup');
+  if (mode === 'live') showRecorderPane('score');
+}
+function ensureQuickGuest(label) {
+  appData.players ??= [];
+  const email = `guest_${label.toLowerCase().replace(/[^a-z0-9]+/g,'_')}@guest.local`;
+  let p = appData.players.find(x => x.email === email);
+  if (!p) {
+    p = { id: crypto.randomUUID(), email, display_name: label, notes: 'Quick-start guest player', games_played: 0, points: 0, rating: 1500, best_rating: 1500, created_at: new Date().toISOString(), is_guest: true };
+    appData.players.push(p);
+  }
+  return p.id;
+}
+function startQuickMatch(type) {
+  const a = ensureQuickGuest('Guest A');
+  const b = ensureQuickGuest('Guest B');
+  const c = type === 'doubles' ? ensureQuickGuest('Guest C') : null;
+  const d = type === 'doubles' ? ensureQuickGuest('Guest D') : null;
+  populatePlayerSelectors();
+  $('matchType').value = type;
+  $('doublesSection').style.display = type === 'doubles' ? 'block' : 'none';
+  $('matchMode').value = 'casual';
+  $('playerA').value = a; $('playerB').value = b;
+  if (type === 'doubles') { $('playerC').value = c; $('playerD').value = d; }
+  $('sessionFormat').value = '1'; $('firstServerSelect').value = 'A';
+  $('startMatchBtn').click();
+}
+function playerOptionsHtml(selectedId) {
+  return [...appData.players].sort((a,b)=>a.display_name.localeCompare(b.display_name)).map(p => `<option value="${p.id}" ${p.id === selectedId ? 'selected' : ''}>${p.display_name}</option>`).join('');
+}
+function renderLivePlayerSelectors() {
+  if (!$('sideAName') || !$('sideBName')) return;
+  const type = currentMatch.type;
+  const serverId = getServingPlayerId(currentMatch.scoreA, currentMatch.scoreB);
+  const makeSelect = (role, id) => `<select class="live-player-select" data-live-role="${role}" title="Change player">${playerOptionsHtml(id)}</select>`;
+  const aRoles = type === 'doubles' && serverId === currentMatch.c ? [['c',currentMatch.c],['a',currentMatch.a]] : [['a',currentMatch.a], ...(type === 'doubles' ? [['c',currentMatch.c]] : [])];
+  const bRoles = type === 'doubles' && serverId === currentMatch.d ? [['d',currentMatch.d],['b',currentMatch.b]] : [['b',currentMatch.b], ...(type === 'doubles' ? [['d',currentMatch.d]] : [])];
+  $('sideAName').innerHTML = aRoles.map(([r,id]) => makeSelect(r,id)).join('');
+  $('sideBName').innerHTML = bRoles.map(([r,id]) => makeSelect(r,id)).join('');
+  document.querySelectorAll('.live-player-select').forEach(sel => { sel.onchange = () => updateLivePlayer(sel.dataset.liveRole, sel.value); });
+}
+function updateLivePlayer(role, playerId) {
+  if (!playerId) return;
+  const otherRoles = ['a','b','c','d'].filter(r => r !== role);
+  if (otherRoles.some(r => currentMatch[r] === playerId)) { alert('That player is already in this match.'); renderLivePlayerSelectors(); return; }
+  currentMatch[role] = playerId;
+  currentMatch.serveOrder = buildServeOrder();
+  renderLivePlayerSelectors(); updateServeIndicator();
+}
+function getRallyHitsValue() { return Math.max(0, Number($('rallyHits')?.value || 0)); }
+function setRallyHitsValue(v, applyToLast = true) {
+  const next = Math.max(0, Number(v) || 0);
+  if ($('rallyHits')) $('rallyHits').value = next;
+  if (applyToLast && currentMatch.pointLog.length) { const pt = currentMatch.pointLog[currentMatch.pointLog.length - 1]; pt.hits_per_rally = next; pt.rally_length = next; }
+}
+function adjustRallyHits(delta) { setRallyHitsValue(getRallyHitsValue() + delta, true); }
+if ($('quickStartSingles')) $('quickStartSingles').onclick = () => startQuickMatch('singles');
+if ($('quickStartDoubles')) $('quickStartDoubles').onclick = () => startQuickMatch('doubles');
+if ($('openMatchSetup')) $('openMatchSetup').onclick = () => setRecorderMode('setup');
+if ($('rallyHitsUp')) $('rallyHitsUp').onclick = () => adjustRallyHits(1);
+if ($('rallyHitsDown')) $('rallyHitsDown').onclick = () => adjustRallyHits(-1);
+if ($('rallyHits')) $('rallyHits').addEventListener('change', () => setRallyHitsValue(getRallyHitsValue(), true));
+document.addEventListener('keydown', e => {
+  const tag = String(e.target?.tagName || '').toLowerCase();
+  if (['input','select','textarea'].includes(tag) || !currentMatch.serveOrder.length) return;
+  if (e.code === 'NumpadAdd') { e.preventDefault(); adjustRallyHits(1); }
+  if (e.code === 'NumpadSubtract') { e.preventDefault(); adjustRallyHits(-1); }
+  if (e.key === 'ArrowUp') { e.preventDefault(); (e.shiftKey ? $('addPointB') : $('addPointA')).click(); }
+  if (e.key === 'ArrowDown') { e.preventDefault(); (e.shiftKey ? $('subPointB') : $('subPointA')).click(); }
+});
+
 $('startMatchBtn').onclick = () => {
   if (currentMatch.serveOrder.length) { completeGame(); return; }
   const type = $('matchType').value;
@@ -2208,17 +2333,9 @@ $('startMatchBtn').onclick = () => {
   });
   currentMatch.serveOrder = buildServeOrder();
 
-  const pa = appData.players.find(p => p.id === a);
-  const pb = appData.players.find(p => p.id === b);
-  const pc = c ? appData.players.find(p => p.id === c) : null;
-  const pd = d ? appData.players.find(p => p.id === d) : null;
-
-  $('sideAName').textContent = type === 'doubles'
-    ? `${pa?.display_name || 'A'} / ${pc?.display_name || 'C'}`
-    : (pa?.display_name || 'Player A');
-  $('sideBName').textContent = type === 'doubles'
-    ? `${pb?.display_name || 'B'} / ${pd?.display_name || 'D'}`
-    : (pb?.display_name || 'Player B');
+  renderLivePlayerSelectors();
+  document.querySelector('.live-score-panel')?.classList?.add('match-active-clean');
+  setRallyHitsValue(0, false);
 
   $('matchActions').textContent = '';
 
@@ -2233,7 +2350,7 @@ $('startMatchBtn').onclick = () => {
   updateScoreUI();
   $('startMatchBtn').textContent = 'Complete Game';
   $('startMatchBtn').classList.add('is-complete');
-  showRecorderPane('score');
+  setRecorderMode('live');
 };
 
 $('resetMatchBtn').onclick = () => {
@@ -2245,21 +2362,23 @@ $('resetMatchBtn').onclick = () => {
     sessionFormat: 1, sessionId: null, gamesA: 0, gamesB: 0, gameNumber: 1,
     pointLog: []
   });
-  $('sideAName').textContent      = 'Player A';
-  $('sideBName').textContent      = 'Player B';
+  $('sideAName').innerHTML        = '';
+  $('sideBName').innerHTML        = '';
+  document.querySelector('.live-score-panel')?.classList?.remove('match-active-clean');
   $('matchActions').textContent   = '';
   $('sessionScore').style.display = 'none';
   updateScoreUI();
   $('matchStatus').textContent = 'Idle';
   $('startMatchBtn').textContent = 'Start Match';
   $('startMatchBtn').classList.remove('is-complete');
-  showRecorderPane('setup');
+  setRecorderMode('choice');
 };
 
 function updateScoreUI() {
   $('scoreA').textContent = currentMatch.scoreA;
   $('scoreB').textContent = currentMatch.scoreB;
   updateServeIndicator();
+  if (currentMatch.serveOrder.length) renderLivePlayerSelectors();
 }
 
 /* ---------- Serve logic (TT standard rules) ----------
@@ -2327,7 +2446,8 @@ function logPoint(winnerSide) {
     score_a_before: sA,
     score_b_before: sB,
     pressure_flag:  Math.max(sA, sB) >= gt - 2,  // last 3+ pts of a game
-    rally_length:   null,                 // tagged later: 'short'|'medium'|'long'
+    hits_per_rally: getRallyHitsValue(),  // 0 = server fault, 1 = ace, etc.
+    rally_length:   getRallyHitsValue(),  // numeric rally count retained for stats/export
     end_type:       null                  // tagged later: 'winner'|'forced_error' etc.
   });
 }
@@ -2361,16 +2481,7 @@ $('switchSides').onclick = () => {
   [currentMatch.c, currentMatch.d] = [currentMatch.d, currentMatch.c];
   [currentMatch.scoreA, currentMatch.scoreB] = [currentMatch.scoreB, currentMatch.scoreA];
 
-  const pa = appData.players.find(p => p.id === currentMatch.a);
-  const pb = appData.players.find(p => p.id === currentMatch.b);
-  const pc = currentMatch.c ? appData.players.find(p => p.id === currentMatch.c) : null;
-  const pd = currentMatch.d ? appData.players.find(p => p.id === currentMatch.d) : null;
-  $('sideAName').textContent = currentMatch.type === 'doubles'
-    ? `${pa?.display_name || 'A'} / ${pc?.display_name || 'C'}`
-    : (pa?.display_name || 'Player A');
-  $('sideBName').textContent = currentMatch.type === 'doubles'
-    ? `${pb?.display_name || 'B'} / ${pd?.display_name || 'D'}`
-    : (pb?.display_name || 'Player B');
+  currentMatch.serveOrder = buildServeOrder();
   updateScoreUI();
 };
 
@@ -2631,7 +2742,7 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
   renderLeaderboard();
   loadTournaments();
   populatePlayerSelectors();
-  showRecorderPane('setup');
+  setRecorderMode('choice');
 })();
 </script>
 
