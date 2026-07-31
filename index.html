@@ -388,6 +388,16 @@ nav::-webkit-scrollbar{display:none} nav{scrollbar-width:none}
 }
 @media(max-width:420px){.btn-large{width:80px}.rally-stepper{grid-template-columns:54px minmax(0,1fr) 54px}.score{font-size:50px}}
 
+
+/* RALLY_TRACKING_TOGGLE_PATCH_V1 */
+.rally-toggle-row{display:flex;align-items:center;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.rally-toggle-row label{display:inline-flex;align-items:center;gap:6px;margin:0;cursor:pointer;color:#cfe6ff;font-size:13px;white-space:nowrap}
+.rally-toggle-row input{width:auto;min-height:auto}
+.rally-control.rally-disabled{opacity:.58}
+.rally-control.rally-disabled .rally-stepper{pointer-events:none;filter:grayscale(.35)}
+.rally-control.rally-disabled .point-hint::after{content:" Tracking off: points will save without rally-hit data.";color:#fbbf24}
+@media(max-width:700px){.rally-toggle-row{justify-content:flex-start}.rally-toggle-row label{font-size:12px}}
+
 </style>
 </head>
 <body>
@@ -643,8 +653,11 @@ nav::-webkit-scrollbar{display:none} nav{scrollbar-width:none}
 
               <div class="rally-control" id="rallyControl">
                 <div>
-                  <div style="font-weight:700;color:#cfe6ff">Hits per rally</div>
-                  <div class="point-hint">0 = server fault, 1 = server ace. Numpad + / - edits the current point.</div>
+                  <div class="rally-toggle-row">
+                    <div style="font-weight:700;color:#cfe6ff;margin-right:auto">Hits per rally</div>
+                    <label><input id="rallyTrackingEnabled" type="checkbox" checked> Track hits</label>
+                  </div>
+                  <div class="point-hint" id="rallyHint">0 = server fault, 1 = server ace. Numpad + / - edits the current point.</div>
                 </div>
                 <div class="rally-stepper">
                   <button id="rallyHitsDown" type="button" class="ghost">−</button>
@@ -2304,14 +2317,24 @@ function updateLivePlayer(role, playerId) {
   currentMatch.serveOrder = buildServeOrder();
   renderLivePlayerSelectors(); updateServeIndicator();
 }
+function isRallyTrackingEnabled() { return !!$('rallyTrackingEnabled')?.checked; }
+function updateRallyTrackingUI() {
+  const enabled = isRallyTrackingEnabled();
+  const control = $('rallyControl');
+  const input = $('rallyHits');
+  if (control) control.classList.toggle('rally-disabled', !enabled);
+  if (input) input.disabled = !enabled;
+  ['rallyHitsUp','rallyHitsDown'].forEach(id => { if ($(id)) $(id).disabled = !enabled; });
+  if (!enabled) setRallyHitsValue(0, false);
+}
 function getRallyHitsValue() { return Math.max(0, Number($('rallyHits')?.value || 0)); }
 function setRallyHitsValue(v, applyToLast = true) {
   const next = Math.max(0, Number(v) || 0);
   if ($('rallyHits')) $('rallyHits').value = next;
-  if (applyToLast && currentMatch.pointLog.length) { const pt = currentMatch.pointLog[currentMatch.pointLog.length - 1]; pt.hits_per_rally = next; pt.rally_length = next; }
+  if (applyToLast && isRallyTrackingEnabled() && currentMatch.pointLog.length) { const pt = currentMatch.pointLog[currentMatch.pointLog.length - 1]; pt.hits_per_rally = next; pt.rally_length = next; }
 }
 function resetRallyHitsForNextPoint() { setRallyHitsValue(0, false); }
-function adjustRallyHits(delta) { setRallyHitsValue(getRallyHitsValue() + delta, true); }
+function adjustRallyHits(delta) { if (!isRallyTrackingEnabled()) return; setRallyHitsValue(getRallyHitsValue() + delta, true); }
 function toggleRecorderFullscreen() {
   const entering = !document.body.classList.contains('live-recorder-fullscreen');
   document.body.classList.toggle('live-recorder-fullscreen', entering);
@@ -2328,6 +2351,7 @@ if ($('fullscreenRecorderBtn')) $('fullscreenRecorderBtn').onclick = toggleRecor
 if ($('rallyHitsUp')) $('rallyHitsUp').onclick = () => adjustRallyHits(1);
 if ($('rallyHitsDown')) $('rallyHitsDown').onclick = () => adjustRallyHits(-1);
 if ($('rallyHits')) $('rallyHits').addEventListener('change', () => setRallyHitsValue(getRallyHitsValue(), true));
+if ($('rallyTrackingEnabled')) $('rallyTrackingEnabled').addEventListener('change', updateRallyTrackingUI);
 document.addEventListener('fullscreenchange', () => {
   if (!document.fullscreenElement) {
     document.body.classList.remove('live-recorder-fullscreen');
@@ -2380,6 +2404,7 @@ $('startMatchBtn').onclick = () => {
 
   renderLivePlayerSelectors();
   document.querySelector('.live-score-panel')?.classList?.add('match-active-clean');
+  updateRallyTrackingUI();
   resetRallyHitsForNextPoint();
 
   $('matchActions').textContent = '';
@@ -2493,8 +2518,8 @@ function logPoint(winnerSide) {
     score_a_before: sA,
     score_b_before: sB,
     pressure_flag:  Math.max(sA, sB) >= gt - 2,  // last 3+ pts of a game
-    hits_per_rally: getRallyHitsValue(),  // 0 = server fault, 1 = ace, etc.
-    rally_length:   getRallyHitsValue(),  // numeric rally count retained for stats/export
+    hits_per_rally: isRallyTrackingEnabled() ? getRallyHitsValue() : null,  // null = tracking disabled for this point
+    rally_length:   isRallyTrackingEnabled() ? getRallyHitsValue() : null,  // numeric rally count when enabled
     end_type:       null                  // tagged later: 'winner'|'forced_error' etc.
   });
 }
@@ -2515,7 +2540,7 @@ $('subPointA').onclick = () => {
     if (currentMatch.pointLog.length) currentMatch.pointLog.pop(); // undo
     updateScoreUI();
     const last = currentMatch.pointLog[currentMatch.pointLog.length - 1];
-    setRallyHitsValue(last?.hits_per_rally ?? 0, false);
+    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
   }
 };
 $('subPointB').onclick = () => {
@@ -2524,7 +2549,7 @@ $('subPointB').onclick = () => {
     if (currentMatch.pointLog.length) currentMatch.pointLog.pop(); // undo
     updateScoreUI();
     const last = currentMatch.pointLog[currentMatch.pointLog.length - 1];
-    setRallyHitsValue(last?.hits_per_rally ?? 0, false);
+    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
   }
 };
 
@@ -2796,6 +2821,7 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
   loadTournaments();
   populatePlayerSelectors();
   setRecorderMode('choice');
+  if (typeof updateRallyTrackingUI === 'function') updateRallyTrackingUI();
 })();
 </script>
 
