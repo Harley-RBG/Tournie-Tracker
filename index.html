@@ -478,6 +478,57 @@ body.live-recorder-fullscreen .fs-player.is-serving{background:var(--accent);bor
 }
 @media(max-height:620px){body.live-recorder-fullscreen .fs-table{max-height:44dvh}}
 
+
+/* FULLSCREEN_TABLE_POSITION_TUNING_PATCH_V1 */
+body.live-recorder-fullscreen .fs-table.fs-singles .fs-player.single{
+  grid-column:1;
+  justify-self:center;
+  align-self:center;
+  max-width:34%;
+}
+body.live-recorder-fullscreen .fs-table.fs-singles .fs-half-b .fs-player.single{
+  transform:translateY(-4%);
+}
+body.live-recorder-fullscreen .fs-table.fs-singles .fs-half-a .fs-player.single{
+  transform:translateY(4%);
+}
+body.live-recorder-fullscreen .fs-table.fs-singles .fs-half-b .fs-side-score{
+  left:72%;
+  top:52%;
+}
+body.live-recorder-fullscreen .fs-table.fs-singles .fs-half-a .fs-side-score{
+  left:72%;
+  top:48%;
+}
+body.live-recorder-fullscreen .fs-table.fs-doubles .fs-half-b .fs-side-score{
+  left:50%;
+  top:25%;
+}
+body.live-recorder-fullscreen .fs-table.fs-doubles .fs-half-a .fs-side-score{
+  left:50%;
+  top:75%;
+}
+body.live-recorder-fullscreen .fs-table.fs-doubles .fs-side-score,
+body.live-recorder-fullscreen .fs-table.fs-singles .fs-side-score{
+  font-size:clamp(42px,calc(6.2vw * var(--fs-text-scale)),112px);
+  background:rgba(5,8,12,.52);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:999px;
+  padding:0 .18em .06em;
+  min-width:1.2em;
+  text-align:center;
+  backdrop-filter:blur(3px);
+}
+body.live-recorder-fullscreen .fs-table.fs-doubles .fs-half-b .fs-side-score{transform:translate(-50%,-50%) translateX(14%)}
+body.live-recorder-fullscreen .fs-table.fs-doubles .fs-half-a .fs-side-score{transform:translate(-50%,-50%) translateX(-14%)}
+@media(max-width:700px){
+  body.live-recorder-fullscreen .fs-table.fs-singles .fs-player.single{max-width:42%;}
+  body.live-recorder-fullscreen .fs-table.fs-singles .fs-half-b .fs-side-score,
+  body.live-recorder-fullscreen .fs-table.fs-singles .fs-half-a .fs-side-score{left:70%;}
+  body.live-recorder-fullscreen .fs-table.fs-doubles .fs-half-b .fs-side-score{top:28%;}
+  body.live-recorder-fullscreen .fs-table.fs-doubles .fs-half-a .fs-side-score{top:72%;}
+}
+
 </style>
 </head>
 <body>
@@ -770,7 +821,7 @@ body.live-recorder-fullscreen .fs-player.is-serving{background:var(--accent);bor
                   </div>
                 </div>
                 <div class="fs-table-wrap">
-                  <div class="fs-table" id="fsTableView">
+                  <div class="fs-table fs-singles" id="fsTableView">
                     <div class="fs-half fs-half-b">
                       <div id="fsServerB" class="fs-server-label">SERVING</div>
                       <div id="fsPlayerB" class="fs-player">Player B</div>
@@ -2545,6 +2596,11 @@ function renderFullscreenRecorderUI() {
   $('fsPlayerC').textContent = names.c;
   $('fsPlayerD').textContent = names.d;
   const isDoubles = type === 'doubles';
+  const table = $('fsTableView');
+  if (table) {
+    table.classList.toggle('fs-doubles', isDoubles);
+    table.classList.toggle('fs-singles', !isDoubles);
+  }
   $('fsPlayerC').style.display = isDoubles ? '' : 'none';
   $('fsPlayerD').style.display = isDoubles ? '' : 'none';
   $('fsPlayerA').classList.toggle('single', !isDoubles);
