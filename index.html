@@ -556,6 +556,117 @@ body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles .fs-serve
 body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles .fs-server-label.server-role-b{left:75%;top:20%}
 @media(max-width:700px){body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player{font-size:clamp(14px,calc(4.1vw * var(--fs-text-scale)),22px);max-width:36%}body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-side-score{font-size:clamp(42px,calc(14vw * var(--fs-text-scale)),78px)}body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-server-label{font-size:clamp(10px,calc(3.2vw * var(--fs-text-scale)),16px);padding:3px 10px}}
 
+
+
+/* ============================================================
+   FULLSCREEN_TABLE_PLAYER_SERVER_BADGE_PATCH_V2
+   Intent:
+   - Serving badge belongs to the actual player slot, not the side.
+   - Legacy side-level .fs-server-label is hidden to avoid duplicate/all-player badges.
+   - Doubles uses four fixed slots: A partner top-left, A bottom-left, B top-right, B partner bottom-right.
+   - Singles uses the same visual language but only top-left Player A and top-right Player B.
+   ============================================================ */
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-server-label,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-server-label.active{
+  display:none!important;
+}
+
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player{
+  overflow:visible!important;
+  white-space:normal!important;
+  text-align:center!important;
+  font-weight:900!important;
+  letter-spacing:-.015em;
+}
+
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving{
+  color:#fff!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  text-shadow:0 3px 14px rgba(0,0,0,.88)!important;
+}
+
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving::before{
+  content:""!important;
+  display:none!important;
+}
+
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving::after{
+  content:"SERVING";
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:8;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:max-content;
+  min-width:calc(92px * var(--fs-ui-scale));
+  padding:calc(5px * var(--fs-ui-scale)) calc(14px * var(--fs-ui-scale));
+  border-radius:999px;
+  background:var(--accent);
+  border:1px solid rgba(255,255,255,.28);
+  color:#fff;
+  font-size:clamp(11px,calc(1.15vw * var(--fs-text-scale)),18px);
+  line-height:1;
+  font-weight:950;
+  letter-spacing:.035em;
+  text-shadow:0 2px 5px rgba(0,0,0,.45);
+  box-shadow:0 4px 0 rgba(0,0,0,.46),0 0 18px rgba(0,94,184,.55);
+  pointer-events:none;
+}
+
+/* Doubles serving badge positions */
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerC.is-serving::after,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerB.is-serving::after{
+  bottom:calc(100% + 18px * var(--fs-ui-scale));
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerA.is-serving::after,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerD.is-serving::after{
+  top:calc(100% + 18px * var(--fs-ui-scale));
+}
+
+/* Singles layout: remove partners and keep Player A and Player B in the top court positions. */
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerA{
+  left:25%!important;
+  top:32%!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerB{
+  left:75%!important;
+  top:32%!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerC,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerD{
+  display:none!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerA.is-serving::after,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerB.is-serving::after{
+  bottom:calc(100% + 18px * var(--fs-ui-scale));
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsScoreA,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsScoreB{
+  top:50%!important;
+}
+
+@media(max-width:700px){
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving::after{
+    min-width:72px;
+    padding:4px 10px;
+    font-size:clamp(10px,calc(3vw * var(--fs-text-scale)),14px);
+  }
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerC.is-serving::after,
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerB.is-serving::after,
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerA.is-serving::after,
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerB.is-serving::after{
+    bottom:calc(100% + 10px);
+  }
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerA.is-serving::after,
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerD.is-serving::after{
+    top:calc(100% + 10px);
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2640,8 +2751,8 @@ function renderFullscreenRecorderUI() {
   const names = {
     a: playerDisplayNameById(currentMatch.a, 'Player A'),
     b: playerDisplayNameById(currentMatch.b, 'Player B'),
-    c: playerDisplayNameById(currentMatch.c, 'Player C'),
-    d: playerDisplayNameById(currentMatch.d, 'Player D')
+    c: playerDisplayNameById(currentMatch.c, 'Player A Partner'),
+    d: playerDisplayNameById(currentMatch.d, 'Player B Partner')
   };
   $('fsPlayerA').textContent = names.a;
   $('fsPlayerB').textContent = names.b;
@@ -3772,4 +3883,3 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
 
 </body>
 </html>
-

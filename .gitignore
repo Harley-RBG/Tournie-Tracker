@@ -4,3 +4,5 @@
 !.dev.vars.example
 .env*
 !.env.example
+build_bundle.py
+bundle.md
