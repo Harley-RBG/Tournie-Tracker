@@ -667,6 +667,90 @@ body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsScoreB
   }
 }
 
+
+
+/* ============================================================
+   FULLSCREEN_DOUBLES_ALIGNMENT_PATCH_V3
+   Intent:
+   - Force doubles scores back to true side-centre positions.
+   - Keep doubles player names clear of score discs.
+   - Give names higher layer than scores, while serving badge remains highest.
+   - Override earlier patch selectors that placed side scores in top/bottom halves.
+   ============================================================ */
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerC{
+  display:block!important;
+  left:25%!important;
+  top:29%!important;
+  z-index:7!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerA{
+  display:block!important;
+  left:25%!important;
+  top:71%!important;
+  z-index:7!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerB{
+  display:block!important;
+  left:75%!important;
+  top:29%!important;
+  z-index:7!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerD{
+  display:block!important;
+  left:75%!important;
+  top:71%!important;
+  z-index:7!important;
+}
+
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsScoreA,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsScoreB{
+  top:50%!important;
+  transform:translate(-50%,-50%)!important;
+  z-index:4!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsScoreA{
+  left:25%!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsScoreB{
+  left:75%!important;
+}
+
+/* Slightly smaller doubles names to keep long guest/player names inside each quadrant. */
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles .fs-player{
+  max-width:31%!important;
+  font-size:clamp(17px,calc(1.85vw * var(--fs-text-scale)),34px)!important;
+  line-height:1.08!important;
+}
+
+/* Doubles serving badge spacing tuned for the quadrant layout. */
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerC.is-serving::after,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerB.is-serving::after{
+  bottom:calc(100% + 14px * var(--fs-ui-scale))!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerA.is-serving::after,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerD.is-serving::after{
+  top:calc(100% + 14px * var(--fs-ui-scale))!important;
+}
+
+@media(max-width:700px){
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerC,
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerB{
+    top:28%!important;
+  }
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerA,
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerD{
+    top:72%!important;
+  }
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles .fs-player{
+    max-width:35%!important;
+    font-size:clamp(13px,calc(3.7vw * var(--fs-text-scale)),21px)!important;
+  }
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsScoreA,
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsScoreB{
+    top:50%!important;
+  }
+}
+
 </style>
 </head>
 <body>
