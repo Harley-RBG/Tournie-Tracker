@@ -816,6 +816,11 @@ body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles .fs-serve
                     <label><input id="rallyTrackingEnabled" type="checkbox" checked> Track hits</label>
                   </div>
                   <div class="point-hint" id="rallyHint">0 = server fault, 1 = server ace. Numpad + / - edits the current point.</div>
+                  <div class="rally-toggle-row">
+                    <div style="font-weight:700;color:#cfe6ff;margin-right:auto">Hits per rally</div>
+                    <label><input id="rallyTrackingEnabled" type="checkbox" checked> Track hits</label>
+                  </div>
+                  <div class="point-hint" id="rallyHint">0 = server fault, 1 = server ace. Numpad + / - edits the current point.</div>
                 </div>
                 <div class="rally-stepper">
                   <button id="rallyHitsDown" type="button" class="ghost">−</button>
@@ -2549,20 +2554,38 @@ function updateRallyTrackingUI() {
   ['fsRallyHitsUp','fsRallyHitsDown'].forEach(id => { if ($(id)) $(id).disabled = !enabled; });
   if ($('fsRallyHits')) $('fsRallyHits').value = $('rallyHits')?.value || 0;
 }
+function isRallyTrackingEnabled() { return !!$('rallyTrackingEnabled')?.checked; }
+function updateRallyTrackingUI() {
+  const enabled = isRallyTrackingEnabled();
+  const control = $('rallyControl');
+  const input = $('rallyHits');
+  if (control) control.classList.toggle('rally-disabled', !enabled);
+  if (input) input.disabled = !enabled;
+  ['rallyHitsUp','rallyHitsDown'].forEach(id => { if ($(id)) $(id).disabled = !enabled; });
+  if (!enabled) setRallyHitsValue(0, false);
+  if ($('fsRallyTrackingEnabled')) $('fsRallyTrackingEnabled').checked = enabled;
+  if ($('fsRallyHits')) $('fsRallyHits').disabled = !enabled;
+  ['fsRallyHitsUp','fsRallyHitsDown'].forEach(id => { if ($(id)) $(id).disabled = !enabled; });
+  if ($('fsRallyHits')) $('fsRallyHits').value = $('rallyHits')?.value || 0;
+}
 function getRallyHitsValue() { return Math.max(0, Number($('rallyHits')?.value || 0)); }
 function setRallyHitsValue(v, applyToLast = true) {
   const next = Math.max(0, Number(v) || 0);
   if ($('rallyHits')) $('rallyHits').value = next;
   if ($('fsRallyHits')) $('fsRallyHits').value = next;
   if (applyToLast && isRallyTrackingEnabled() && currentMatch.pointLog.length) { const pt = currentMatch.pointLog[currentMatch.pointLog.length - 1]; pt.hits_per_rally = next; pt.rally_length = next; }
+  if ($('fsRallyHits')) $('fsRallyHits').value = next;
+  if (applyToLast && isRallyTrackingEnabled() && currentMatch.pointLog.length) { const pt = currentMatch.pointLog[currentMatch.pointLog.length - 1]; pt.hits_per_rally = next; pt.rally_length = next; }
 }
 function resetRallyHitsForNextPoint() { setRallyHitsValue(0, false); }
+function adjustRallyHits(delta) { if (!isRallyTrackingEnabled()) return; setRallyHitsValue(getRallyHitsValue() + delta, true); }
 function adjustRallyHits(delta) { if (!isRallyTrackingEnabled()) return; setRallyHitsValue(getRallyHitsValue() + delta, true); }
 function toggleRecorderFullscreen() {
   const entering = !document.body.classList.contains('live-recorder-fullscreen');
   document.body.classList.toggle('live-recorder-fullscreen', entering);
   const btn = $('fullscreenRecorderBtn');
   if (btn) btn.textContent = entering ? 'Exit Fullscreen' : 'Fullscreen';
+  if (entering) { applyFullscreenScaleSettings(); wireFullscreenRecorderControls(); renderFullscreenRecorderUI(); }
   if (entering) { applyFullscreenScaleSettings(); wireFullscreenRecorderControls(); renderFullscreenRecorderUI(); }
   const target = $('tab-recorder');
   if (entering && target?.requestFullscreen) target.requestFullscreen().catch(() => {});
@@ -2576,10 +2599,12 @@ if ($('rallyHitsUp')) $('rallyHitsUp').onclick = () => adjustRallyHits(1);
 if ($('rallyHitsDown')) $('rallyHitsDown').onclick = () => adjustRallyHits(-1);
 if ($('rallyHits')) $('rallyHits').addEventListener('change', () => setRallyHitsValue(getRallyHitsValue(), true));
 if ($('rallyTrackingEnabled')) $('rallyTrackingEnabled').addEventListener('change', updateRallyTrackingUI);
+if ($('rallyTrackingEnabled')) $('rallyTrackingEnabled').addEventListener('change', updateRallyTrackingUI);
 document.addEventListener('fullscreenchange', () => {
   if (!document.fullscreenElement) {
     document.body.classList.remove('live-recorder-fullscreen');
     if ($('fullscreenRecorderBtn')) $('fullscreenRecorderBtn').textContent = 'Fullscreen';
+    $('fsScalePanel')?.classList.remove('open');
     $('fsScalePanel')?.classList.remove('open');
   }
 });
@@ -2709,6 +2734,7 @@ $('startMatchBtn').onclick = () => {
   renderLivePlayerSelectors();
   document.querySelector('.live-score-panel')?.classList?.add('match-active-clean');
   updateRallyTrackingUI();
+  updateRallyTrackingUI();
   resetRallyHitsForNextPoint();
 
   $('matchActions').textContent = '';
@@ -2755,6 +2781,7 @@ function updateScoreUI() {
   $('scoreB').textContent = currentMatch.scoreB;
   updateServeIndicator();
   if (currentMatch.serveOrder.length) renderLivePlayerSelectors();
+  renderFullscreenRecorderUI();
   renderFullscreenRecorderUI();
 }
 
@@ -2825,6 +2852,8 @@ function logPoint(winnerSide) {
     pressure_flag:  Math.max(sA, sB) >= gt - 2,  // last 3+ pts of a game
     hits_per_rally: isRallyTrackingEnabled() ? getRallyHitsValue() : null,  // null = tracking disabled for this point
     rally_length:   isRallyTrackingEnabled() ? getRallyHitsValue() : null,  // numeric rally count when enabled
+    hits_per_rally: isRallyTrackingEnabled() ? getRallyHitsValue() : null,  // null = tracking disabled for this point
+    rally_length:   isRallyTrackingEnabled() ? getRallyHitsValue() : null,  // numeric rally count when enabled
     end_type:       null                  // tagged later: 'winner'|'forced_error' etc.
   });
 }
@@ -2846,6 +2875,7 @@ $('subPointA').onclick = () => {
     updateScoreUI();
     const last = currentMatch.pointLog[currentMatch.pointLog.length - 1];
     setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
+    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
   }
 };
 $('subPointB').onclick = () => {
@@ -2854,6 +2884,7 @@ $('subPointB').onclick = () => {
     if (currentMatch.pointLog.length) currentMatch.pointLog.pop(); // undo
     updateScoreUI();
     const last = currentMatch.pointLog[currentMatch.pointLog.length - 1];
+    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
     setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
   }
 };
@@ -3126,6 +3157,9 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
   loadTournaments();
   populatePlayerSelectors();
   setRecorderMode('choice');
+  if (typeof updateRallyTrackingUI === 'function') updateRallyTrackingUI();
+  if (typeof applyFullscreenScaleSettings === 'function') applyFullscreenScaleSettings();
+  if (typeof wireFullscreenRecorderControls === 'function') wireFullscreenRecorderControls();
   if (typeof updateRallyTrackingUI === 'function') updateRallyTrackingUI();
   if (typeof applyFullscreenScaleSettings === 'function') applyFullscreenScaleSettings();
   if (typeof wireFullscreenRecorderControls === 'function') wireFullscreenRecorderControls();
@@ -3738,3 +3772,4 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
 
 </body>
 </html>
+
