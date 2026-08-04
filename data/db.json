@@ -78,16 +78,16 @@
       "display_name": "Harley Trappitt",
       "notes": "",
       "games_played": 11,
-      "points": 4,
+      "points": 7,
       "created_at": "2026-07-22T11:37:42.700Z",
       "handedness": "Right",
       "grip": "Shakehand",
       "play_style": "All-round",
       "primary_weapon": "Slice Serve, Backhand Topspin",
       "weakness_notes": "",
-      "rating_change": 22,
-      "rating": 1502,
-      "best_rating": 1502
+      "rating_change": 20,
+      "rating": 1522,
+      "best_rating": 1522
     },
     {
       "id": "9a88653d-aab6-46b4-b55d-c75fb057fa61",
@@ -95,10 +95,10 @@
       "display_name": "heru.gani",
       "notes": "",
       "games_played": 6,
-      "points": 0,
-      "rating": 1500,
+      "points": 1,
+      "rating": 1480,
       "best_rating": 1500,
-      "rating_change": null,
+      "rating_change": -20,
       "handedness": null,
       "grip": null,
       "play_style": null,
@@ -413,7 +413,7 @@
     {
       "id": "4cbefc93-d756-4c38-a1c7-7a1e250f2d26",
       "tournament_id": null,
-      "mode": "casual",
+      "mode": "ranked",
       "type": "singles",
       "game_type": 11,
       "session_id": null,
@@ -4166,8 +4166,8 @@
         "player_id": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
         "player_name": "Harley Trappitt",
         "rank": 1,
-        "rating": 1502,
-        "games": 9
+        "rating": 1522,
+        "games": 11
       },
       {
         "player_id": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
@@ -4198,25 +4198,25 @@
         "games": 7
       },
       {
-        "player_id": "9a88653d-aab6-46b4-b55d-c75fb057fa61",
-        "player_name": "heru.gani",
-        "rank": 6,
-        "rating": 1500,
-        "games": 4
-      },
-      {
         "player_id": "485cd7ed-34ef-43f4-aed0-799162348c52",
         "player_name": "Guest D",
-        "rank": 7,
+        "rank": 6,
         "rating": 1500,
         "games": 3
       },
       {
         "player_id": "2cbec020-0561-4b16-81b5-40b9d3b66973",
         "player_name": "Shane Chicharo",
-        "rank": 8,
+        "rank": 7,
         "rating": 1498,
         "games": 3
+      },
+      {
+        "player_id": "9a88653d-aab6-46b4-b55d-c75fb057fa61",
+        "player_name": "heru.gani",
+        "rank": 8,
+        "rating": 1480,
+        "games": 6
       }
     ],
     "doubles": [
