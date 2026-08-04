@@ -341,7 +341,7 @@
     {
       "id": "ba3028d1-e494-4ffd-a721-623dab897fef",
       "tournament_id": null,
-      "mode": "casual",
+      "mode": "ranked",
       "type": "doubles",
       "game_type": 11,
       "session_id": null,
