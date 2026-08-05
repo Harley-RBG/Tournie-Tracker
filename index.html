@@ -1992,8 +1992,16 @@ function computePlayerStats(playerId) {
     if (m.mode === 'ranked')  won ? rw++ : rl++;
     if (m.type === 'singles') won ? sw++ : sl++;
     if (m.type === 'doubles') won ? dblW++ : dblL++;
-    const oppId = onA ? m.player_b : m.player_a;
-    if (oppId) { h2h[oppId] ??= {w:0,l:0}; won ? h2h[oppId].w++ : h2h[oppId].l++; }
+    // Head-to-head is player-vs-opponent, not side-vs-first-listed-player.
+    // In doubles, count the result against both opposing players so the profile
+    // matches the visible match history. Do not count the player's partner.
+    const oppIds = m.type === 'doubles'
+      ? (onA ? [m.player_b, m.player_d] : [m.player_a, m.player_c])
+      : [onA ? m.player_b : m.player_a];
+    [...new Set(oppIds.filter(id => id && id !== playerId))].forEach(oppId => {
+      h2h[oppId] ??= {w:0,l:0};
+      won ? h2h[oppId].w++ : h2h[oppId].l++;
+    });
   }
 
   // Current streak (scan from newest)
@@ -3395,27 +3403,57 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
 
   function rebuildDoublesTeamRankings(){
     ensureDoublesTeams();
-    const stats = new Map();
-    appData.doubles_teams.forEach(t => stats.set(t.id, {
-      team: t,
-      rating: Number(t.rating || 1500),
-      points: 0,
-      games: 0,
-      wins: 0,
-      losses: 0,
-      rating_change: 0
-    }));
+
+    // Build leaderboard teams from the actual ranked doubles match history.
+    // Admin-created teams keep their custom names, but ad-hoc ranked pairings
+    // are still shown as virtual derived teams. This keeps match data untouched.
+    const teamStats = new Map();
+    const existingTeamsByKey = new Map();
+    appData.doubles_teams.forEach(t => existingTeamsByKey.set(teamKey(t.player_ids || []), t));
+
+    function teamRecordForPair(p1, p2){
+      const ids = [p1, p2].filter(Boolean);
+      if (ids.length !== 2) return null;
+      const key = teamKey(ids);
+      let rec = teamStats.get(key);
+      if (rec) return rec;
+
+      const namedTeam = existingTeamsByKey.get(key);
+      const base = namedTeam || {
+        id: `pair:${key}`,
+        team_name: ids.map(playerName).join(' / '),
+        player_ids: ids,
+        rating: 1500,
+        points: 0,
+        games: 0,
+        wins: 0,
+        losses: 0
+      };
+
+      rec = {
+        key,
+        team: base,
+        is_virtual: !namedTeam,
+        rating: Number(base.rating || 1500),
+        points: 0,
+        games: 0,
+        wins: 0,
+        losses: 0,
+        rating_change: 0
+      };
+      teamStats.set(key, rec);
+      return rec;
+    }
 
     const rankedDoubles = [...(appData.matches || [])]
       .filter(m => m.mode === 'ranked' && m.type === 'doubles' && m.player_a && m.player_b && m.player_c && m.player_d)
       .sort((a,b) => String(a.created_at || '').localeCompare(String(b.created_at || '')));
 
     for (const m of rankedDoubles){
-      const teamA = exactTeamForSide(m.player_a, m.player_c);
-      const teamB = exactTeamForSide(m.player_b, m.player_d);
-      if (!teamA || !teamB || teamA.id === teamB.id) continue;
-      const a = stats.get(teamA.id), b = stats.get(teamB.id);
-      if (!a || !b) continue;
+      const a = teamRecordForPair(m.player_a, m.player_c);
+      const b = teamRecordForPair(m.player_b, m.player_d);
+      if (!a || !b || a.key === b.key) continue;
+
       const aWon = m.winner === m.player_a;
       const ra = a.rating || 1500, rb = b.rating || 1500;
       const ea = 1 / (1 + Math.pow(10, (rb - ra) / 400));
@@ -3423,6 +3461,7 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
       const kB = b.games < 30 ? 40 : 20;
       const newRa = Math.round(ra + kA * ((aWon ? 1 : 0) - ea));
       const newRb = Math.round(rb + kB * ((aWon ? 0 : 1) - (1 - ea)));
+
       a.rating_change = newRa - ra;
       b.rating_change = newRb - rb;
       a.rating = newRa;
@@ -3432,12 +3471,13 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
       else { b.wins++; a.losses++; b.points += 3; a.points += 1; }
     }
 
-    const rankings = [...stats.values()]
-      .sort((a,b) => (b.rating - a.rating) || (b.points - a.points) || (b.wins - a.wins) || a.team.team_name.localeCompare(b.team.team_name))
+    const rankings = [...teamStats.values()]
+      .filter(r => r.games > 0)
+      .sort((a,b) => (b.rating - a.rating) || (b.points - a.points) || (b.wins - a.wins) || teamPlayersLabel(a.team).localeCompare(teamPlayersLabel(b.team)))
       .map((r,i) => ({
         rank: i + 1,
         team_id: r.team.id,
-        team_name: r.team.team_name,
+        team_name: r.team.team_name || teamPlayersLabel(r.team),
         player_ids: r.team.player_ids,
         player_names: (r.team.player_ids || []).map(playerName),
         rating: r.rating,
@@ -3445,7 +3485,8 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
         games: r.games,
         wins: r.wins,
         losses: r.losses,
-        rating_change: r.rating_change
+        rating_change: r.rating_change,
+        derived: r.is_virtual
       }));
     appData.rankings.doubles = rankings;
     return rankings;
@@ -3457,7 +3498,7 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
     if (!dEl) return;
     const rankings = rebuildDoublesTeamRankings();
     if (!rankings.length){
-      dEl.innerHTML = '<div class="muted">No doubles teams yet. Admins can add named teams in the Admin tab.</div>';
+      dEl.innerHTML = '<div class="muted">No ranked doubles matches yet.</div>';
       return;
     }
     dEl.innerHTML = rankings.map(r => {
