@@ -751,6 +751,39 @@ body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayer
   }
 }
 
+
+
+/* FULLSCREEN_SERVE_UI_CLEANUP_PATCH_V2
+   Final override: remove side-level and pseudo serving banners that can stretch across the table.
+   Serving is now shown by highlighting the actual active player chip only. */
+body.live-recorder-fullscreen .fs-server-label,
+body.live-recorder-fullscreen .fs-server-label.active,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-server-label,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-server-label.active{
+  display:none!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving,
+body.live-recorder-fullscreen .fs-player.is-serving{
+  background:rgba(0,94,184,.94)!important;
+  color:#fff!important;
+  border:1px solid rgba(255,255,255,.35)!important;
+  box-shadow:0 0 24px rgba(0,94,184,.55),0 8px 24px rgba(0,0,0,.36)!important;
+  text-shadow:none!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving::before,
+body.live-recorder-fullscreen .fs-player.is-serving::before{
+  content:"● "!important;
+  display:inline!important;
+  font-size:.75em!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving::after,
+body.live-recorder-fullscreen .fs-player.is-serving::after{
+  content:none!important;
+  display:none!important;
+}
+
 </style>
 </head>
 <body>
@@ -2863,18 +2896,19 @@ function renderFullscreenRecorderUI() {
   ['A','B','C','D'].forEach(k => $('fsPlayer' + k)?.classList.remove('is-serving'));
   const roleMap = { [currentMatch.a]:'A', [currentMatch.b]:'B', [currentMatch.c]:'C', [currentMatch.d]:'D' };
   if (serverId && roleMap[serverId] && $('fsPlayer' + roleMap[serverId])) $('fsPlayer' + roleMap[serverId]).classList.add('is-serving');
+  // Fullscreen serving indicator cleanup:
+  // keep serving state on the actual player chip only. Side-level labels caused
+  // large blue overlay artefacts in fullscreen singles and doubles table view.
   const serverOnA = serverId === currentMatch.a || serverId === currentMatch.c;
   const servingRole = roleMap[serverId] || null;
   ['a','b','c','d'].forEach(r => {
     $('fsServerA')?.classList.remove('server-role-' + r);
     $('fsServerB')?.classList.remove('server-role-' + r);
   });
-  $('fsServerA').classList.toggle('active', !!serverId && serverOnA);
-  $('fsServerB').classList.toggle('active', !!serverId && !serverOnA);
-  if (servingRole) {
-    const label = serverOnA ? $('fsServerA') : $('fsServerB');
-    label?.classList.add('server-role-' + servingRole.toLowerCase());
-  }
+  $('fsServerA')?.classList.remove('active');
+  $('fsServerB')?.classList.remove('active');
+  $('fsServerA')?.setAttribute('aria-hidden', 'true');
+  $('fsServerB')?.setAttribute('aria-hidden', 'true');
   if ($('fsRallyHits')) $('fsRallyHits').value = $('rallyHits')?.value || 0;
   if ($('fsRallyTrackingEnabled')) $('fsRallyTrackingEnabled').checked = !!$('rallyTrackingEnabled')?.checked;
 }
