@@ -559,197 +559,196 @@ body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles .fs-serve
 
 
 /* ============================================================
-   FULLSCREEN_FIELD_EXPAND_TOUCH_SCORE_DND_PATCH_V4
-   - Larger/resizable table with drag resize handle and display panel range.
-   - Tap left/right table half: single tap adds point, double tap removes point.
-   - Scores moved off-table, below each half, with plain large-number styling.
-   - Doubles player visual slots can flip after serves.
-   - Player names can be drag/dropped between slots before the first point.
+   FULLSCREEN_TABLE_PLAYER_SERVER_BADGE_PATCH_V2
+   Intent:
+   - Serving badge belongs to the actual player slot, not the side.
+   - Legacy side-level .fs-server-label is hidden to avoid duplicate/all-player badges.
+   - Doubles uses four fixed slots: A partner top-left, A bottom-left, B top-right, B partner bottom-right.
+   - Singles uses the same visual language but only top-left Player A and top-right Player B.
    ============================================================ */
-:root{--fs-table-scale:1;--fs-table-extra-bottom:120px;}
-body.live-recorder-fullscreen .fs-table-wrap{
-  position:relative!important;
-  overflow:visible!important;
-  width:min(96vw,1300px)!important;
-  display:flex!important;
-  justify-content:center!important;
-  padding-bottom:calc(var(--fs-table-extra-bottom) * var(--fs-ui-scale));
-  margin-bottom:calc(8px * var(--fs-ui-scale));
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-server-label,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-server-label.active{
+  display:none!important;
 }
-body.live-recorder-fullscreen .fs-table{
-  transform:scale(var(--fs-table-scale));
-  transform-origin:center center;
-  overflow:visible!important;
-  cursor:default;
-  touch-action:manipulation;
-}
-body.live-recorder-fullscreen .fs-table.fs-reference-layout{
-  width:min(92vw,calc((100dvh - 330px) * 1.68),1180px)!important;
-  max-height:none!important;
-}
-body.live-recorder-fullscreen .fs-server-label,
-body.live-recorder-fullscreen .fs-server-label.active{display:none!important;}
-
-body.live-recorder-fullscreen .fs-table-resize-handle{
-  position:absolute;
-  right:calc(4px * var(--fs-ui-scale));
-  bottom:calc((var(--fs-table-extra-bottom) - 4px) * var(--fs-ui-scale));
-  z-index:30;
-  width:32px;
-  height:32px;
-  border-radius:10px;
-  border:1px solid rgba(207,230,255,.35);
-  background:rgba(0,94,184,.75);
-  box-shadow:0 8px 22px rgba(0,0,0,.35);
-  cursor:nwse-resize;
-  display:grid;
-  place-items:center;
-  color:white;
-  font-weight:900;
-  user-select:none;
-}
-body.live-recorder-fullscreen .fs-table-resize-handle::before{content:"↘";font-size:18px;line-height:1;}
-body.live-recorder-fullscreen .fs-resize-hint{
-  position:absolute;
-  right:46px;
-  bottom:calc(var(--fs-table-extra-bottom) * var(--fs-ui-scale));
-  z-index:30;
-  font-size:11px;
-  color:#9fb5c8;
-  background:rgba(5,8,12,.72);
-  border:1px solid rgba(207,230,255,.14);
-  border-radius:999px;
-  padding:5px 9px;
-  pointer-events:none;
-}
-body.live-recorder-fullscreen .fs-scale-field{margin-top:10px;display:grid;gap:6px;}
-
-/* Touch zones sit behind names/badges but over the field background. */
-body.live-recorder-fullscreen .fs-tap-zone{
-  position:absolute;
-  top:0;
-  bottom:0;
-  z-index:2;
-  background:transparent;
-  border-radius:16px;
-  pointer-events:auto;
-}
-body.live-recorder-fullscreen .fs-tap-zone-a{left:0;width:50%;}
-body.live-recorder-fullscreen .fs-tap-zone-b{right:0;width:50%;}
-body.live-recorder-fullscreen .fs-tap-zone:active{background:rgba(0,94,184,.10);}
-
-/* Plain large score below the relevant side, not inside a bubble on the tabletop. */
-body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-side-score{
-  top:calc(100% + 26px)!important;
-  transform:translate(-50%,0)!important;
-  z-index:12!important;
-  width:auto!important;
-  min-width:0!important;
-  padding:0!important;
-  background:transparent!important;
-  border:0!important;
-  border-radius:0!important;
-  box-shadow:none!important;
-  backdrop-filter:none!important;
-  color:#fff!important;
-  font-weight:950!important;
-  font-size:clamp(52px,calc(7.2vw * var(--fs-text-scale)),118px)!important;
-  line-height:.9!important;
-  text-align:center!important;
-  text-shadow:0 5px 18px rgba(0,0,0,.8),0 0 14px rgba(255,255,255,.15)!important;
-  pointer-events:none!important;
-}
-body.live-recorder-fullscreen .fs-table.fs-reference-layout #fsScoreA{left:25%!important;}
-body.live-recorder-fullscreen .fs-table.fs-reference-layout #fsScoreB{left:75%!important;}
-body.live-recorder-fullscreen .fs-score-side-label{
-  position:absolute;
-  top:calc(100% + 6px);
-  transform:translateX(-50%);
-  z-index:12;
-  color:#9fb5c8;
-  font-size:clamp(11px,calc(1vw * var(--fs-text-scale)),15px);
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.05em;
-  text-shadow:0 2px 8px rgba(0,0,0,.75);
-  pointer-events:none;
-}
-body.live-recorder-fullscreen #fsScoreLabelA{left:25%;}
-body.live-recorder-fullscreen #fsScoreLabelB{left:75%;}
 
 body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player{
-  z-index:16!important;
   overflow:visible!important;
   white-space:normal!important;
   text-align:center!important;
   font-weight:900!important;
+  letter-spacing:-.015em;
+}
+
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving{
+  color:#fff!important;
   background:transparent!important;
   border:0!important;
   box-shadow:none!important;
-  color:#fff!important;
   text-shadow:0 3px 14px rgba(0,0,0,.88)!important;
-  cursor:default;
 }
-body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles .fs-player{
-  max-width:32%!important;
-  font-size:clamp(18px,calc(1.9vw * var(--fs-text-scale)),34px)!important;
+
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving::before{
+  content:""!important;
+  display:none!important;
 }
-body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.fs-dnd-ready{
-  cursor:grab;
-  padding:3px 8px!important;
-  border-radius:10px!important;
-  outline:1px dashed rgba(207,230,255,.22)!important;
-  background:rgba(5,8,12,.22)!important;
-}
-body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.fs-drag-over{
-  outline:2px solid var(--accent)!important;
-  background:rgba(0,94,184,.22)!important;
-}
-body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving::before{content:""!important;display:none!important;}
+
 body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving::after{
   content:"SERVING";
   position:absolute;
   left:50%;
   transform:translateX(-50%);
-  z-index:22;
+  z-index:8;
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  min-width:calc(88px * var(--fs-ui-scale));
-  padding:calc(5px * var(--fs-ui-scale)) calc(13px * var(--fs-ui-scale));
+  width:max-content;
+  min-width:calc(92px * var(--fs-ui-scale));
+  padding:calc(5px * var(--fs-ui-scale)) calc(14px * var(--fs-ui-scale));
   border-radius:999px;
   background:var(--accent);
   border:1px solid rgba(255,255,255,.28);
   color:#fff;
-  font-size:clamp(11px,calc(1.12vw * var(--fs-text-scale)),17px);
+  font-size:clamp(11px,calc(1.15vw * var(--fs-text-scale)),18px);
   line-height:1;
   font-weight:950;
   letter-spacing:.035em;
+  text-shadow:0 2px 5px rgba(0,0,0,.45);
   box-shadow:0 4px 0 rgba(0,0,0,.46),0 0 18px rgba(0,94,184,.55);
   pointer-events:none;
 }
-body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerC{left:25%!important;top:28%!important;}
-body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerA{left:25%!important;top:72%!important;}
-body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerB{left:75%!important;top:28%!important;}
-body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerD{left:75%!important;top:72%!important;}
-body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerC.is-serving::after,
-body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerB.is-serving::after,
-body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerA.is-serving::after,
-body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerB.is-serving::after{bottom:calc(100% + 14px * var(--fs-ui-scale));}
-body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerA.is-serving::after,
-body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerD.is-serving::after{top:calc(100% + 14px * var(--fs-ui-scale));}
 
-body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerA{left:25%!important;top:30%!important;}
-body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerB{left:75%!important;top:30%!important;}
+/* Doubles serving badge positions */
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerC.is-serving::after,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerB.is-serving::after{
+  bottom:calc(100% + 18px * var(--fs-ui-scale));
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerA.is-serving::after,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerD.is-serving::after{
+  top:calc(100% + 18px * var(--fs-ui-scale));
+}
+
+/* Singles layout: remove partners and keep Player A and Player B in the top court positions. */
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerA{
+  left:25%!important;
+  top:32%!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerB{
+  left:75%!important;
+  top:32%!important;
+}
 body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerC,
-body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerD{display:none!important;}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerD{
+  display:none!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerA.is-serving::after,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerB.is-serving::after{
+  bottom:calc(100% + 18px * var(--fs-ui-scale));
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsScoreA,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsScoreB{
+  top:50%!important;
+}
 
 @media(max-width:700px){
-  body.live-recorder-fullscreen .fs-table-wrap{width:96vw!important;padding-bottom:calc(110px * var(--fs-ui-scale));}
-  body.live-recorder-fullscreen .fs-table.fs-reference-layout{width:min(94vw,calc((100dvh - 285px) * 1.55))!important;}
-  body.live-recorder-fullscreen .fs-resize-hint{display:none;}
-  body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-side-score{font-size:clamp(44px,calc(13vw * var(--fs-text-scale)),86px)!important;top:calc(100% + 22px)!important;}
-  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles .fs-player{font-size:clamp(13px,calc(3.6vw * var(--fs-text-scale)),22px)!important;max-width:36%!important;}
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving::after{
+    min-width:72px;
+    padding:4px 10px;
+    font-size:clamp(10px,calc(3vw * var(--fs-text-scale)),14px);
+  }
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerC.is-serving::after,
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerB.is-serving::after,
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerA.is-serving::after,
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayerB.is-serving::after{
+    bottom:calc(100% + 10px);
+  }
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerA.is-serving::after,
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerD.is-serving::after{
+    top:calc(100% + 10px);
+  }
+}
+
+
+
+/* ============================================================
+   FULLSCREEN_DOUBLES_ALIGNMENT_PATCH_V3
+   Intent:
+   - Force doubles scores back to true side-centre positions.
+   - Keep doubles player names clear of score discs.
+   - Give names higher layer than scores, while serving badge remains highest.
+   - Override earlier patch selectors that placed side scores in top/bottom halves.
+   ============================================================ */
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerC{
+  display:block!important;
+  left:25%!important;
+  top:29%!important;
+  z-index:7!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerA{
+  display:block!important;
+  left:25%!important;
+  top:71%!important;
+  z-index:7!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerB{
+  display:block!important;
+  left:75%!important;
+  top:29%!important;
+  z-index:7!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerD{
+  display:block!important;
+  left:75%!important;
+  top:71%!important;
+  z-index:7!important;
+}
+
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsScoreA,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsScoreB{
+  top:50%!important;
+  transform:translate(-50%,-50%)!important;
+  z-index:4!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsScoreA{
+  left:25%!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsScoreB{
+  left:75%!important;
+}
+
+/* Slightly smaller doubles names to keep long guest/player names inside each quadrant. */
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles .fs-player{
+  max-width:31%!important;
+  font-size:clamp(17px,calc(1.85vw * var(--fs-text-scale)),34px)!important;
+  line-height:1.08!important;
+}
+
+/* Doubles serving badge spacing tuned for the quadrant layout. */
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerC.is-serving::after,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerB.is-serving::after{
+  bottom:calc(100% + 14px * var(--fs-ui-scale))!important;
+}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerA.is-serving::after,
+body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerD.is-serving::after{
+  top:calc(100% + 14px * var(--fs-ui-scale))!important;
+}
+
+@media(max-width:700px){
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerC,
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerB{
+    top:28%!important;
+  }
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerA,
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayerD{
+    top:72%!important;
+  }
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles .fs-player{
+    max-width:35%!important;
+    font-size:clamp(13px,calc(3.7vw * var(--fs-text-scale)),21px)!important;
+  }
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsScoreA,
+  body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsScoreB{
+    top:50%!important;
+  }
 }
 
 </style>
@@ -1009,12 +1008,12 @@ body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayer
                 <div>
                   <div class="rally-toggle-row">
                     <div style="font-weight:700;color:#cfe6ff;margin-right:auto">Hits per rally</div>
-                    <label><input id="rallyTrackingEnabled" type="checkbox"> Track hits</label>
+                    <label><input id="rallyTrackingEnabled" type="checkbox" checked> Track hits</label>
                   </div>
                   <div class="point-hint" id="rallyHint">0 = server fault, 1 = server ace. Numpad + / - edits the current point.</div>
                   <div class="rally-toggle-row">
                     <div style="font-weight:700;color:#cfe6ff;margin-right:auto">Hits per rally</div>
-                    <label><input id="rallyTrackingEnabled" type="checkbox"> Track hits</label>
+                    <label><input id="rallyTrackingEnabled" type="checkbox" checked> Track hits</label>
                   </div>
                   <div class="point-hint" id="rallyHint">0 = server fault, 1 = server ace. Numpad + / - edits the current point.</div>
                 </div>
@@ -1081,7 +1080,7 @@ body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-singles #fsPlayer
                   </div>
                   <div class="fs-rally-panel">
                     <div class="fs-rally-title">Hits per rally</div>
-                    <label><input id="fsRallyTrackingEnabled" type="checkbox"> Track hits</label>
+                    <label><input id="fsRallyTrackingEnabled" type="checkbox" checked> Track hits</label>
                     <div class="fs-rally-stepper">
                       <button id="fsRallyHitsDown" type="button" class="ghost">−</button>
                       <input id="fsRallyHits" type="number" min="0" step="1" value="0" inputmode="numeric">
@@ -2844,8 +2843,8 @@ function renderFullscreenRecorderUI() {
   const names = {
     a: playerDisplayNameById(currentMatch.a, 'Player A'),
     b: playerDisplayNameById(currentMatch.b, 'Player B'),
-    c: playerDisplayNameById(currentMatch.c, 'Player C'),
-    d: playerDisplayNameById(currentMatch.d, 'Player D')
+    c: playerDisplayNameById(currentMatch.c, 'Player A Partner'),
+    d: playerDisplayNameById(currentMatch.d, 'Player B Partner')
   };
   $('fsPlayerA').textContent = names.a;
   $('fsPlayerB').textContent = names.b;
@@ -4005,248 +4004,6 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
   enhanceTournamentModal();
   if (typeof loadTournaments === 'function') loadTournaments();
 })();
-
-
-/* ============================================================
-   FULLSCREEN_FIELD_EXPAND_TOUCH_SCORE_DND_PATCH_V4
-   Behaviour layer for fullscreen table resize, touch scoring,
-   off-table scoring, doubles visual flipping, and pre-point DnD.
-   ============================================================ */
-(function(){
-  const TABLE_SCALE_KEY = 'rbg_tt_fs_table_scale_v4';
-  const TAP_DELAY = 260;
-  let tapTimer = null;
-  let tapSide = null;
-
-  function q(id){ return document.getElementById(id); }
-  function clamp(n,min,max){ return Math.max(min, Math.min(max, Number(n)||0)); }
-  function fsCanSwapNames(){ return !!currentMatch && currentMatch.scoreA === 0 && currentMatch.scoreB === 0 && (!currentMatch.pointLog || currentMatch.pointLog.length === 0); }
-  function ensureFsMeta(){
-    if (!currentMatch.fsVisual) currentMatch.fsVisual = { flipA:false, flipB:false };
-    return currentMatch.fsVisual;
-  }
-  function setTableScale(value){
-    const v = clamp(value, .82, 1.42);
-    document.documentElement.style.setProperty('--fs-table-scale', String(v));
-    try{ localStorage.setItem(TABLE_SCALE_KEY, String(v)); }catch(_e){}
-    const range = q('fsTableScale'); if (range) range.value = String(v);
-  }
-  function initTableScale(){
-    let saved = 1;
-    try{ saved = Number(localStorage.getItem(TABLE_SCALE_KEY) || 1); }catch(_e){}
-    setTableScale(saved || 1);
-  }
-  function addScaleControls(){
-    const panel = q('fsScalePanel');
-    if (!panel || q('fsTableScale')) return;
-    const block = document.createElement('div');
-    block.className = 'fs-scale-field';
-    block.innerHTML = '<label>Table size</label><input id="fsTableScale" type="range" min="0.82" max="1.42" step="0.02" value="1"><div class="fs-scale-values"><span>Smaller</span><span>Larger</span></div><button id="fsTableScaleReset" type="button" class="ghost" style="width:100%">Reset table size</button>';
-    const reset = q('fsScaleReset');
-    if (reset) reset.insertAdjacentElement('beforebegin', block); else panel.appendChild(block);
-    q('fsTableScale')?.addEventListener('input', e => setTableScale(e.target.value));
-    q('fsTableScaleReset')?.addEventListener('click', () => setTableScale(1));
-  }
-  function addResizeHandle(){
-    const wrap = document.querySelector('.fs-table-wrap');
-    if (!wrap) return;
-    if (!q('fsTableResizeHandle')) {
-      const hint = document.createElement('div');
-      hint.className = 'fs-resize-hint';
-      hint.textContent = 'Drag corner to resize table';
-      wrap.appendChild(hint);
-      const handle = document.createElement('div');
-      handle.id = 'fsTableResizeHandle';
-      handle.className = 'fs-table-resize-handle';
-      handle.title = 'Drag to resize the tabletop';
-      wrap.appendChild(handle);
-      let startX = 0, startScale = 1;
-      handle.addEventListener('pointerdown', ev => {
-        ev.preventDefault(); ev.stopPropagation();
-        startX = ev.clientX;
-        startScale = Number(getComputedStyle(document.documentElement).getPropertyValue('--fs-table-scale')) || 1;
-        handle.setPointerCapture?.(ev.pointerId);
-        const move = e => setTableScale(startScale + ((e.clientX - startX) / 520));
-        const up = e => { handle.releasePointerCapture?.(e.pointerId); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
-        window.addEventListener('pointermove', move);
-        window.addEventListener('pointerup', up, { once:true });
-      });
-    }
-  }
-  function addTapZones(){
-    const table = q('fsTableView');
-    if (!table || q('fsTapZoneA')) return;
-    const a = document.createElement('div'); a.id = 'fsTapZoneA'; a.className = 'fs-tap-zone fs-tap-zone-a'; a.dataset.side = 'A';
-    const b = document.createElement('div'); b.id = 'fsTapZoneB'; b.className = 'fs-tap-zone fs-tap-zone-b'; b.dataset.side = 'B';
-    table.insertBefore(a, table.firstChild);
-    table.insertBefore(b, table.firstChild);
-    [a,b].forEach(zone => {
-      zone.addEventListener('click', ev => {
-        ev.preventDefault(); ev.stopPropagation();
-        queueTableTap(zone.dataset.side);
-      });
-      zone.addEventListener('dblclick', ev => { ev.preventDefault(); ev.stopPropagation(); });
-    });
-  }
-  function queueTableTap(side){
-    if (tapTimer && tapSide === side) {
-      clearTimeout(tapTimer); tapTimer = null; tapSide = null;
-      scoreSide(side, -1);
-      return;
-    }
-    if (tapTimer) { clearTimeout(tapTimer); tapTimer = null; }
-    tapSide = side;
-    tapTimer = setTimeout(() => { scoreSide(side, 1); tapTimer = null; tapSide = null; }, TAP_DELAY);
-  }
-  function scoreSide(side, delta){
-    const id = delta > 0 ? (side === 'A' ? 'addPointA' : 'addPointB') : (side === 'A' ? 'subPointA' : 'subPointB');
-    q(id)?.click();
-  }
-  function addScoreLabels(){
-    const table = q('fsTableView');
-    if (!table) return;
-    if (!q('fsScoreLabelA')) {
-      const la = document.createElement('div'); la.id = 'fsScoreLabelA'; la.className = 'fs-score-side-label'; la.textContent = 'Side A';
-      const lb = document.createElement('div'); lb.id = 'fsScoreLabelB'; lb.className = 'fs-score-side-label'; lb.textContent = 'Side B';
-      table.appendChild(la); table.appendChild(lb);
-    }
-  }
-  function applyRallyDefaultOff(){
-    document.querySelectorAll('#rallyTrackingEnabled,#fsRallyTrackingEnabled').forEach(cb => { cb.checked = false; });
-    if (typeof updateRallyTrackingUI === 'function') updateRallyTrackingUI();
-  }
-  function roleName(role){
-    const fallback = { a:'Player A', b:'Player B', c:'Player A Partner', d:'Player B Partner' }[role] || 'Player';
-    return playerDisplayNameById(currentMatch[role], fallback);
-  }
-  function orderedSlots(){
-    const visual = ensureFsMeta();
-    const isDoubles = (currentMatch.type || 'singles') === 'doubles';
-    if (!isDoubles) return { A:'a', B:'b', C:null, D:null };
-    return {
-      C: visual.flipA ? 'a' : 'c',
-      A: visual.flipA ? 'c' : 'a',
-      B: visual.flipB ? 'd' : 'b',
-      D: visual.flipB ? 'b' : 'd'
-    };
-  }
-  function setSlot(slotId, role, serverId, isDoubles){
-    const el = q('fsPlayer' + slotId); if (!el) return;
-    if (!role || (!isDoubles && (slotId === 'C' || slotId === 'D'))) { el.style.display = 'none'; return; }
-    el.style.display = '';
-    el.textContent = roleName(role);
-    el.dataset.liveRole = role;
-    el.draggable = fsCanSwapNames();
-    el.classList.toggle('fs-dnd-ready', fsCanSwapNames());
-    el.classList.toggle('is-serving', !!serverId && currentMatch[role] === serverId);
-  }
-  const oldRender = window.renderFullscreenRecorderUI || renderFullscreenRecorderUI;
-  window.renderFullscreenRecorderUI = function(){
-    if (typeof oldRender === 'function') oldRender();
-    const type = currentMatch.type || 'singles';
-    const isDoubles = type === 'doubles';
-    const serverId = getServingPlayerId(currentMatch.scoreA, currentMatch.scoreB);
-    const table = q('fsTableView');
-    if (table) { table.classList.toggle('fs-doubles', isDoubles); table.classList.toggle('fs-singles', !isDoubles); }
-    const slots = orderedSlots();
-    ['A','B','C','D'].forEach(slot => setSlot(slot, slots[slot], serverId, isDoubles));
-    if (q('fsScoreA')) q('fsScoreA').textContent = currentMatch.scoreA;
-    if (q('fsScoreB')) q('fsScoreB').textContent = currentMatch.scoreB;
-    addScoreLabels(); addTapZones(); addResizeHandle(); addScaleControls(); initDragDrop();
-  };
-  // Make the original function name call the override where possible.
-  try { renderFullscreenRecorderUI = window.renderFullscreenRecorderUI; } catch(_e) {}
-
-  function toggleVisualForServer(serverId){
-    if (!serverId || currentMatch.type !== 'doubles') return;
-    const visual = ensureFsMeta();
-    if (serverId === currentMatch.a || serverId === currentMatch.c) visual.flipA = !visual.flipA;
-    if (serverId === currentMatch.b || serverId === currentMatch.d) visual.flipB = !visual.flipB;
-  }
-  function wrapScoreButtons(){
-    if (wrapScoreButtons.done) return; wrapScoreButtons.done = true;
-    ['A','B'].forEach(side => {
-      const add = q('addPoint' + side);
-      if (add && add.onclick) {
-        const old = add.onclick;
-        add.onclick = function(ev){
-          const serverBefore = getServingPlayerId(currentMatch.scoreA, currentMatch.scoreB);
-          const result = old.call(this, ev);
-          toggleVisualForServer(serverBefore);
-          window.renderFullscreenRecorderUI?.();
-          return result;
-        };
-      }
-      const sub = q('subPoint' + side);
-      if (sub && sub.onclick) {
-        const old = sub.onclick;
-        sub.onclick = function(ev){
-          const lastServer = currentMatch.pointLog?.length ? currentMatch.pointLog[currentMatch.pointLog.length - 1].server_id : null;
-          const result = old.call(this, ev);
-          toggleVisualForServer(lastServer);
-          window.renderFullscreenRecorderUI?.();
-          return result;
-        };
-      }
-    });
-  }
-  function wrapStartMatch(){
-    const start = q('startMatchBtn');
-    if (!start || !start.onclick || start.dataset.fsV4Wrapped) return;
-    const old = start.onclick;
-    start.onclick = function(ev){
-      const result = old.call(this, ev);
-      currentMatch.fsVisual = { flipA:false, flipB:false };
-      document.querySelectorAll('#rallyTrackingEnabled,#fsRallyTrackingEnabled').forEach(cb => { cb.checked = false; });
-      if (typeof updateRallyTrackingUI === 'function') updateRallyTrackingUI();
-      window.renderFullscreenRecorderUI?.();
-      return result;
-    };
-    start.dataset.fsV4Wrapped = '1';
-  }
-  function initDragDrop(){
-    if (initDragDrop.done) return;
-    initDragDrop.done = true;
-    document.addEventListener('dragstart', ev => {
-      const el = ev.target.closest?.('.fs-player');
-      if (!el || !fsCanSwapNames() || !el.dataset.liveRole) { ev.preventDefault(); return; }
-      ev.dataTransfer.setData('text/plain', el.dataset.liveRole);
-      ev.dataTransfer.effectAllowed = 'move';
-    });
-    document.addEventListener('dragover', ev => {
-      const el = ev.target.closest?.('.fs-player');
-      if (!el || !fsCanSwapNames() || !el.dataset.liveRole) return;
-      ev.preventDefault();
-      el.classList.add('fs-drag-over');
-    });
-    document.addEventListener('dragleave', ev => {
-      ev.target.closest?.('.fs-player')?.classList.remove('fs-drag-over');
-    });
-    document.addEventListener('drop', ev => {
-      const el = ev.target.closest?.('.fs-player');
-      if (!el || !fsCanSwapNames() || !el.dataset.liveRole) return;
-      ev.preventDefault();
-      document.querySelectorAll('.fs-drag-over').forEach(x => x.classList.remove('fs-drag-over'));
-      const fromRole = ev.dataTransfer.getData('text/plain');
-      const toRole = el.dataset.liveRole;
-      if (!fromRole || !toRole || fromRole === toRole) return;
-      [currentMatch[fromRole], currentMatch[toRole]] = [currentMatch[toRole], currentMatch[fromRole]];
-      currentMatch.serveOrder = buildServeOrder();
-      currentMatch.fsVisual = { flipA:false, flipB:false };
-      if (typeof renderLivePlayerSelectors === 'function') renderLivePlayerSelectors();
-      if (typeof updateServeIndicator === 'function') updateServeIndicator();
-      window.renderFullscreenRecorderUI?.();
-    });
-  }
-  function boot(){
-    initTableScale(); addScaleControls(); addResizeHandle(); addTapZones(); addScoreLabels();
-    applyRallyDefaultOff(); wrapScoreButtons(); wrapStartMatch(); initDragDrop();
-    window.renderFullscreenRecorderUI?.();
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
-  document.addEventListener('fullscreenchange', () => setTimeout(boot, 50));
-})();
-
 </script>
 
 </body>
