@@ -539,7 +539,7 @@
     {
       "id": "96bdc5d6-1573-4269-9ed3-90bd5ffea58a",
       "tournament_id": null,
-      "mode": "casual",
+      "mode": "ranked",
       "type": "doubles",
       "game_type": 11,
       "session_id": null,
@@ -6140,6 +6140,26 @@
       },
       {
         "rank": 2,
+        "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|737d2e34-85d4-4cbf-b8bf-89409b83f998",
+        "team_name": "Tyler Smith / joshua.whiston",
+        "player_ids": [
+          "4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
+          "737d2e34-85d4-4cbf-b8bf-89409b83f998"
+        ],
+        "player_names": [
+          "Tyler Smith",
+          "joshua.whiston"
+        ],
+        "rating": 1539,
+        "points": 6,
+        "games": 2,
+        "wins": 2,
+        "losses": 0,
+        "rating_change": 19,
+        "derived": true
+      },
+      {
+        "rank": 3,
         "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
         "team_name": "Tyler Smith / Shane Chicharo",
         "player_ids": [
@@ -6159,7 +6179,7 @@
         "derived": true
       },
       {
-        "rank": 3,
+        "rank": 4,
         "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|9a88653d-aab6-46b4-b55d-c75fb057fa61",
         "team_name": "heru.gani / Harley Trappitt",
         "player_ids": [
@@ -6179,7 +6199,7 @@
         "derived": true
       },
       {
-        "rank": 4,
+        "rank": 5,
         "team_id": "pair:65638f26-9c35-48c9-a1e8-486d80d6a7ac|9a88653d-aab6-46b4-b55d-c75fb057fa61",
         "team_name": "heru.gani / virginia.martineznavarro",
         "player_ids": [
@@ -6199,7 +6219,7 @@
         "derived": true
       },
       {
-        "rank": 5,
+        "rank": 6,
         "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
         "team_name": "Shane Chicharo / minh.nguyen",
         "player_ids": [
@@ -6209,26 +6229,6 @@
         "player_names": [
           "Shane Chicharo",
           "minh.nguyen"
-        ],
-        "rating": 1520,
-        "points": 3,
-        "games": 1,
-        "wins": 1,
-        "losses": 0,
-        "rating_change": 20,
-        "derived": true
-      },
-      {
-        "rank": 6,
-        "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|737d2e34-85d4-4cbf-b8bf-89409b83f998",
-        "team_name": "Tyler Smith / joshua.whiston",
-        "player_ids": [
-          "4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
-          "737d2e34-85d4-4cbf-b8bf-89409b83f998"
-        ],
-        "player_names": [
-          "Tyler Smith",
-          "joshua.whiston"
         ],
         "rating": 1520,
         "points": 3,
@@ -6280,26 +6280,6 @@
       },
       {
         "rank": 9,
-        "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|2cbec020-0561-4b16-81b5-40b9d3b66973",
-        "team_name": "Shane Chicharo / Harley Trappitt",
-        "player_ids": [
-          "2cbec020-0561-4b16-81b5-40b9d3b66973",
-          "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
-        ],
-        "player_names": [
-          "Shane Chicharo",
-          "Harley Trappitt"
-        ],
-        "rating": 1501,
-        "points": 4,
-        "games": 2,
-        "wins": 1,
-        "losses": 1,
-        "rating_change": 21,
-        "derived": true
-      },
-      {
-        "rank": 10,
         "team_id": "af04282c-97a6-480c-b75d-e368e915228f",
         "team_name": "Golden Flamenco Queens",
         "player_ids": [
@@ -6317,6 +6297,26 @@
         "losses": 1,
         "rating_change": 21,
         "derived": false
+      },
+      {
+        "rank": 10,
+        "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|2cbec020-0561-4b16-81b5-40b9d3b66973",
+        "team_name": "Shane Chicharo / Harley Trappitt",
+        "player_ids": [
+          "2cbec020-0561-4b16-81b5-40b9d3b66973",
+          "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
+        ],
+        "player_names": [
+          "Shane Chicharo",
+          "Harley Trappitt"
+        ],
+        "rating": 1482,
+        "points": 5,
+        "games": 3,
+        "wins": 1,
+        "losses": 2,
+        "rating_change": -19,
+        "derived": true
       },
       {
         "rank": 11,
