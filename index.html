@@ -1360,9 +1360,6 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
   <div id="settingsModal" class="modal-overlay" style="display:none">
     <div class="modal">
       <h2>&#9881; Settings</h2>
-      <label>GitHub Personal Access Token (PAT)</label>
-      <input id="settingsPat" type="password" placeholder="github_pat_...">
-      <p class="note">Required to save data. Create a fine-grained PAT with <code>Contents: Read &amp; Write</code> for the <code>Harley-RBG/Tournie-Tracker</code> repo only. Stored in this browser&rsquo;s localStorage &mdash; do not share this device.</p>
       <label>Logged in as</label>
       <input id="settingsUser" placeholder="Not logged in" readonly style="opacity:0.6;cursor:default">
       <label style="margin-top:12px">Admin Emails <span style="opacity:.6;font-weight:400">(comma-separated)</span></label>
@@ -1432,10 +1429,10 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
 
 <script>
 /* ============================
-   RBG-TT  —  Local + GitHub Pages
-   No backend. Identity in localStorage.
-   Data synced to data/db.json via GitHub Contents API.
-   ============================ */
+  RBG-TT  —  Cloudflare Worker + GitHub
+  Identity in localStorage.
+  Data synced to data/db.json via Worker endpoints.
+  ============================ */
 
 const $ = id => document.getElementById(id);
 
@@ -1443,10 +1440,6 @@ const $ = id => document.getElementById(id);
 const API_BASE = 'https://rbg-tt-api.harley-trappitt.workers.dev';
 
 const LS_USER = 'tt_user';
-
-// Kept only so old localStorage/settings code does not break.
-// New saves go through Cloudflare Worker, not a user PAT.
-const LS_PAT = 'tt_gh_pat';
 
 /* ---------- In-memory state ---------- */
 const EMPTY_DATA = () => ({ players: [], matches: [], sessions: [], points: [], tournaments: [], rankings: { singles: [], doubles: [] }, player_stats: [], settings: { admins: [] } });
@@ -1652,7 +1645,6 @@ $('signOutBtn').onclick = () => {
 
 /* ---------- Settings modal ---------- */
 $('openSettingsBtn').onclick = () => {
-  $('settingsPat').value    = localStorage.getItem(LS_PAT) || '';
   $('settingsUser').value   = currentUser
     ? `${currentUser.displayName} (${currentUser.email})`
     : 'Not logged in';
@@ -1667,16 +1659,13 @@ $('settingsModal').addEventListener('click', e => {
 $('settingsClose').onclick = () => { $('settingsModal').style.display = 'none'; };
 
 $('settingsSave').onclick = async () => {
-  const pat = $('settingsPat').value.trim();
-  if (pat) localStorage.setItem(LS_PAT, pat);
-  else     localStorage.removeItem(LS_PAT);
   // Save admin list to shared data
   const admins = $('settingsAdmins').value
     .split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
   appData.settings ??= {};
   appData.settings.admins = admins;
   $('settingsModal').style.display = 'none';
-  if (pat) await writeData('Update settings');
+  await writeData('Update settings');
 };
 
 /* ---------- Refresh buttons ---------- */
@@ -1903,7 +1892,7 @@ $('editMatchSave').onclick = async () => {
   $('editMatchModal').style.display = 'none';
   const ok = await writeData(`Edit match ${_editMatchId.slice(0,8)}`);
   if (ok) { renderHistory(); renderLeaderboard(); }
-  else    alert('Save failed. Check your PAT in \u2699 Settings.');
+  else    alert('Save failed via Cloudflare Worker.');
 };
 
 /* ---------- Delete Match ---------- */
@@ -1920,7 +1909,7 @@ window.confirmDeleteMatch = function(id) {
 
   writeData(`Delete match ${id.slice(0,8)}`).then(ok => {
     if (ok) { renderHistory(); renderLeaderboard(); }
-    else alert('Save failed. Check your PAT in \u2699 Settings.');
+    else alert('Save failed via Cloudflare Worker.');
   });
 };
 
