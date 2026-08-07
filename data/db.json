@@ -6300,6 +6300,26 @@
       },
       {
         "rank": 10,
+        "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|737d2e34-85d4-4cbf-b8bf-89409b83f998",
+        "team_name": "joshua.whiston / Harley Trappitt",
+        "player_ids": [
+          "737d2e34-85d4-4cbf-b8bf-89409b83f998",
+          "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
+        ],
+        "player_names": [
+          "joshua.whiston",
+          "Harley Trappitt"
+        ],
+        "rating": 1500,
+        "points": 4,
+        "games": 2,
+        "wins": 1,
+        "losses": 1,
+        "rating_change": 20,
+        "derived": true
+      },
+      {
+        "rank": 11,
         "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|2cbec020-0561-4b16-81b5-40b9d3b66973",
         "team_name": "Shane Chicharo / Harley Trappitt",
         "player_ids": [
@@ -6319,7 +6339,7 @@
         "derived": true
       },
       {
-        "rank": 11,
+        "rank": 12,
         "team_id": "pair:485cd7ed-34ef-43f4-aed0-799162348c52|6dfe21eb-7a7c-4926-a791-b135a287b301",
         "team_name": "Guest D / lorna.li",
         "player_ids": [
@@ -6339,7 +6359,7 @@
         "derived": true
       },
       {
-        "rank": 12,
+        "rank": 13,
         "team_id": "c6996337-2e26-4445-a7f0-d884dd58ad5a",
         "team_name": "Chop Suey",
         "player_ids": [
@@ -6359,7 +6379,7 @@
         "derived": false
       },
       {
-        "rank": 13,
+        "rank": 14,
         "team_id": "2fa740f7-8058-4775-adfb-8d6adf57ab27",
         "team_name": "Bomb Squad",
         "player_ids": [
@@ -6377,26 +6397,6 @@
         "losses": 1,
         "rating_change": -20,
         "derived": false
-      },
-      {
-        "rank": 14,
-        "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|737d2e34-85d4-4cbf-b8bf-89409b83f998",
-        "team_name": "joshua.whiston / Harley Trappitt",
-        "player_ids": [
-          "737d2e34-85d4-4cbf-b8bf-89409b83f998",
-          "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
-        ],
-        "player_names": [
-          "joshua.whiston",
-          "Harley Trappitt"
-        ],
-        "rating": 1480,
-        "points": 1,
-        "games": 1,
-        "wins": 0,
-        "losses": 1,
-        "rating_change": -20,
-        "derived": true
       },
       {
         "rank": 15,
@@ -6440,26 +6440,6 @@
       },
       {
         "rank": 17,
-        "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
-        "team_name": "minh.nguyen / Tyler Smith",
-        "player_ids": [
-          "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
-          "4145bacb-cc0f-4b92-bcfd-1aadaa613e58"
-        ],
-        "player_names": [
-          "minh.nguyen",
-          "Tyler Smith"
-        ],
-        "rating": 1479,
-        "points": 1,
-        "games": 1,
-        "wins": 0,
-        "losses": 1,
-        "rating_change": -21,
-        "derived": true
-      },
-      {
-        "rank": 18,
         "team_id": "pair:485cd7ed-34ef-43f4-aed0-799162348c52|65638f26-9c35-48c9-a1e8-486d80d6a7ac",
         "team_name": "virginia.martineznavarro / Guest D",
         "player_ids": [
@@ -6479,7 +6459,7 @@
         "derived": true
       },
       {
-        "rank": 19,
+        "rank": 18,
         "team_id": "pair:6dfe21eb-7a7c-4926-a791-b135a287b301|9a88653d-aab6-46b4-b55d-c75fb057fa61",
         "team_name": "heru.gani / lorna.li",
         "player_ids": [
@@ -6496,6 +6476,26 @@
         "wins": 0,
         "losses": 2,
         "rating_change": -18,
+        "derived": true
+      },
+      {
+        "rank": 19,
+        "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+        "team_name": "minh.nguyen / Tyler Smith",
+        "player_ids": [
+          "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+          "4145bacb-cc0f-4b92-bcfd-1aadaa613e58"
+        ],
+        "player_names": [
+          "minh.nguyen",
+          "Tyler Smith"
+        ],
+        "rating": 1459,
+        "points": 2,
+        "games": 2,
+        "wins": 0,
+        "losses": 2,
+        "rating_change": -20,
         "derived": true
       }
     ]
