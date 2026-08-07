@@ -753,35 +753,32 @@ body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayer
 
 
 
-/* FULLSCREEN_SERVE_UI_CLEANUP_PATCH_V2
-   Final override: remove side-level and pseudo serving banners that can stretch across the table.
-   Serving is now shown by highlighting the actual active player chip only. */
+/* LAYOUT_AND_RECORDER_REFINEMENT_PATCH_V1 */
+.app{max-width:1600px!important;width:min(1600px,100%)!important}
+header{align-items:flex-start!important}
+.topbar{flex:1 1 auto;justify-content:flex-end;flex-wrap:wrap}
+#mainNav{flex:1 1 auto;justify-content:flex-end;flex-wrap:wrap;row-gap:6px}
+#mobileNavToggle{display:none}
+.leaderboard-grid{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;align-items:start!important}
+.leaderboard-card,.leaderboard-doubles-card{width:100%!important;min-width:0!important;flex:1 1 0!important}
+#singlesList,#doublesList{max-height:none!important;overflow:visible!important}
+.leaderboard-list{max-height:none!important;overflow:visible!important}
+#swapTeamsLiveBtn.swap-disabled{opacity:.45;cursor:not-allowed}
 body.live-recorder-fullscreen .fs-server-label,
 body.live-recorder-fullscreen .fs-server-label.active,
 body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-server-label,
-body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-server-label.active{
-  display:none!important;
-  visibility:hidden!important;
-  pointer-events:none!important;
-}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-server-label.active{display:none!important;visibility:hidden!important;pointer-events:none!important}
 body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving,
-body.live-recorder-fullscreen .fs-player.is-serving{
-  background:rgba(0,94,184,.94)!important;
-  color:#fff!important;
-  border:1px solid rgba(255,255,255,.35)!important;
-  box-shadow:0 0 24px rgba(0,94,184,.55),0 8px 24px rgba(0,0,0,.36)!important;
-  text-shadow:none!important;
-}
+body.live-recorder-fullscreen .fs-player.is-serving{background:rgba(0,94,184,.94)!important;color:#fff!important;border:1px solid rgba(255,255,255,.35)!important;box-shadow:0 0 24px rgba(0,94,184,.55),0 8px 24px rgba(0,0,0,.36)!important;text-shadow:none!important}
 body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving::before,
-body.live-recorder-fullscreen .fs-player.is-serving::before{
-  content:"● "!important;
-  display:inline!important;
-  font-size:.75em!important;
-}
+body.live-recorder-fullscreen .fs-player.is-serving::before{content:"● "!important;display:inline!important;font-size:.75em!important}
 body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving::after,
-body.live-recorder-fullscreen .fs-player.is-serving::after{
-  content:none!important;
-  display:none!important;
+body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!important;display:none!important}
+@media(max-width:700px){
+  .leaderboard-grid{grid-template-columns:1fr!important}
+  #mobileNavToggle{display:inline-flex!important;align-items:center;justify-content:center;grid-column:1/-1;min-height:40px}
+  body.mobile-nav-hidden #mainNav{display:none!important}
+  body.mobile-nav-hidden #mobileNavToggle::after{content:""}
 }
 
 </style>
@@ -804,6 +801,7 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
           <button data-tab="admin" id="adminTab" style="display:none">Admin</button>
           <button data-tab="profile" id="profileTab">Profile</button>
         </nav>
+          <button id="mobileNavToggle" type="button" class="ghost" aria-expanded="true" aria-controls="mainNav">Hide Nav</button>
 
         <div style="width:1px;height:36px;background:rgba(255,255,255,0.03);margin:0 8px"></div>
 
@@ -990,6 +988,7 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
               <div style="margin-top:10px;display:flex;gap:8px">
                 <button id="addGuestBtn" class="ghost">Add Guest</button>
                 <button id="challengeBtn" class="ghost">Challenge (ranked)</button>
+                <button id="swapTeamsSetupBtn" type="button" class="ghost">Swap Team A/B</button>
               </div>
             </div>
 
@@ -1044,11 +1043,6 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
                     <label><input id="rallyTrackingEnabled" type="checkbox" checked> Track hits</label>
                   </div>
                   <div class="point-hint" id="rallyHint">0 = server fault, 1 = server ace. Numpad + / - edits the current point.</div>
-                  <div class="rally-toggle-row">
-                    <div style="font-weight:700;color:#cfe6ff;margin-right:auto">Hits per rally</div>
-                    <label><input id="rallyTrackingEnabled" type="checkbox" checked> Track hits</label>
-                  </div>
-                  <div class="point-hint" id="rallyHint">0 = server fault, 1 = server ace. Numpad + / - edits the current point.</div>
                 </div>
                 <div class="rally-stepper">
                   <button id="rallyHitsDown" type="button" class="ghost">−</button>
@@ -1058,6 +1052,7 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
               </div>
               <div class="live-controls">
                 <button id="switchSides" class="ghost">Switch Sides</button>
+                <button id="swapTeamsLiveBtn" type="button" class="ghost">Swap Team A/B</button>
                 <button id="startMatchBtn" class="primary">Start Match</button>
               </div>
 
@@ -1360,6 +1355,9 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
   <div id="settingsModal" class="modal-overlay" style="display:none">
     <div class="modal">
       <h2>&#9881; Settings</h2>
+      <label>GitHub Personal Access Token (PAT)</label>
+      <input id="settingsPat" type="password" placeholder="github_pat_...">
+      <p class="note">Required to save data. Create a fine-grained PAT with <code>Contents: Read &amp; Write</code> for the <code>Harley-RBG/Tournie-Tracker</code> repo only. Stored in this browser&rsquo;s localStorage &mdash; do not share this device.</p>
       <label>Logged in as</label>
       <input id="settingsUser" placeholder="Not logged in" readonly style="opacity:0.6;cursor:default">
       <label style="margin-top:12px">Admin Emails <span style="opacity:.6;font-weight:400">(comma-separated)</span></label>
@@ -1429,10 +1427,10 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
 
 <script>
 /* ============================
-  RBG-TT  —  Cloudflare Worker + GitHub
-  Identity in localStorage.
-  Data synced to data/db.json via Worker endpoints.
-  ============================ */
+   RBG-TT  —  Local + GitHub Pages
+   No backend. Identity in localStorage.
+   Data synced to data/db.json via GitHub Contents API.
+   ============================ */
 
 const $ = id => document.getElementById(id);
 
@@ -1440,6 +1438,10 @@ const $ = id => document.getElementById(id);
 const API_BASE = 'https://rbg-tt-api.harley-trappitt.workers.dev';
 
 const LS_USER = 'tt_user';
+
+// Kept only so old localStorage/settings code does not break.
+// New saves go through Cloudflare Worker, not a user PAT.
+const LS_PAT = 'tt_gh_pat';
 
 /* ---------- In-memory state ---------- */
 const EMPTY_DATA = () => ({ players: [], matches: [], sessions: [], points: [], tournaments: [], rankings: { singles: [], doubles: [] }, player_stats: [], settings: { admins: [] } });
@@ -1486,6 +1488,16 @@ tabs.forEach(btn => btn.addEventListener('click', () => {
   if (tab === 'history') renderHistory();
   if (tab === 'recorder' && !$('tab-recorder').classList.contains('mobile-show-score')) showRecorderPane('setup');
 }));
+
+/* Mobile nav hide/show */
+const mobileNavToggle = $('mobileNavToggle');
+if (mobileNavToggle) {
+  mobileNavToggle.onclick = () => {
+    const hidden = document.body.classList.toggle('mobile-nav-hidden');
+    mobileNavToggle.textContent = hidden ? 'Show Nav' : 'Hide Nav';
+    mobileNavToggle.setAttribute('aria-expanded', String(!hidden));
+  };
+}
 
 /* ---------- Theme toggle ---------- */
 $('themeToggle').addEventListener('change', e => {
@@ -1645,6 +1657,7 @@ $('signOutBtn').onclick = () => {
 
 /* ---------- Settings modal ---------- */
 $('openSettingsBtn').onclick = () => {
+  $('settingsPat').value    = localStorage.getItem(LS_PAT) || '';
   $('settingsUser').value   = currentUser
     ? `${currentUser.displayName} (${currentUser.email})`
     : 'Not logged in';
@@ -1659,13 +1672,16 @@ $('settingsModal').addEventListener('click', e => {
 $('settingsClose').onclick = () => { $('settingsModal').style.display = 'none'; };
 
 $('settingsSave').onclick = async () => {
+  const pat = $('settingsPat').value.trim();
+  if (pat) localStorage.setItem(LS_PAT, pat);
+  else     localStorage.removeItem(LS_PAT);
   // Save admin list to shared data
   const admins = $('settingsAdmins').value
     .split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
   appData.settings ??= {};
   appData.settings.admins = admins;
   $('settingsModal').style.display = 'none';
-  await writeData('Update settings');
+  if (pat) await writeData('Update settings');
 };
 
 /* ---------- Refresh buttons ---------- */
@@ -1892,7 +1908,7 @@ $('editMatchSave').onclick = async () => {
   $('editMatchModal').style.display = 'none';
   const ok = await writeData(`Edit match ${_editMatchId.slice(0,8)}`);
   if (ok) { renderHistory(); renderLeaderboard(); }
-  else    alert('Save failed via Cloudflare Worker.');
+  else    alert('Save failed. Check your PAT in \u2699 Settings.');
 };
 
 /* ---------- Delete Match ---------- */
@@ -1909,7 +1925,7 @@ window.confirmDeleteMatch = function(id) {
 
   writeData(`Delete match ${id.slice(0,8)}`).then(ok => {
     if (ok) { renderHistory(); renderLeaderboard(); }
-    else alert('Save failed via Cloudflare Worker.');
+    else alert('Save failed. Check your PAT in \u2699 Settings.');
   });
 };
 
@@ -2779,38 +2795,20 @@ function updateRallyTrackingUI() {
   ['fsRallyHitsUp','fsRallyHitsDown'].forEach(id => { if ($(id)) $(id).disabled = !enabled; });
   if ($('fsRallyHits')) $('fsRallyHits').value = $('rallyHits')?.value || 0;
 }
-function isRallyTrackingEnabled() { return !!$('rallyTrackingEnabled')?.checked; }
-function updateRallyTrackingUI() {
-  const enabled = isRallyTrackingEnabled();
-  const control = $('rallyControl');
-  const input = $('rallyHits');
-  if (control) control.classList.toggle('rally-disabled', !enabled);
-  if (input) input.disabled = !enabled;
-  ['rallyHitsUp','rallyHitsDown'].forEach(id => { if ($(id)) $(id).disabled = !enabled; });
-  if (!enabled) setRallyHitsValue(0, false);
-  if ($('fsRallyTrackingEnabled')) $('fsRallyTrackingEnabled').checked = enabled;
-  if ($('fsRallyHits')) $('fsRallyHits').disabled = !enabled;
-  ['fsRallyHitsUp','fsRallyHitsDown'].forEach(id => { if ($(id)) $(id).disabled = !enabled; });
-  if ($('fsRallyHits')) $('fsRallyHits').value = $('rallyHits')?.value || 0;
-}
 function getRallyHitsValue() { return Math.max(0, Number($('rallyHits')?.value || 0)); }
 function setRallyHitsValue(v, applyToLast = true) {
   const next = Math.max(0, Number(v) || 0);
   if ($('rallyHits')) $('rallyHits').value = next;
   if ($('fsRallyHits')) $('fsRallyHits').value = next;
   if (applyToLast && isRallyTrackingEnabled() && currentMatch.pointLog.length) { const pt = currentMatch.pointLog[currentMatch.pointLog.length - 1]; pt.hits_per_rally = next; pt.rally_length = next; }
-  if ($('fsRallyHits')) $('fsRallyHits').value = next;
-  if (applyToLast && isRallyTrackingEnabled() && currentMatch.pointLog.length) { const pt = currentMatch.pointLog[currentMatch.pointLog.length - 1]; pt.hits_per_rally = next; pt.rally_length = next; }
 }
 function resetRallyHitsForNextPoint() { setRallyHitsValue(0, false); }
-function adjustRallyHits(delta) { if (!isRallyTrackingEnabled()) return; setRallyHitsValue(getRallyHitsValue() + delta, true); }
 function adjustRallyHits(delta) { if (!isRallyTrackingEnabled()) return; setRallyHitsValue(getRallyHitsValue() + delta, true); }
 function toggleRecorderFullscreen() {
   const entering = !document.body.classList.contains('live-recorder-fullscreen');
   document.body.classList.toggle('live-recorder-fullscreen', entering);
   const btn = $('fullscreenRecorderBtn');
   if (btn) btn.textContent = entering ? 'Exit Fullscreen' : 'Fullscreen';
-  if (entering) { applyFullscreenScaleSettings(); wireFullscreenRecorderControls(); renderFullscreenRecorderUI(); }
   if (entering) { applyFullscreenScaleSettings(); wireFullscreenRecorderControls(); renderFullscreenRecorderUI(); }
   const target = $('tab-recorder');
   if (entering && target?.requestFullscreen) target.requestFullscreen().catch(() => {});
@@ -2824,12 +2822,10 @@ if ($('rallyHitsUp')) $('rallyHitsUp').onclick = () => adjustRallyHits(1);
 if ($('rallyHitsDown')) $('rallyHitsDown').onclick = () => adjustRallyHits(-1);
 if ($('rallyHits')) $('rallyHits').addEventListener('change', () => setRallyHitsValue(getRallyHitsValue(), true));
 if ($('rallyTrackingEnabled')) $('rallyTrackingEnabled').addEventListener('change', updateRallyTrackingUI);
-if ($('rallyTrackingEnabled')) $('rallyTrackingEnabled').addEventListener('change', updateRallyTrackingUI);
 document.addEventListener('fullscreenchange', () => {
   if (!document.fullscreenElement) {
     document.body.classList.remove('live-recorder-fullscreen');
     if ($('fullscreenRecorderBtn')) $('fullscreenRecorderBtn').textContent = 'Fullscreen';
-    $('fsScalePanel')?.classList.remove('open');
     $('fsScalePanel')?.classList.remove('open');
   }
 });
@@ -2885,9 +2881,7 @@ function renderFullscreenRecorderUI() {
   ['A','B','C','D'].forEach(k => $('fsPlayer' + k)?.classList.remove('is-serving'));
   const roleMap = { [currentMatch.a]:'A', [currentMatch.b]:'B', [currentMatch.c]:'C', [currentMatch.d]:'D' };
   if (serverId && roleMap[serverId] && $('fsPlayer' + roleMap[serverId])) $('fsPlayer' + roleMap[serverId]).classList.add('is-serving');
-  // Fullscreen serving indicator cleanup:
-  // keep serving state on the actual player chip only. Side-level labels caused
-  // large blue overlay artefacts in fullscreen singles and doubles table view.
+  // Fullscreen serving indicator cleanup: use the actual player chip only.
   const serverOnA = serverId === currentMatch.a || serverId === currentMatch.c;
   const servingRole = roleMap[serverId] || null;
   ['a','b','c','d'].forEach(r => {
@@ -2921,6 +2915,59 @@ function wireFullscreenRecorderControls() {
   if ($('fsRallyHitsDown')) $('fsRallyHitsDown').onclick = () => { adjustRallyHits(-1); renderFullscreenRecorderUI(); };
   if ($('fsRallyHits')) $('fsRallyHits').addEventListener('change', e => { setRallyHitsValue(Math.max(0, Number(e.target.value || 0)), true); renderFullscreenRecorderUI(); });
 }
+
+
+function hasScoredPointInCurrentMatch() {
+  return (currentMatch.scoreA || 0) > 0 || (currentMatch.scoreB || 0) > 0 || (currentMatch.pointLog || []).length > 0;
+}
+function updateSwapTeamsButtons() {
+  const active = !!currentMatch.serveOrder.length;
+  const canSwap = !active || !hasScoredPointInCurrentMatch();
+  ['swapTeamsSetupBtn','swapTeamsLiveBtn'].forEach(id => {
+    const btn = $(id);
+    if (!btn) return;
+    btn.disabled = !canSwap;
+    btn.classList.toggle('swap-disabled', !canSwap);
+    btn.title = canSwap ? 'Swap Team A players with Team B players before the first point.' : 'Teams can only be swapped before the first point.';
+  });
+}
+function swapTeamSelections() {
+  const type = $('matchType')?.value || currentMatch.type || 'singles';
+  const a = $('playerA')?.value || null;
+  const b = $('playerB')?.value || null;
+  if ($('playerA')) $('playerA').value = b || '';
+  if ($('playerB')) $('playerB').value = a || '';
+  if (type === 'doubles') {
+    const c = $('playerC')?.value || null;
+    const d = $('playerD')?.value || null;
+    if ($('playerC')) $('playerC').value = d || '';
+    if ($('playerD')) $('playerD').value = c || '';
+  }
+}
+function swapActiveTeamsBeforeFirstPoint() {
+  if (hasScoredPointInCurrentMatch()) {
+    alert('Teams can only be swapped before the first point is recorded.');
+    updateSwapTeamsButtons();
+    return;
+  }
+  [currentMatch.a, currentMatch.b] = [currentMatch.b, currentMatch.a];
+  [currentMatch.c, currentMatch.d] = [currentMatch.d, currentMatch.c];
+  currentMatch.serveOrder = buildServeOrder();
+  if ($('playerA')) $('playerA').value = currentMatch.a || '';
+  if ($('playerB')) $('playerB').value = currentMatch.b || '';
+  if ($('playerC')) $('playerC').value = currentMatch.c || '';
+  if ($('playerD')) $('playerD').value = currentMatch.d || '';
+  renderLivePlayerSelectors();
+  updateScoreUI();
+  updateSwapTeamsButtons();
+}
+function swapTeamsBeforeFirstPoint() {
+  if (currentMatch.serveOrder.length) swapActiveTeamsBeforeFirstPoint();
+  else swapTeamSelections();
+}
+if ($('swapTeamsSetupBtn')) $('swapTeamsSetupBtn').onclick = swapTeamsBeforeFirstPoint;
+if ($('swapTeamsLiveBtn')) $('swapTeamsLiveBtn').onclick = swapTeamsBeforeFirstPoint;
+updateSwapTeamsButtons();
 
 $('startMatchBtn').onclick = () => {
   if (currentMatch.serveOrder.length) { completeGame(); return; }
@@ -2960,7 +3007,6 @@ $('startMatchBtn').onclick = () => {
   renderLivePlayerSelectors();
   document.querySelector('.live-score-panel')?.classList?.add('match-active-clean');
   updateRallyTrackingUI();
-  updateRallyTrackingUI();
   resetRallyHitsForNextPoint();
 
   $('matchActions').textContent = '';
@@ -2976,6 +3022,7 @@ $('startMatchBtn').onclick = () => {
   updateScoreUI();
   $('startMatchBtn').textContent = 'Complete Game';
   $('startMatchBtn').classList.add('is-complete');
+  updateSwapTeamsButtons();
   setRecorderMode('live');
 };
 
@@ -2999,6 +3046,9 @@ $('resetMatchBtn').onclick = () => {
   $('matchStatus').textContent = 'Idle';
   $('startMatchBtn').textContent = 'Start Match';
   $('startMatchBtn').classList.remove('is-complete');
+  $('startMatchBtn').disabled = false;
+  saveInProgress = false;
+  updateSwapTeamsButtons();
   setRecorderMode('choice');
 };
 
@@ -3008,7 +3058,7 @@ function updateScoreUI() {
   updateServeIndicator();
   if (currentMatch.serveOrder.length) renderLivePlayerSelectors();
   renderFullscreenRecorderUI();
-  renderFullscreenRecorderUI();
+  updateSwapTeamsButtons();
 }
 
 /* ---------- Serve logic (TT standard rules) ----------
@@ -3078,8 +3128,6 @@ function logPoint(winnerSide) {
     pressure_flag:  Math.max(sA, sB) >= gt - 2,  // last 3+ pts of a game
     hits_per_rally: isRallyTrackingEnabled() ? getRallyHitsValue() : null,  // null = tracking disabled for this point
     rally_length:   isRallyTrackingEnabled() ? getRallyHitsValue() : null,  // numeric rally count when enabled
-    hits_per_rally: isRallyTrackingEnabled() ? getRallyHitsValue() : null,  // null = tracking disabled for this point
-    rally_length:   isRallyTrackingEnabled() ? getRallyHitsValue() : null,  // numeric rally count when enabled
     end_type:       null                  // tagged later: 'winner'|'forced_error' etc.
   });
 }
@@ -3101,7 +3149,6 @@ $('subPointA').onclick = () => {
     updateScoreUI();
     const last = currentMatch.pointLog[currentMatch.pointLog.length - 1];
     setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
-    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
   }
 };
 $('subPointB').onclick = () => {
@@ -3110,7 +3157,6 @@ $('subPointB').onclick = () => {
     if (currentMatch.pointLog.length) currentMatch.pointLog.pop(); // undo
     updateScoreUI();
     const last = currentMatch.pointLog[currentMatch.pointLog.length - 1];
-    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
     setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
   }
 };
@@ -3137,11 +3183,15 @@ function checkAutoComplete() {
 
 async function completeGame() {
   if (saveInProgress) return;
-    saveInProgress = true;
-    if ($('startMatchBtn')) $('startMatchBtn').disabled = true;
+  saveInProgress = true;
+  if ($('startMatchBtn')) $('startMatchBtn').disabled = true;
   const pa = appData.players.find(p => p.id === currentMatch.a);
   const pb = appData.players.find(p => p.id === currentMatch.b);
-  if (!pa || !pb) return alert('Players not set. Use \u201cStart Match\u201d first.');
+  if (!pa || !pb) {
+    saveInProgress = false;
+    if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
+    return alert('Players not set. Use \u201cStart Match\u201d first.');
+  }
 
   const pc       = currentMatch.c ? appData.players.find(p => p.id === currentMatch.c) : null;
   const pd       = currentMatch.d ? appData.players.find(p => p.id === currentMatch.d) : null;
@@ -3254,19 +3304,28 @@ async function completeGame() {
         `Game ${currentMatch.gameNumber} of ${currentMatch.sessionFormat} \u00b7 ${currentMatch.gamesA}\u2013${currentMatch.gamesB} in games`;
       $('matchActions').textContent =
         `Game ${currentMatch.gameNumber - 1} done \u2014 ${sideAWon ? sideAName : sideBName} leads. Next server: Side ${currentMatch.firstServer}.`;
+      saveInProgress = false;
+      if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
+      updateSwapTeamsButtons();
     }
     return;
   }
 
   /* ---- Single game rematch prompt ---- */
   $('matchActions').textContent = `Recorded \u2014 Winner: ${winnerName}`;
+  saveInProgress = false;
+  if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
   setTimeout(() => {
     if (confirm('Rematch with same players?')) {
       currentMatch.scoreA = 0; currentMatch.scoreB = 0;
+      currentMatch.pointLog = [];
+      resetRallyHitsForNextPoint();
       updateScoreUI();
       $('matchStatus').textContent  = `${currentMatch.mode} \u00b7 ${currentMatch.type} \u00b7 rematch`;
       $('matchActions').textContent = '';
     } else {
+      saveInProgress = false;
+      if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
       $('resetMatchBtn').click();
     }
   }, 200);
