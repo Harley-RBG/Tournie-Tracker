@@ -557,7 +557,7 @@
     {
       "id": "06a374e4-e021-405e-84df-c884681ae334",
       "tournament_id": null,
-      "mode": "casual",
+      "mode": "ranked",
       "type": "doubles",
       "game_type": 11,
       "session_id": null,
@@ -6140,6 +6140,26 @@
       },
       {
         "rank": 2,
+        "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
+        "team_name": "Tyler Smith / Shane Chicharo",
+        "player_ids": [
+          "4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
+          "2cbec020-0561-4b16-81b5-40b9d3b66973"
+        ],
+        "player_names": [
+          "Tyler Smith",
+          "Shane Chicharo"
+        ],
+        "rating": 1540,
+        "points": 6,
+        "games": 2,
+        "wins": 2,
+        "losses": 0,
+        "rating_change": 19,
+        "derived": true
+      },
+      {
+        "rank": 3,
         "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|737d2e34-85d4-4cbf-b8bf-89409b83f998",
         "team_name": "Tyler Smith / joshua.whiston",
         "player_ids": [
@@ -6156,26 +6176,6 @@
         "wins": 2,
         "losses": 0,
         "rating_change": 19,
-        "derived": true
-      },
-      {
-        "rank": 3,
-        "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
-        "team_name": "Tyler Smith / Shane Chicharo",
-        "player_ids": [
-          "4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
-          "2cbec020-0561-4b16-81b5-40b9d3b66973"
-        ],
-        "player_names": [
-          "Tyler Smith",
-          "Shane Chicharo"
-        ],
-        "rating": 1521,
-        "points": 3,
-        "games": 1,
-        "wins": 1,
-        "losses": 0,
-        "rating_change": 21,
         "derived": true
       },
       {
@@ -6340,6 +6340,26 @@
       },
       {
         "rank": 12,
+        "team_id": "c6996337-2e26-4445-a7f0-d884dd58ad5a",
+        "team_name": "Chop Suey",
+        "player_ids": [
+          "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+          "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
+        ],
+        "player_names": [
+          "minh.nguyen",
+          "Harley Trappitt"
+        ],
+        "rating": 1481,
+        "points": 1,
+        "games": 1,
+        "wins": 0,
+        "losses": 1,
+        "rating_change": -19,
+        "derived": false
+      },
+      {
+        "rank": 13,
         "team_id": "2fa740f7-8058-4775-adfb-8d6adf57ab27",
         "team_name": "Bomb Squad",
         "player_ids": [
@@ -6359,7 +6379,7 @@
         "derived": false
       },
       {
-        "rank": 13,
+        "rank": 14,
         "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|737d2e34-85d4-4cbf-b8bf-89409b83f998",
         "team_name": "joshua.whiston / Harley Trappitt",
         "player_ids": [
@@ -6379,7 +6399,7 @@
         "derived": true
       },
       {
-        "rank": 14,
+        "rank": 15,
         "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|65638f26-9c35-48c9-a1e8-486d80d6a7ac",
         "team_name": "Shane Chicharo / virginia.martineznavarro",
         "player_ids": [
@@ -6399,7 +6419,7 @@
         "derived": true
       },
       {
-        "rank": 15,
+        "rank": 16,
         "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|485cd7ed-34ef-43f4-aed0-799162348c52",
         "team_name": "Harley Trappitt / Guest D",
         "player_ids": [
@@ -6419,7 +6439,7 @@
         "derived": true
       },
       {
-        "rank": 16,
+        "rank": 17,
         "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
         "team_name": "minh.nguyen / Tyler Smith",
         "player_ids": [
@@ -6439,7 +6459,7 @@
         "derived": true
       },
       {
-        "rank": 17,
+        "rank": 18,
         "team_id": "pair:485cd7ed-34ef-43f4-aed0-799162348c52|65638f26-9c35-48c9-a1e8-486d80d6a7ac",
         "team_name": "virginia.martineznavarro / Guest D",
         "player_ids": [
@@ -6459,7 +6479,7 @@
         "derived": true
       },
       {
-        "rank": 18,
+        "rank": 19,
         "team_id": "pair:6dfe21eb-7a7c-4926-a791-b135a287b301|9a88653d-aab6-46b4-b55d-c75fb057fa61",
         "team_name": "heru.gani / lorna.li",
         "player_ids": [
