@@ -54,11 +54,11 @@
       "display_name": "minh.nguyen",
       "notes": "",
       "games_played": 19,
-      "points": 0,
+      "points": 3,
       "created_at": "2026-07-22T10:51:40.904Z",
-      "rating": 1500,
-      "best_rating": 1500,
-      "rating_change": null
+      "rating": 1521,
+      "best_rating": 1521,
+      "rating_change": 21
     },
     {
       "id": "6dfe21eb-7a7c-4926-a791-b135a287b301",
@@ -78,15 +78,15 @@
       "display_name": "Harley Trappitt",
       "notes": "",
       "games_played": 35,
-      "points": 11,
+      "points": 12,
       "created_at": "2026-07-22T11:37:42.700Z",
       "handedness": "Right",
       "grip": "Shakehand",
       "play_style": "All-round",
       "primary_weapon": "Slice Serve, Backhand Topspin",
       "weakness_notes": "",
-      "rating_change": -22,
-      "rating": 1518,
+      "rating_change": -21,
+      "rating": 1497,
       "best_rating": 1540
     },
     {
@@ -575,7 +575,7 @@
     {
       "id": "e6f0870b-a84c-40ff-8c43-ecfff0138f1e",
       "tournament_id": null,
-      "mode": "casual",
+      "mode": "ranked",
       "type": "singles",
       "game_type": 11,
       "session_id": null,
@@ -11328,13 +11328,13 @@
         "player_name": "Tyler Smith",
         "rank": 1,
         "rating": 1522,
-        "games": 8
+        "games": 15
       },
       {
-        "player_id": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
-        "player_name": "Harley Trappitt",
+        "player_id": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+        "player_name": "minh.nguyen",
         "rank": 2,
-        "rating": 1518,
+        "rating": 1521,
         "games": 19
       },
       {
@@ -11342,7 +11342,7 @@
         "player_name": "virginia.martineznavarro",
         "rank": 3,
         "rating": 1500,
-        "games": 8
+        "games": 13
       },
       {
         "player_id": "737d2e34-85d4-4cbf-b8bf-89409b83f998",
@@ -11352,37 +11352,44 @@
         "games": 7
       },
       {
-        "player_id": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
-        "player_name": "minh.nguyen",
-        "rank": 5,
-        "rating": 1500,
-        "games": 7
-      },
-      {
         "player_id": "6dfe21eb-7a7c-4926-a791-b135a287b301",
         "player_name": "lorna.li",
+        "rank": 5,
+        "rating": 1500,
+        "games": 14
+      },
+      {
+        "player_id": "2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8",
+        "player_name": "Guest B",
         "rank": 6,
         "rating": 1500,
-        "games": 7
+        "games": 6
       },
       {
         "player_id": "485cd7ed-34ef-43f4-aed0-799162348c52",
         "player_name": "Guest D",
         "rank": 7,
         "rating": 1500,
-        "games": 3
+        "games": 5
       },
       {
         "player_id": "2cbec020-0561-4b16-81b5-40b9d3b66973",
         "player_name": "Shane Chicharo",
         "rank": 8,
         "rating": 1498,
-        "games": 9
+        "games": 18
+      },
+      {
+        "player_id": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
+        "player_name": "Harley Trappitt",
+        "rank": 9,
+        "rating": 1497,
+        "games": 35
       },
       {
         "player_id": "9a88653d-aab6-46b4-b55d-c75fb057fa61",
         "player_name": "heru.gani",
-        "rank": 9,
+        "rank": 10,
         "rating": 1462,
         "games": 6
       }
