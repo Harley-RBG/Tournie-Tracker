@@ -191,6 +191,23 @@
       "primary_weapon": null,
       "weakness_notes": "",
       "created_at": "2026-07-31T05:48:04.013Z"
+    },
+    {
+      "id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
+      "email": "saqib.javed@robertbird.com.au",
+      "display_name": "saqib.javed",
+      "notes": "",
+      "games_played": 0,
+      "points": 0,
+      "rating": 1500,
+      "best_rating": 1500,
+      "rating_change": null,
+      "handedness": null,
+      "grip": null,
+      "play_style": null,
+      "primary_weapon": null,
+      "weakness_notes": "",
+      "created_at": "2026-08-10T04:02:45.116Z"
     }
   ],
   "matches": [
@@ -11407,10 +11424,10 @@
           "virginia.martineznavarro",
           "Harley Trappitt"
         ],
-        "rating": 1573,
-        "points": 12,
-        "games": 4,
-        "wins": 4,
+        "rating": 1590,
+        "points": 15,
+        "games": 5,
+        "wins": 5,
         "losses": 0,
         "rating_change": 17,
         "derived": true
@@ -11577,26 +11594,6 @@
       },
       {
         "rank": 10,
-        "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|485cd7ed-34ef-43f4-aed0-799162348c52",
-        "team_name": "Shane Chicharo / Guest D",
-        "player_ids": [
-          "2cbec020-0561-4b16-81b5-40b9d3b66973",
-          "485cd7ed-34ef-43f4-aed0-799162348c52"
-        ],
-        "player_names": [
-          "Shane Chicharo",
-          "Guest D"
-        ],
-        "rating": 1519,
-        "points": 3,
-        "games": 1,
-        "wins": 1,
-        "losses": 0,
-        "rating_change": 19,
-        "derived": true
-      },
-      {
-        "rank": 11,
         "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
         "team_name": "Tyler Smith / Shane Chicharo",
         "player_ids": [
@@ -11616,7 +11613,7 @@
         "derived": true
       },
       {
-        "rank": 12,
+        "rank": 11,
         "team_id": "2fa740f7-8058-4775-adfb-8d6adf57ab27",
         "team_name": "Bomb Squad",
         "player_ids": [
@@ -11634,6 +11631,26 @@
         "losses": 1,
         "rating_change": 22,
         "derived": false
+      },
+      {
+        "rank": 12,
+        "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|485cd7ed-34ef-43f4-aed0-799162348c52",
+        "team_name": "Shane Chicharo / Guest D",
+        "player_ids": [
+          "2cbec020-0561-4b16-81b5-40b9d3b66973",
+          "485cd7ed-34ef-43f4-aed0-799162348c52"
+        ],
+        "player_names": [
+          "Shane Chicharo",
+          "Guest D"
+        ],
+        "rating": 1502,
+        "points": 4,
+        "games": 2,
+        "wins": 1,
+        "losses": 1,
+        "rating_change": -17,
+        "derived": true
       },
       {
         "rank": 13,
