@@ -208,6 +208,23 @@
       "primary_weapon": null,
       "weakness_notes": "",
       "created_at": "2026-08-10T04:02:45.116Z"
+    },
+    {
+      "id": "c47d30be-215a-467d-9be7-de1ef3575719",
+      "email": "john.wong@robertbird.com.au",
+      "display_name": "john.wong",
+      "notes": "",
+      "games_played": 0,
+      "points": 0,
+      "rating": 1500,
+      "best_rating": 1500,
+      "rating_change": null,
+      "handedness": null,
+      "grip": null,
+      "play_style": null,
+      "primary_weapon": null,
+      "weakness_notes": "",
+      "created_at": "2026-08-10T04:03:11.780Z"
     }
   ],
   "matches": [
