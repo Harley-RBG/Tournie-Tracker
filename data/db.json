@@ -719,7 +719,7 @@
     {
       "id": "1fef8503-4e37-4259-b7dd-60bce8705141",
       "tournament_id": null,
-      "mode": "casual",
+      "mode": "ranked",
       "type": "doubles",
       "game_type": 11,
       "session_id": null,
@@ -11617,26 +11617,6 @@
       },
       {
         "rank": 12,
-        "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|2cbec020-0561-4b16-81b5-40b9d3b66973",
-        "team_name": "Shane Chicharo / Harley Trappitt",
-        "player_ids": [
-          "2cbec020-0561-4b16-81b5-40b9d3b66973",
-          "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
-        ],
-        "player_names": [
-          "Shane Chicharo",
-          "Harley Trappitt"
-        ],
-        "rating": 1482,
-        "points": 5,
-        "games": 3,
-        "wins": 1,
-        "losses": 2,
-        "rating_change": -19,
-        "derived": true
-      },
-      {
-        "rank": 13,
         "team_id": "pair:485cd7ed-34ef-43f4-aed0-799162348c52|6dfe21eb-7a7c-4926-a791-b135a287b301",
         "team_name": "Guest D / lorna.li",
         "player_ids": [
@@ -11653,6 +11633,26 @@
         "wins": 0,
         "losses": 1,
         "rating_change": -18,
+        "derived": true
+      },
+      {
+        "rank": 13,
+        "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+        "team_name": "minh.nguyen / Tyler Smith",
+        "player_ids": [
+          "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+          "4145bacb-cc0f-4b92-bcfd-1aadaa613e58"
+        ],
+        "player_names": [
+          "minh.nguyen",
+          "Tyler Smith"
+        ],
+        "rating": 1480,
+        "points": 5,
+        "games": 3,
+        "wins": 1,
+        "losses": 2,
+        "rating_change": 21,
         "derived": true
       },
       {
@@ -11757,22 +11757,22 @@
       },
       {
         "rank": 19,
-        "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
-        "team_name": "minh.nguyen / Tyler Smith",
+        "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|2cbec020-0561-4b16-81b5-40b9d3b66973",
+        "team_name": "Shane Chicharo / Harley Trappitt",
         "player_ids": [
-          "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
-          "4145bacb-cc0f-4b92-bcfd-1aadaa613e58"
+          "2cbec020-0561-4b16-81b5-40b9d3b66973",
+          "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
         ],
         "player_names": [
-          "minh.nguyen",
-          "Tyler Smith"
+          "Shane Chicharo",
+          "Harley Trappitt"
         ],
-        "rating": 1459,
-        "points": 2,
-        "games": 2,
-        "wins": 0,
-        "losses": 2,
-        "rating_change": -20,
+        "rating": 1461,
+        "points": 6,
+        "games": 4,
+        "wins": 1,
+        "losses": 3,
+        "rating_change": -21,
         "derived": true
       }
     ]
