@@ -141,7 +141,7 @@
       "email": "guest_guest_b@guest.local",
       "display_name": "Guest B",
       "notes": "Quick-start guest player",
-      "games_played": 1,
+      "games_played": 0,
       "points": 0,
       "rating": 1500,
       "best_rating": 1500,
@@ -214,7 +214,7 @@
       "email": "john.wong@robertbird.com.au",
       "display_name": "john.wong",
       "notes": "",
-      "games_played": 5,
+      "games_played": 6,
       "points": 0,
       "rating": 1500,
       "best_rating": 1500,
@@ -813,7 +813,7 @@
       "session_id": null,
       "game_number": null,
       "player_a": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
-      "player_b": "2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8",
+      "player_b": "c47d30be-215a-467d-9be7-de1ef3575719",
       "player_c": "6dfe21eb-7a7c-4926-a791-b135a287b301",
       "player_d": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
       "score_a": 11,
@@ -9068,7 +9068,7 @@
       "game_id": "909f9da2-bd72-441e-86fe-d69c4e143d7f",
       "session_id": null,
       "point_number": 3,
-      "server_id": "2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8",
+      "server_id": "c47d30be-215a-467d-9be7-de1ef3575719",
       "winner_side": "A",
       "score_a_before": 2,
       "score_b_before": 0,
@@ -9082,7 +9082,7 @@
       "game_id": "909f9da2-bd72-441e-86fe-d69c4e143d7f",
       "session_id": null,
       "point_number": 4,
-      "server_id": "2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8",
+      "server_id": "c47d30be-215a-467d-9be7-de1ef3575719",
       "winner_side": "B",
       "score_a_before": 3,
       "score_b_before": 0,
@@ -9180,7 +9180,7 @@
       "game_id": "909f9da2-bd72-441e-86fe-d69c4e143d7f",
       "session_id": null,
       "point_number": 11,
-      "server_id": "2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8",
+      "server_id": "c47d30be-215a-467d-9be7-de1ef3575719",
       "winner_side": "B",
       "score_a_before": 5,
       "score_b_before": 5,
@@ -9194,7 +9194,7 @@
       "game_id": "909f9da2-bd72-441e-86fe-d69c4e143d7f",
       "session_id": null,
       "point_number": 12,
-      "server_id": "2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8",
+      "server_id": "c47d30be-215a-467d-9be7-de1ef3575719",
       "winner_side": "A",
       "score_a_before": 5,
       "score_b_before": 6,
@@ -9292,7 +9292,7 @@
       "game_id": "909f9da2-bd72-441e-86fe-d69c4e143d7f",
       "session_id": null,
       "point_number": 19,
-      "server_id": "2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8",
+      "server_id": "c47d30be-215a-467d-9be7-de1ef3575719",
       "winner_side": "A",
       "score_a_before": 10,
       "score_b_before": 8,
@@ -11400,44 +11400,37 @@
         "games": 14
       },
       {
-        "player_id": "2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8",
-        "player_name": "Guest B",
-        "rank": 7,
-        "rating": 1500,
-        "games": 1
-      },
-      {
         "player_id": "485cd7ed-34ef-43f4-aed0-799162348c52",
         "player_name": "Guest D",
-        "rank": 8,
+        "rank": 7,
         "rating": 1500,
         "games": 3
       },
       {
         "player_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
         "player_name": "saqib.javed",
-        "rank": 9,
+        "rank": 8,
         "rating": 1500,
         "games": 2
       },
       {
         "player_id": "c47d30be-215a-467d-9be7-de1ef3575719",
         "player_name": "john.wong",
-        "rank": 10,
+        "rank": 9,
         "rating": 1500,
-        "games": 5
+        "games": 6
       },
       {
         "player_id": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
         "player_name": "minh.nguyen",
-        "rank": 11,
+        "rank": 10,
         "rating": 1482,
         "games": 19
       },
       {
         "player_id": "9a88653d-aab6-46b4-b55d-c75fb057fa61",
         "player_name": "heru.gani",
-        "rank": 12,
+        "rank": 11,
         "rating": 1462,
         "games": 6
       }
@@ -11605,14 +11598,14 @@
       },
       {
         "rank": 9,
-        "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8",
-        "team_name": "Guest B / Harley Trappitt",
+        "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|c47d30be-215a-467d-9be7-de1ef3575719",
+        "team_name": "john.wong / Harley Trappitt",
         "player_ids": [
-          "2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8",
+          "c47d30be-215a-467d-9be7-de1ef3575719",
           "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
         ],
         "player_names": [
-          "Guest B",
+          "john.wong",
           "Harley Trappitt"
         ],
         "rating": 1519,
