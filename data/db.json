@@ -128,7 +128,7 @@
       "email": "guest_guest_a@guest.local",
       "display_name": "Guest A",
       "notes": "Quick-start guest player",
-      "games_played": 5,
+      "games_played": 4,
       "points": 0,
       "rating": 1500,
       "best_rating": 1500,
@@ -231,7 +231,7 @@
       "email": "nikola.najdovski@robertbird.com.au",
       "display_name": "nikola.najdovski",
       "notes": "",
-      "games_played": 0,
+      "games_played": 1,
       "points": 0,
       "rating": 1500,
       "best_rating": 1500,
@@ -974,12 +974,12 @@
       "session_id": null,
       "game_number": null,
       "player_a": "2cbec020-0561-4b16-81b5-40b9d3b66973",
-      "player_b": "38a15526-b61a-47fb-83df-5c7c13e8e65c",
+      "player_b": "35c58513-aa75-4722-8ab1-22c3d8982fc9",
       "player_c": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
       "player_d": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
       "score_a": 7,
       "score_b": 11,
-      "winner": "38a15526-b61a-47fb-83df-5c7c13e8e65c",
+      "winner": "35c58513-aa75-4722-8ab1-22c3d8982fc9",
       "win_by_2": true,
       "created_at": "2026-08-10T07:10:56.375Z"
     },
@@ -11415,7 +11415,7 @@
       "game_id": "29059fbd-597d-4de5-99a3-769ab9c285ca",
       "session_id": null,
       "point_number": 3,
-      "server_id": "38a15526-b61a-47fb-83df-5c7c13e8e65c",
+      "server_id": "35c58513-aa75-4722-8ab1-22c3d8982fc9",
       "winner_side": "B",
       "score_a_before": 1,
       "score_b_before": 1,
@@ -11429,7 +11429,7 @@
       "game_id": "29059fbd-597d-4de5-99a3-769ab9c285ca",
       "session_id": null,
       "point_number": 4,
-      "server_id": "38a15526-b61a-47fb-83df-5c7c13e8e65c",
+      "server_id": "35c58513-aa75-4722-8ab1-22c3d8982fc9",
       "winner_side": "B",
       "score_a_before": 1,
       "score_b_before": 2,
@@ -11527,7 +11527,7 @@
       "game_id": "29059fbd-597d-4de5-99a3-769ab9c285ca",
       "session_id": null,
       "point_number": 11,
-      "server_id": "38a15526-b61a-47fb-83df-5c7c13e8e65c",
+      "server_id": "35c58513-aa75-4722-8ab1-22c3d8982fc9",
       "winner_side": "A",
       "score_a_before": 2,
       "score_b_before": 8,
@@ -11541,7 +11541,7 @@
       "game_id": "29059fbd-597d-4de5-99a3-769ab9c285ca",
       "session_id": null,
       "point_number": 12,
-      "server_id": "38a15526-b61a-47fb-83df-5c7c13e8e65c",
+      "server_id": "35c58513-aa75-4722-8ab1-22c3d8982fc9",
       "winner_side": "A",
       "score_a_before": 3,
       "score_b_before": 8,
@@ -12589,77 +12589,35 @@
         "player_name": "Tyler Smith",
         "rank": 1,
         "rating": 1536,
-        "games": 15
+        "games": 4
       },
       {
         "player_id": "2cbec020-0561-4b16-81b5-40b9d3b66973",
         "player_name": "Shane Chicharo",
         "rank": 2,
         "rating": 1519,
-        "games": 18
+        "games": 3
       },
       {
         "player_id": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
         "player_name": "Harley Trappitt",
         "rank": 3,
         "rating": 1501,
-        "games": 35
-      },
-      {
-        "player_id": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
-        "player_name": "virginia.martineznavarro",
-        "rank": 4,
-        "rating": 1500,
-        "games": 13
-      },
-      {
-        "player_id": "737d2e34-85d4-4cbf-b8bf-89409b83f998",
-        "player_name": "joshua.whiston",
-        "rank": 5,
-        "rating": 1500,
-        "games": 7
-      },
-      {
-        "player_id": "6dfe21eb-7a7c-4926-a791-b135a287b301",
-        "player_name": "lorna.li",
-        "rank": 6,
-        "rating": 1500,
-        "games": 14
-      },
-      {
-        "player_id": "485cd7ed-34ef-43f4-aed0-799162348c52",
-        "player_name": "Guest D",
-        "rank": 7,
-        "rating": 1500,
-        "games": 3
-      },
-      {
-        "player_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
-        "player_name": "saqib.javed",
-        "rank": 8,
-        "rating": 1500,
-        "games": 2
-      },
-      {
-        "player_id": "c47d30be-215a-467d-9be7-de1ef3575719",
-        "player_name": "john.wong",
-        "rank": 9,
-        "rating": 1500,
-        "games": 6
+        "games": 10
       },
       {
         "player_id": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
         "player_name": "minh.nguyen",
-        "rank": 10,
+        "rank": 4,
         "rating": 1482,
-        "games": 19
+        "games": 3
       },
       {
         "player_id": "9a88653d-aab6-46b4-b55d-c75fb057fa61",
         "player_name": "heru.gani",
-        "rank": 11,
+        "rank": 5,
         "rating": 1462,
-        "games": 6
+        "games": 2
       }
     ],
     "doubles": [
