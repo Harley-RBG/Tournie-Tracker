@@ -763,7 +763,7 @@ header{align-items:flex-start!important}
 .leaderboard-card,.leaderboard-doubles-card{width:100%!important;min-width:0!important;flex:1 1 0!important}
 #singlesList,#doublesList{max-height:none!important;overflow:visible!important}
 .leaderboard-list{max-height:none!important;overflow:visible!important}
-#swapTeamsLiveBtn.swap-disabled{opacity:.45;cursor:not-allowed}
+#switchInitialServerLiveBtn.server-switch-disabled,#switchInitialServerSetupBtn.server-switch-disabled,.partner-swap-disabled{opacity:.45;cursor:not-allowed}
 body.live-recorder-fullscreen .fs-server-label,
 body.live-recorder-fullscreen .fs-server-label.active,
 body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-server-label,
@@ -988,7 +988,9 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
               <div style="margin-top:10px;display:flex;gap:8px">
                 <button id="addGuestBtn" class="ghost">Add Guest</button>
                 <button id="challengeBtn" class="ghost">Challenge (ranked)</button>
-                <button id="swapTeamsSetupBtn" type="button" class="ghost">Swap Team A/B</button>
+                <button id="switchInitialServerSetupBtn" type="button" class="ghost">Switch Initial Server</button>
+                <button id="swapSideAPartnersSetupBtn" type="button" class="ghost">Swap Side A Partners</button>
+                <button id="swapSideBPartnersSetupBtn" type="button" class="ghost">Swap Side B Partners</button>
               </div>
             </div>
 
@@ -1042,17 +1044,19 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
                     <div style="font-weight:700;color:#cfe6ff;margin-right:auto">Hits per rally</div>
                     <label><input id="rallyTrackingEnabled" type="checkbox" checked> Track hits</label>
                   </div>
-                  <div class="point-hint" id="rallyHint">0 = server fault, 1 = server ace. Numpad + / - edits the current point.</div>
+                  <div class="point-hint" id="rallyHint">1 = serve ace, 2 = serve + return, 3 = serve + return + third ball. Numpad + / - edits the current point.</div>
                 </div>
                 <div class="rally-stepper">
                   <button id="rallyHitsDown" type="button" class="ghost">−</button>
-                  <input id="rallyHits" type="number" min="0" step="1" value="0" inputmode="numeric">
+                  <input id="rallyHits" type="number" min="1" step="1" value="1" inputmode="numeric">
                   <button id="rallyHitsUp" type="button" class="ghost">+</button>
                 </div>
               </div>
               <div class="live-controls">
                 <button id="switchSides" class="ghost">Switch Sides</button>
-                <button id="swapTeamsLiveBtn" type="button" class="ghost">Swap Team A/B</button>
+                <button id="switchInitialServerLiveBtn" type="button" class="ghost">Switch Initial Server</button>
+                <button id="swapSideAPartnersLiveBtn" type="button" class="ghost">Swap Side A Partners</button>
+                <button id="swapSideBPartnersLiveBtn" type="button" class="ghost">Swap Side B Partners</button>
                 <button id="startMatchBtn" class="primary">Start Match</button>
               </div>
 
@@ -1111,7 +1115,7 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
                     <label><input id="fsRallyTrackingEnabled" type="checkbox" checked> Track hits</label>
                     <div class="fs-rally-stepper">
                       <button id="fsRallyHitsDown" type="button" class="ghost">−</button>
-                      <input id="fsRallyHits" type="number" min="0" step="1" value="0" inputmode="numeric">
+                      <input id="fsRallyHits" type="number" min="1" step="1" value="1" inputmode="numeric">
                       <button id="fsRallyHitsUp" type="button" class="ghost">+</button>
                     </div>
                   </div>
@@ -1407,6 +1411,21 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
       <h2>Edit Match</h2>
       <div id="editMatchInfo" class="muted" style="margin:6px 0 10px;font-size:12px"></div>
       <input type="hidden" id="editMatchId">
+      <label>Match type</label>
+      <select id="editMatchType">
+        <option value="singles">Singles</option>
+        <option value="doubles">Doubles</option>
+      </select>
+      <label>Side A Player</label>
+      <select id="editPlayerA"></select>
+      <label>Side B Player</label>
+      <select id="editPlayerB"></select>
+      <div id="editDoublesPlayers">
+        <label>Side A Partner</label>
+        <select id="editPlayerC"></select>
+        <label>Side B Partner</label>
+        <select id="editPlayerD"></select>
+      </div>
       <label>Score — Side A</label>
       <input id="editScoreA" type="number" min="0" max="99">
       <label>Score — Side B</label>
@@ -1417,7 +1436,7 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
         <option value="ranked">Ranked</option>
         <option value="tournament">Tournament</option>
       </select>
-      <p class="note">Saving will recalculate all Elo ratings and player stats from scratch.</p>
+      <p class="note">Saving updates this history record only, remaps point servers for changed players, and recalculates Elo, H2H, player stats and leaderboards from match history.</p>
       <div class="modal-actions">
         <button id="editMatchClose" class="ghost">Cancel</button>
         <button id="editMatchSave" class="primary">Save &amp; Recalculate</button>
@@ -1874,19 +1893,43 @@ $('historyModeFilter').addEventListener('change', renderHistory);
 /* ---------- Edit Match ---------- */
 let _editMatchId = null;
 
+function editPlayerOptionsHtml(selectedId) {
+  return [...appData.players]
+    .sort((a,b)=>(a.display_name||'').localeCompare(b.display_name||''))
+    .map(p => `<option value="${p.id}" ${p.id === selectedId ? 'selected' : ''}>${p.display_name}</option>`)
+    .join('');
+}
+
+function syncEditMatchTypeUI() {
+  const isDoubles = $('editMatchType')?.value === 'doubles';
+  if ($('editDoublesPlayers')) $('editDoublesPlayers').style.display = isDoubles ? 'block' : 'none';
+}
+
+function populateEditMatchPlayers(m) {
+  if (!m) return;
+  $('editPlayerA').innerHTML = editPlayerOptionsHtml(m.player_a);
+  $('editPlayerB').innerHTML = editPlayerOptionsHtml(m.player_b);
+  $('editPlayerC').innerHTML = editPlayerOptionsHtml(m.player_c);
+  $('editPlayerD').innerHTML = editPlayerOptionsHtml(m.player_d);
+  syncEditMatchTypeUI();
+}
+
 window.showEditMatch = function(id) {
   const m = appData.matches.find(x => x.id === id);
   if (!m) return;
   const pa = appData.players.find(p => p.id === m.player_a)?.display_name || '?';
   const pb = appData.players.find(p => p.id === m.player_b)?.display_name || '?';
   _editMatchId = id;
-  $('editMatchInfo').textContent = `${pa} vs ${pb} \u00b7 ${new Date(m.created_at).toLocaleDateString()}`;
+  $('editMatchInfo').textContent = `${pa} vs ${pb} · ${new Date(m.created_at).toLocaleDateString()}`;
+  $('editMatchType').value = m.type || 'singles';
+  populateEditMatchPlayers(m);
   $('editScoreA').value = m.score_a;
   $('editScoreB').value = m.score_b;
   $('editMode').value   = m.mode;
   $('editMatchModal').style.display = 'flex';
 };
 
+$('editMatchType').addEventListener('change', syncEditMatchTypeUI);
 $('editMatchModal').addEventListener('click', e => {
   if (e.target === $('editMatchModal')) $('editMatchModal').style.display = 'none';
 });
@@ -1895,20 +1938,45 @@ $('editMatchClose').onclick = () => { $('editMatchModal').style.display = 'none'
 $('editMatchSave').onclick = async () => {
   const m = appData.matches.find(x => x.id === _editMatchId);
   if (!m) return;
+  const oldRoles = {
+    [m.player_a]: $('editPlayerA').value,
+    [m.player_b]: $('editPlayerB').value,
+    ...(m.player_c ? { [m.player_c]: $('editPlayerC').value } : {}),
+    ...(m.player_d ? { [m.player_d]: $('editPlayerD').value } : {})
+  };
+  const newType = $('editMatchType').value;
+  const newA = $('editPlayerA').value;
+  const newB = $('editPlayerB').value;
+  const newC = newType === 'doubles' ? $('editPlayerC').value : null;
+  const newD = newType === 'doubles' ? $('editPlayerD').value : null;
+  const required = newType === 'doubles' ? [newA, newB, newC, newD] : [newA, newB];
+  if (required.some(id => !id)) return alert('Select all required players for this match.');
+  if (new Set(required).size !== required.length) return alert('Each player in a match must be different.');
+
   const newSA = Number($('editScoreA').value);
   const newSB = Number($('editScoreB').value);
   const newMode = $('editMode').value;
 
+  m.type = newType;
+  m.player_a = newA;
+  m.player_b = newB;
+  m.player_c = newC;
+  m.player_d = newD;
   m.score_a = newSA;
   m.score_b = newSB;
   m.mode    = newMode;
   m.winner  = newSA > newSB ? m.player_a : m.player_b;
 
+  // Remap point server ids for this game if a player was corrected.
+  (appData.points || []).forEach(pt => {
+    if (pt.game_id === m.id && oldRoles[pt.server_id]) pt.server_id = oldRoles[pt.server_id];
+  });
+
   recalculateAllStats();
   $('editMatchModal').style.display = 'none';
   const ok = await writeData(`Edit match ${_editMatchId.slice(0,8)}`);
   if (ok) { renderHistory(); renderLeaderboard(); }
-  else    alert('Save failed. Check your PAT in \u2699 Settings.');
+  else    alert('Save failed. Check your PAT in ⚙ Settings.');
 };
 
 /* ---------- Delete Match ---------- */
@@ -2789,20 +2857,20 @@ function updateRallyTrackingUI() {
   if (control) control.classList.toggle('rally-disabled', !enabled);
   if (input) input.disabled = !enabled;
   ['rallyHitsUp','rallyHitsDown'].forEach(id => { if ($(id)) $(id).disabled = !enabled; });
-  if (!enabled) setRallyHitsValue(0, false);
+  if (!enabled) setRallyHitsValue(1, false);
   if ($('fsRallyTrackingEnabled')) $('fsRallyTrackingEnabled').checked = enabled;
   if ($('fsRallyHits')) $('fsRallyHits').disabled = !enabled;
   ['fsRallyHitsUp','fsRallyHitsDown'].forEach(id => { if ($(id)) $(id).disabled = !enabled; });
   if ($('fsRallyHits')) $('fsRallyHits').value = $('rallyHits')?.value || 0;
 }
-function getRallyHitsValue() { return Math.max(0, Number($('rallyHits')?.value || 0)); }
+function getRallyHitsValue() { return Math.max(1, Number($('rallyHits')?.value || 1)); }
 function setRallyHitsValue(v, applyToLast = true) {
-  const next = Math.max(0, Number(v) || 0);
+  const next = Math.max(1, Number(v) || 1);
   if ($('rallyHits')) $('rallyHits').value = next;
   if ($('fsRallyHits')) $('fsRallyHits').value = next;
   if (applyToLast && isRallyTrackingEnabled() && currentMatch.pointLog.length) { const pt = currentMatch.pointLog[currentMatch.pointLog.length - 1]; pt.hits_per_rally = next; pt.rally_length = next; }
 }
-function resetRallyHitsForNextPoint() { setRallyHitsValue(0, false); }
+function resetRallyHitsForNextPoint() { setRallyHitsValue(1, false); }
 function adjustRallyHits(delta) { if (!isRallyTrackingEnabled()) return; setRallyHitsValue(getRallyHitsValue() + delta, true); }
 function toggleRecorderFullscreen() {
   const entering = !document.body.classList.contains('live-recorder-fullscreen');
@@ -2913,61 +2981,110 @@ function wireFullscreenRecorderControls() {
   if ($('fsRallyTrackingEnabled')) $('fsRallyTrackingEnabled').addEventListener('change', e => { if ($('rallyTrackingEnabled')) $('rallyTrackingEnabled').checked = e.target.checked; updateRallyTrackingUI(); renderFullscreenRecorderUI(); });
   if ($('fsRallyHitsUp')) $('fsRallyHitsUp').onclick = () => { adjustRallyHits(1); renderFullscreenRecorderUI(); };
   if ($('fsRallyHitsDown')) $('fsRallyHitsDown').onclick = () => { adjustRallyHits(-1); renderFullscreenRecorderUI(); };
-  if ($('fsRallyHits')) $('fsRallyHits').addEventListener('change', e => { setRallyHitsValue(Math.max(0, Number(e.target.value || 0)), true); renderFullscreenRecorderUI(); });
+  if ($('fsRallyHits')) $('fsRallyHits').addEventListener('change', e => { setRallyHitsValue(Math.max(1, Number(e.target.value || 1)), true); renderFullscreenRecorderUI(); });
 }
 
 
 function hasScoredPointInCurrentMatch() {
   return (currentMatch.scoreA || 0) > 0 || (currentMatch.scoreB || 0) > 0 || (currentMatch.pointLog || []).length > 0;
 }
-function updateSwapTeamsButtons() {
+function initialServerLabel(side) {
+  return `Initial Server: Side ${side}`;
+}
+function updateInitialServerButtons() {
   const active = !!currentMatch.serveOrder.length;
-  const canSwap = !active || !hasScoredPointInCurrentMatch();
-  ['swapTeamsSetupBtn','swapTeamsLiveBtn'].forEach(id => {
+  const canSwitch = !active || !hasScoredPointInCurrentMatch();
+  const side = active ? currentMatch.firstServer : ($('firstServerSelect')?.value || 'A');
+  ['switchInitialServerSetupBtn','switchInitialServerLiveBtn'].forEach(id => {
     const btn = $(id);
     if (!btn) return;
-    btn.disabled = !canSwap;
-    btn.classList.toggle('swap-disabled', !canSwap);
-    btn.title = canSwap ? 'Swap Team A players with Team B players before the first point.' : 'Teams can only be swapped before the first point.';
+    btn.disabled = !canSwitch;
+    btn.classList.toggle('server-switch-disabled', !canSwitch);
+    btn.textContent = initialServerLabel(side);
+    btn.title = canSwitch ? 'Switch which side serves first. Teams stay on their current sides.' : 'Initial server can only be changed before the first point.';
   });
 }
-function swapTeamSelections() {
-  const type = $('matchType')?.value || currentMatch.type || 'singles';
-  const a = $('playerA')?.value || null;
-  const b = $('playerB')?.value || null;
-  if ($('playerA')) $('playerA').value = b || '';
-  if ($('playerB')) $('playerB').value = a || '';
-  if (type === 'doubles') {
-    const c = $('playerC')?.value || null;
-    const d = $('playerD')?.value || null;
-    if ($('playerC')) $('playerC').value = d || '';
-    if ($('playerD')) $('playerD').value = c || '';
-  }
-}
-function swapActiveTeamsBeforeFirstPoint() {
-  if (hasScoredPointInCurrentMatch()) {
-    alert('Teams can only be swapped before the first point is recorded.');
-    updateSwapTeamsButtons();
+function switchInitialServerBeforeFirstPoint() {
+  if (currentMatch.serveOrder.length && hasScoredPointInCurrentMatch()) {
+    alert('Initial server can only be changed before the first point is recorded.');
+    updateInitialServerButtons();
     return;
   }
-  [currentMatch.a, currentMatch.b] = [currentMatch.b, currentMatch.a];
-  [currentMatch.c, currentMatch.d] = [currentMatch.d, currentMatch.c];
-  currentMatch.serveOrder = buildServeOrder();
-  if ($('playerA')) $('playerA').value = currentMatch.a || '';
-  if ($('playerB')) $('playerB').value = currentMatch.b || '';
-  if ($('playerC')) $('playerC').value = currentMatch.c || '';
-  if ($('playerD')) $('playerD').value = currentMatch.d || '';
-  renderLivePlayerSelectors();
-  updateScoreUI();
-  updateSwapTeamsButtons();
+  const current = currentMatch.serveOrder.length ? currentMatch.firstServer : ($('firstServerSelect')?.value || 'A');
+  const next = current === 'A' ? 'B' : 'A';
+  if ($('firstServerSelect')) $('firstServerSelect').value = next;
+  currentMatch.firstServer = next;
+  if (currentMatch.serveOrder.length) {
+    currentMatch.serveOrder = buildServeOrder();
+    updateScoreUI();
+    renderLivePlayerSelectors();
+  }
+  updateInitialServerButtons();
 }
-function swapTeamsBeforeFirstPoint() {
-  if (currentMatch.serveOrder.length) swapActiveTeamsBeforeFirstPoint();
-  else swapTeamSelections();
+if ($('switchInitialServerSetupBtn')) $('switchInitialServerSetupBtn').onclick = switchInitialServerBeforeFirstPoint;
+if ($('switchInitialServerLiveBtn')) $('switchInitialServerLiveBtn').onclick = switchInitialServerBeforeFirstPoint;
+if ($('firstServerSelect')) $('firstServerSelect').addEventListener('change', () => {
+  if (!currentMatch.serveOrder.length) { updateInitialServerButtons(); updatePartnerSwapButtons(); }
+});
+updateInitialServerButtons();
+
+function isDoublesContext() {
+  return currentMatch.serveOrder.length ? currentMatch.type === 'doubles' : $('matchType')?.value === 'doubles';
 }
-if ($('swapTeamsSetupBtn')) $('swapTeamsSetupBtn').onclick = swapTeamsBeforeFirstPoint;
-if ($('swapTeamsLiveBtn')) $('swapTeamsLiveBtn').onclick = swapTeamsBeforeFirstPoint;
-updateSwapTeamsButtons();
+function updatePartnerSwapButtons() {
+  const isDoubles = isDoublesContext();
+  const active = !!currentMatch.serveOrder.length;
+  const canSwap = isDoubles && (!active || !hasScoredPointInCurrentMatch());
+  ['swapSideAPartnersSetupBtn','swapSideAPartnersLiveBtn','swapSideBPartnersSetupBtn','swapSideBPartnersLiveBtn'].forEach(id => {
+    const btn = $(id);
+    if (!btn) return;
+    btn.style.display = isDoubles ? '' : 'none';
+    btn.disabled = !canSwap;
+    btn.classList.toggle('partner-swap-disabled', !canSwap);
+    btn.title = canSwap ? 'Swap the main player with their partner on this side before the first point.' : 'Partner swap is only available for doubles before the first point.';
+  });
+}
+function swapPartnerSelection(side) {
+  if (!isDoublesContext()) {
+    updatePartnerSwapButtons();
+    return;
+  }
+  if (currentMatch.serveOrder.length && hasScoredPointInCurrentMatch()) {
+    alert('Partners can only be swapped before the first point is recorded.');
+    updatePartnerSwapButtons();
+    return;
+  }
+  if (currentMatch.serveOrder.length) {
+    if (side === 'A') [currentMatch.a, currentMatch.c] = [currentMatch.c, currentMatch.a];
+    else [currentMatch.b, currentMatch.d] = [currentMatch.d, currentMatch.b];
+    if ($('playerA')) $('playerA').value = currentMatch.a || '';
+    if ($('playerB')) $('playerB').value = currentMatch.b || '';
+    if ($('playerC')) $('playerC').value = currentMatch.c || '';
+    if ($('playerD')) $('playerD').value = currentMatch.d || '';
+    currentMatch.serveOrder = buildServeOrder();
+    renderLivePlayerSelectors();
+    updateScoreUI();
+  } else {
+    if (side === 'A') {
+      const a = $('playerA')?.value || '';
+      const c = $('playerC')?.value || '';
+      if ($('playerA')) $('playerA').value = c;
+      if ($('playerC')) $('playerC').value = a;
+    } else {
+      const b = $('playerB')?.value || '';
+      const d = $('playerD')?.value || '';
+      if ($('playerB')) $('playerB').value = d;
+      if ($('playerD')) $('playerD').value = b;
+    }
+  }
+  updatePartnerSwapButtons();
+}
+if ($('swapSideAPartnersSetupBtn')) $('swapSideAPartnersSetupBtn').onclick = () => swapPartnerSelection('A');
+if ($('swapSideAPartnersLiveBtn')) $('swapSideAPartnersLiveBtn').onclick = () => swapPartnerSelection('A');
+if ($('swapSideBPartnersSetupBtn')) $('swapSideBPartnersSetupBtn').onclick = () => swapPartnerSelection('B');
+if ($('swapSideBPartnersLiveBtn')) $('swapSideBPartnersLiveBtn').onclick = () => swapPartnerSelection('B');
+if ($('matchType')) $('matchType').addEventListener('change', updatePartnerSwapButtons);
+updatePartnerSwapButtons();
 
 $('startMatchBtn').onclick = () => {
   if (currentMatch.serveOrder.length) { completeGame(); return; }
@@ -3022,7 +3139,8 @@ $('startMatchBtn').onclick = () => {
   updateScoreUI();
   $('startMatchBtn').textContent = 'Complete Game';
   $('startMatchBtn').classList.add('is-complete');
-  updateSwapTeamsButtons();
+  updateInitialServerButtons();
+  updatePartnerSwapButtons();
   setRecorderMode('live');
 };
 
@@ -3048,7 +3166,8 @@ $('resetMatchBtn').onclick = () => {
   $('startMatchBtn').classList.remove('is-complete');
   $('startMatchBtn').disabled = false;
   saveInProgress = false;
-  updateSwapTeamsButtons();
+  updateInitialServerButtons();
+  updatePartnerSwapButtons();
   setRecorderMode('choice');
 };
 
@@ -3058,7 +3177,8 @@ function updateScoreUI() {
   updateServeIndicator();
   if (currentMatch.serveOrder.length) renderLivePlayerSelectors();
   renderFullscreenRecorderUI();
-  updateSwapTeamsButtons();
+  updateInitialServerButtons();
+  updatePartnerSwapButtons();
 }
 
 /* ---------- Serve logic (TT standard rules) ----------
@@ -3148,7 +3268,7 @@ $('subPointA').onclick = () => {
     if (currentMatch.pointLog.length) currentMatch.pointLog.pop(); // undo
     updateScoreUI();
     const last = currentMatch.pointLog[currentMatch.pointLog.length - 1];
-    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
+    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 1) : 0, false);
   }
 };
 $('subPointB').onclick = () => {
@@ -3157,7 +3277,7 @@ $('subPointB').onclick = () => {
     if (currentMatch.pointLog.length) currentMatch.pointLog.pop(); // undo
     updateScoreUI();
     const last = currentMatch.pointLog[currentMatch.pointLog.length - 1];
-    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
+    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 1) : 0, false);
   }
 };
 
@@ -3306,7 +3426,7 @@ async function completeGame() {
         `Game ${currentMatch.gameNumber - 1} done \u2014 ${sideAWon ? sideAName : sideBName} leads. Next server: Side ${currentMatch.firstServer}.`;
       saveInProgress = false;
       if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
-      updateSwapTeamsButtons();
+      updateInitialServerButtons();
     }
     return;
   }
