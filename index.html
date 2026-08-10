@@ -886,7 +886,7 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
               <select id="historyModeFilter" style="min-width:110px">
                 <option value="">All modes</option>
                 <option value="casual">Casual</option>
-                <option value="ranked">Ranked</option>
+                <option value="ranked" selected>Ranked</option>
                 <option value="tournament">Tournament</option>
               </select>
             </div>
@@ -1472,7 +1472,7 @@ let currentPlayer = null; // entry in appData.players matching currentUser.email
 let currentMatch  = {
   a: null, b: null, c: null, d: null,
   scoreA: 0, scoreB: 0,
-  mode: 'casual',
+  mode: 'ranked',
   type: 'singles',
   gameType: 11,
   winBy2: true,
@@ -2000,31 +2000,52 @@ window.confirmDeleteMatch = function(id) {
 /* ============================================================
    Rankings & Leaderboard
    ============================================================ */
+function singlesGameCountForPlayer(playerId) {
+  return (appData.matches || []).filter(m => m.type === 'singles' && (m.player_a === playerId || m.player_b === playerId)).length;
+}
+
+function singlesWinsLossesForPlayer(playerId) {
+  let wins = 0, losses = 0;
+  (appData.matches || []).forEach(m => {
+    if (m.type !== 'singles' || (m.player_a !== playerId && m.player_b !== playerId)) return;
+    const won = m.player_a === playerId ? m.winner === m.player_a : m.winner === m.player_b;
+    won ? wins++ : losses++;
+  });
+  return { wins, losses };
+}
+
 function renderLeaderboard() {
   const sEl = $('singlesList'), dEl = $('doublesList');
   sEl.innerHTML = ''; dEl.innerHTML = '';
 
-  // Singles: use ranked array, or fallback to all players sorted by Elo
-  const singles = appData.rankings.singles.length
-    ? appData.rankings.singles
-    : [...appData.players].filter(p=>(p.games_played||0)>0)
-        .sort((a,b)=>(b.rating||1500)-(a.rating||1500))
-        .map((p,i)=>({ player_id:p.id, player_name:p.display_name, rank:i+1, rating:p.rating||1500, games:p.games_played||0 }));
+  // Singles leaderboard must be singles-only. Doubles games still contribute to
+  // player profiles, but not to the singles leaderboard game readout.
+  const rankedSingles = (appData.rankings.singles || [])
+    .map(r => ({ ...r, games: singlesGameCountForPlayer(r.player_id) }))
+    .filter(r => r.games > 0);
+
+  const singles = rankedSingles.length
+    ? rankedSingles
+    : [...appData.players]
+        .map(p => ({ p, games: singlesGameCountForPlayer(p.id) }))
+        .filter(x => x.games > 0)
+        .sort((a,b)=>(b.p.rating||1500)-(a.p.rating||1500))
+        .map((x,i)=>({ player_id:x.p.id, player_name:x.p.display_name, rank:i+1, rating:x.p.rating||1500, games:x.games }));
 
   if (!singles.length) {
-    sEl.innerHTML = '<div class="muted">No players with games yet.</div>';
+    sEl.innerHTML = '<div class="muted">No players with singles games yet.</div>';
   } else {
     singles.forEach(r => {
       const p = appData.players.find(x=>x.id===r.player_id) || { id: r.player_id, display_name: r.player_name||'Unknown' };
       const rc = p.rating_change;
-      const rcHtml = rc!=null ? ` <span style="font-size:11px;color:${rc>=0?'#4ade80':'#f87171'}">${rc>=0?'+':''}${rc}</span>` : '';
+      const wl = singlesWinsLossesForPlayer(p.id || r.player_id);
       const el = document.createElement('div');
       el.className = 'lb-row';
       el.innerHTML = `
         <div class="lb-rank">#${r.rank}</div>
         <div class="lb-main">
           <div class="lb-name" onclick="openPlayerProfile('${p.id || r.player_id}')">${p.display_name}</div>
-          <div class="muted lb-meta">${r.rating || 1500} Elo &middot; ${r.games || p.games_played || 0} games</div>
+          <div class="muted lb-meta">${r.rating || 1500} Elo &middot; ${r.games || 0} singles games &middot; ${wl.wins}W ${wl.losses}L</div>
         </div>
         ${rc != null ? `<div class="lb-change" style="color:${rc >= 0 ? '#4ade80' : '#f87171'}">${rc >= 0 ? '+' : ''}${rc}</div>` : ''}
       `;
@@ -2032,25 +2053,28 @@ function renderLeaderboard() {
     });
   }
 
-  const doubles = appData.rankings.doubles;
+  const doubles = appData.rankings.doubles || [];
   dEl.innerHTML = doubles.length
-  ? doubles.map(r => `
+  ? doubles.map(r => {
+    const key = doublesPairKey(r.player_ids || []);
+    return `
     <div class="lb-row">
       <div class="lb-rank">#${r.rank}</div>
       <div class="lb-main">
-        <div class="lb-name">${r.team_name || 'Team'}</div>
+        <div class="lb-name" onclick="openDoublesProfile('${key}')">${r.team_name || 'Team'}</div>
         <div class="muted lb-meta">${r.points || 0} pts</div>
       </div>
-    </div>
-  `).join('')
+    </div>`;
+  }).join('')
     : '<div class="muted">No doubles rankings yet.</div>';
 }
 
 function rebuildSinglesRankings() {
   appData.rankings.singles = [...appData.players]
-    .filter(p => (p.games_played || 0) > 0)
-    .sort((a, b) => (b.rating || 1500) - (a.rating || 1500))
-    .map((p, i) => ({ player_id: p.id, player_name: p.display_name, rank: i + 1, rating: p.rating || 1500, games: p.games_played || 0 }));
+    .map(p => ({ p, games: singlesGameCountForPlayer(p.id) }))
+    .filter(x => x.games > 0)
+    .sort((a, b) => (b.p.rating || 1500) - (a.p.rating || 1500))
+    .map((x, i) => ({ player_id: x.p.id, player_name: x.p.display_name, rank: i + 1, rating: x.p.rating || 1500, games: x.games }));
 }
 
 /* ============================================================
@@ -2183,6 +2207,117 @@ function computePlayerStats(playerId) {
     }),
     h2h
   };
+}
+
+
+function doublesPairKey(ids) {
+  return [...new Set((ids || []).filter(Boolean))].sort().join('|');
+}
+function doublesPairName(key) {
+  return String(key || '').split('|').filter(Boolean).map(id => appData.players.find(p => p.id === id)?.display_name || 'Unknown').join(' / ') || 'Unknown Pair';
+}
+function computeDoublesPairStats(key) {
+  const ms = (appData.matches || [])
+    .filter(m => m.type === 'doubles' && (doublesPairKey([m.player_a, m.player_c]) === key || doublesPairKey([m.player_b, m.player_d]) === key))
+    .sort((a,b)=>a.created_at.localeCompare(b.created_at));
+  let wins=0, losses=0, pf=0, pa=0, rankedW=0, rankedL=0;
+  const h2h = {};
+  const pct = (n,d) => d ? Math.round(n/d*100) : 0;
+  ms.forEach(m => {
+    const onA = doublesPairKey([m.player_a, m.player_c]) === key;
+    const won = onA ? m.winner === m.player_a : m.winner === m.player_b;
+    won ? wins++ : losses++;
+    if (m.mode === 'ranked') won ? rankedW++ : rankedL++;
+    pf += onA ? m.score_a : m.score_b;
+    pa += onA ? m.score_b : m.score_a;
+    const oppKey = onA ? doublesPairKey([m.player_b, m.player_d]) : doublesPairKey([m.player_a, m.player_c]);
+    h2h[oppKey] ??= { w:0, l:0 };
+    won ? h2h[oppKey].w++ : h2h[oppKey].l++;
+  });
+  return {
+    matches: ms,
+    total: wins + losses,
+    wins, losses,
+    win_pct: pct(wins, wins + losses),
+    ranked_wins: rankedW,
+    ranked_losses: rankedL,
+    ranked_win_pct: pct(rankedW, rankedW + rankedL),
+    points_for: pf,
+    points_against: pa,
+    point_diff: pf - pa,
+    avg_scored: ms.length ? (pf / ms.length).toFixed(1) : '0.0',
+    avg_conceded: ms.length ? (pa / ms.length).toFixed(1) : '0.0',
+    h2h,
+    recent_form: ms.slice(-10).map(m => {
+      const onA = doublesPairKey([m.player_a, m.player_c]) === key;
+      return onA ? m.winner === m.player_a : m.winner === m.player_b;
+    })
+  };
+}
+function openDoublesProfile(key) {
+  tabs.forEach(b => b.classList.remove('active'));
+  tabs.find(b => b.dataset.tab === 'profile')?.classList.add('active');
+  for (const k in tabSections) tabSections[k].style.display = k === 'profile' ? 'block' : 'none';
+  renderDoublesProfile(key);
+}
+function renderDoublesProfile(key) {
+  const el = $('profileContent');
+  const ids = String(key || '').split('|').filter(Boolean);
+  if (ids.length !== 2) { el.innerHTML = '<div class="muted">Doubles pair not found.</div>'; return; }
+  if ($('editProfile')) $('editProfile').style.display = 'none';
+  const stats = computeDoublesPairStats(key);
+  const ranking = (appData.rankings.doubles || []).find(r => doublesPairKey(r.player_ids || []) === key);
+  const rank = ranking?.rank ?? '—';
+  const rating = ranking?.rating || 1500;
+  const name = ranking?.team_name || doublesPairName(key);
+  el.innerHTML = `
+    <div style="margin-bottom:12px">
+      <div style="font-size:17px;font-weight:700;color:#fff">${name}</div>
+      <div class="muted">Doubles pair profile · ${doublesPairName(key)}</div>
+    </div>
+    <div class="stat-bar">
+      <div class="stat-pill"><div class="val">${rating}</div><div class="lbl">Doubles Elo</div></div>
+      <div class="stat-pill"><div class="val">#${rank}</div><div class="lbl">Doubles Rank</div></div>
+      <div class="stat-pill"><div class="val">${stats.win_pct}%</div><div class="lbl">Win Rate</div></div>
+      <div class="stat-pill"><div class="val">${stats.wins}–${stats.losses}</div><div class="lbl">W–L</div></div>
+      <div class="stat-pill"><div class="val">${stats.point_diff>=0?'+':''}${stats.point_diff}</div><div class="lbl">Pt Diff</div></div>
+      <div class="stat-pill"><div class="val">${stats.total}</div><div class="lbl">Matches</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-bottom:12px">
+      <div class="card" style="padding:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Performance</div>
+        <div class="muted" style="margin-bottom:3px">Avg scored: <strong style="color:#cfe6ff">${stats.avg_scored}</strong></div>
+        <div class="muted" style="margin-bottom:3px">Avg conceded: <strong style="color:#cfe6ff">${stats.avg_conceded}</strong></div>
+        <div class="muted" style="margin-bottom:3px">Points for/against: <strong style="color:#cfe6ff">${stats.points_for}–${stats.points_against}</strong></div>
+      </div>
+      <div class="card" style="padding:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">By Mode</div>
+        <div class="muted" style="margin-bottom:3px">Ranked: <strong style="color:#cfe6ff">${stats.ranked_wins}W ${stats.ranked_losses}L (${stats.ranked_win_pct}%)</strong></div>
+        <div class="muted" style="margin-bottom:3px">Leaderboard points: <strong style="color:#cfe6ff">${ranking?.points || 0}</strong></div>
+      </div>
+    </div>`;
+  if (stats.recent_form.length) {
+    const chips = stats.recent_form.map(w=>`<span class="form-chip ${w?'win':'loss'}">${w?'W':'L'}</span>`).join('');
+    el.insertAdjacentHTML('beforeend', `<div style="margin-bottom:14px"><div class="muted" style="margin-bottom:6px;font-size:12px">Recent form (last ${stats.recent_form.length})</div><div style="display:flex;gap:4px;flex-wrap:wrap">${chips}</div></div>`);
+  }
+  const h2hPairs = Object.entries(stats.h2h).sort((a,b)=>(b[1].w+b[1].l)-(a[1].w+a[1].l));
+  if (h2hPairs.length) {
+    const rows = h2hPairs.map(([oppKey,r])=>{
+      const total = r.w + r.l, p = Math.round(r.w / total * 100);
+      return `<div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><div style="display:flex;justify-content:space-between;gap:8px"><span class="small" style="cursor:pointer;color:#cfe6ff" onclick="openDoublesProfile('${oppKey}')">${doublesPairName(oppKey)}</span><span class="muted" style="font-size:12px">${r.w}–${r.l} <span style="color:${p>=50?'#4ade80':'#f87171'}">(${p}%)</span></span></div><div class="h2h-bar"><div class="h2h-bar-fill" style="width:${p}%"></div></div></div>`;
+    }).join('');
+    el.insertAdjacentHTML('beforeend', `<div class="card" style="padding:10px;margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Pair Head to Head</div>${rows}</div>`);
+  }
+  if (stats.matches.length) {
+    const rows = stats.matches.slice(-20).reverse().map(m => {
+      const onA = doublesPairKey([m.player_a, m.player_c]) === key;
+      const won = onA ? m.winner === m.player_a : m.winner === m.player_b;
+      const sA = doublesPairName(doublesPairKey([m.player_a, m.player_c]));
+      const sB = doublesPairName(doublesPairKey([m.player_b, m.player_d]));
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span><strong style="color:${won?'#4ade80':'#f87171'};margin-right:6px">${won?'W':'L'}</strong><span class="small">${sA} ${m.score_a}–${m.score_b} ${sB}</span></span><span class="muted" style="font-size:11px;white-space:nowrap">${m.mode} · ${new Date(m.created_at).toLocaleDateString()}</span></div>`;
+    }).join('');
+    el.insertAdjacentHTML('beforeend', `<div class="card" style="padding:10px;margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Recent Doubles Matches</div>${rows}</div>`);
+  }
 }
 
 /* ============================================================
@@ -2821,7 +2956,7 @@ function startQuickMatch(type) {
   populatePlayerSelectors();
   $('matchType').value = type;
   $('doublesSection').style.display = type === 'doubles' ? 'block' : 'none';
-  $('matchMode').value = 'casual';
+  $('matchMode').value = 'ranked';
   $('playerA').value = a; $('playerB').value = b;
   if (type === 'doubles') { $('playerC').value = c; $('playerD').value = d; }
   $('sessionFormat').value = '1'; $('firstServerSelect').value = 'A';
@@ -3148,7 +3283,7 @@ $('resetMatchBtn').onclick = () => {
   Object.assign(currentMatch, {
     a: null, b: null, c: null, d: null,
     scoreA: 0, scoreB: 0,
-    mode: 'casual', type: 'singles', gameType: 11, winBy2: true,
+    mode: 'ranked', type: 'singles', gameType: 11, winBy2: true,
     tournament: null, serveOrder: [], firstServer: 'A',
     sessionFormat: 1, sessionId: null, gamesA: 0, gamesB: 0, gameNumber: 1,
     pointLog: []
@@ -3709,7 +3844,7 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
         <div class="lb-row">
           <div class="lb-rank">#${r.rank}</div>
           <div class="lb-main">
-            <div class="lb-name">${r.team_name || 'Unnamed Team'}</div>
+            <div class="lb-name" onclick="openDoublesProfile('${doublesPairKey(r.player_ids || [])}')">${r.team_name || 'Unnamed Team'}</div>
             <div class="muted lb-meta">${(r.player_names || []).join(' / ')}</div>
             <div class="muted lb-meta">${r.rating || 1500} Elo &middot; ${r.points || 0} pts &middot; ${r.wins || 0}W ${r.losses || 0}L &middot; ${r.games || 0} ranked games</div>
           </div>
