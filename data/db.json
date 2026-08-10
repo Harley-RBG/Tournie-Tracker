@@ -167,7 +167,7 @@
       "email": "guest_guest_d@guest.local",
       "display_name": "Guest D",
       "notes": "Quick-start guest player",
-      "games_played": 4,
+      "games_played": 3,
       "points": 0,
       "rating": 1500,
       "best_rating": 1500,
@@ -197,7 +197,7 @@
       "email": "saqib.javed@robertbird.com.au",
       "display_name": "saqib.javed",
       "notes": "",
-      "games_played": 1,
+      "games_played": 2,
       "points": 0,
       "rating": 1500,
       "best_rating": 1500,
@@ -940,7 +940,7 @@
       "game_number": null,
       "player_a": "2cbec020-0561-4b16-81b5-40b9d3b66973",
       "player_b": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
-      "player_c": "485cd7ed-34ef-43f4-aed0-799162348c52",
+      "player_c": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
       "player_d": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
       "score_a": 10,
       "score_b": 12,
@@ -11028,7 +11028,7 @@
       "game_id": "8bd50171-252e-4406-8560-296a17a08de9",
       "session_id": null,
       "point_number": 5,
-      "server_id": "485cd7ed-34ef-43f4-aed0-799162348c52",
+      "server_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
       "winner_side": "A",
       "score_a_before": 0,
       "score_b_before": 4,
@@ -11042,7 +11042,7 @@
       "game_id": "8bd50171-252e-4406-8560-296a17a08de9",
       "session_id": null,
       "point_number": 6,
-      "server_id": "485cd7ed-34ef-43f4-aed0-799162348c52",
+      "server_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
       "winner_side": "A",
       "score_a_before": 1,
       "score_b_before": 4,
@@ -11140,7 +11140,7 @@
       "game_id": "8bd50171-252e-4406-8560-296a17a08de9",
       "session_id": null,
       "point_number": 13,
-      "server_id": "485cd7ed-34ef-43f4-aed0-799162348c52",
+      "server_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
       "winner_side": "A",
       "score_a_before": 4,
       "score_b_before": 8,
@@ -11154,7 +11154,7 @@
       "game_id": "8bd50171-252e-4406-8560-296a17a08de9",
       "session_id": null,
       "point_number": 14,
-      "server_id": "485cd7ed-34ef-43f4-aed0-799162348c52",
+      "server_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
       "winner_side": "A",
       "score_a_before": 5,
       "score_b_before": 8,
@@ -11252,7 +11252,7 @@
       "game_id": "8bd50171-252e-4406-8560-296a17a08de9",
       "session_id": null,
       "point_number": 21,
-      "server_id": "485cd7ed-34ef-43f4-aed0-799162348c52",
+      "server_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
       "winner_side": "B",
       "score_a_before": 10,
       "score_b_before": 10,
@@ -11411,14 +11411,14 @@
         "player_name": "Guest D",
         "rank": 8,
         "rating": 1500,
-        "games": 4
+        "games": 3
       },
       {
         "player_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
         "player_name": "saqib.javed",
         "rank": 9,
         "rating": 1500,
-        "games": 1
+        "games": 2
       },
       {
         "player_id": "c47d30be-215a-467d-9be7-de1ef3575719",
@@ -11455,12 +11455,12 @@
           "virginia.martineznavarro",
           "Harley Trappitt"
         ],
-        "rating": 1590,
+        "rating": 1589,
         "points": 15,
         "games": 5,
         "wins": 5,
         "losses": 0,
-        "rating_change": 17,
+        "rating_change": 16,
         "derived": true
       },
       {
@@ -11585,6 +11585,26 @@
       },
       {
         "rank": 8,
+        "team_id": "pair:1d547aab-daf0-4e87-a9e4-bac4cb2ac82a|2cbec020-0561-4b16-81b5-40b9d3b66973",
+        "team_name": "Shane Chicharo / saqib.javed",
+        "player_ids": [
+          "2cbec020-0561-4b16-81b5-40b9d3b66973",
+          "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a"
+        ],
+        "player_names": [
+          "Shane Chicharo",
+          "saqib.javed"
+        ],
+        "rating": 1520,
+        "points": 3,
+        "games": 1,
+        "wins": 1,
+        "losses": 0,
+        "rating_change": 20,
+        "derived": true
+      },
+      {
+        "rank": 9,
         "team_id": "pair:664444c2-ad82-43ab-9a31-66ffb1e91c7f|737d2e34-85d4-4cbf-b8bf-89409b83f998",
         "team_name": "joshua.whiston / minh.nguyen",
         "player_ids": [
@@ -11604,7 +11624,7 @@
         "derived": true
       },
       {
-        "rank": 9,
+        "rank": 10,
         "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8",
         "team_name": "Guest B / Harley Trappitt",
         "player_ids": [
@@ -11624,7 +11644,7 @@
         "derived": true
       },
       {
-        "rank": 10,
+        "rank": 11,
         "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
         "team_name": "Tyler Smith / Shane Chicharo",
         "player_ids": [
@@ -11644,7 +11664,7 @@
         "derived": true
       },
       {
-        "rank": 11,
+        "rank": 12,
         "team_id": "2fa740f7-8058-4775-adfb-8d6adf57ab27",
         "team_name": "Bomb Squad",
         "player_ids": [
@@ -11662,26 +11682,6 @@
         "losses": 1,
         "rating_change": 22,
         "derived": false
-      },
-      {
-        "rank": 12,
-        "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|485cd7ed-34ef-43f4-aed0-799162348c52",
-        "team_name": "Shane Chicharo / Guest D",
-        "player_ids": [
-          "2cbec020-0561-4b16-81b5-40b9d3b66973",
-          "485cd7ed-34ef-43f4-aed0-799162348c52"
-        ],
-        "player_names": [
-          "Shane Chicharo",
-          "Guest D"
-        ],
-        "rating": 1502,
-        "points": 4,
-        "games": 2,
-        "wins": 1,
-        "losses": 1,
-        "rating_change": -17,
-        "derived": true
       },
       {
         "rank": 13,
@@ -11745,6 +11745,46 @@
       },
       {
         "rank": 16,
+        "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|485cd7ed-34ef-43f4-aed0-799162348c52",
+        "team_name": "Shane Chicharo / Guest D",
+        "player_ids": [
+          "2cbec020-0561-4b16-81b5-40b9d3b66973",
+          "485cd7ed-34ef-43f4-aed0-799162348c52"
+        ],
+        "player_names": [
+          "Shane Chicharo",
+          "Guest D"
+        ],
+        "rating": 1484,
+        "points": 1,
+        "games": 1,
+        "wins": 0,
+        "losses": 1,
+        "rating_change": -16,
+        "derived": true
+      },
+      {
+        "rank": 17,
+        "team_id": "pair:2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8|6dfe21eb-7a7c-4926-a791-b135a287b301",
+        "team_name": "lorna.li / Guest B",
+        "player_ids": [
+          "6dfe21eb-7a7c-4926-a791-b135a287b301",
+          "2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8"
+        ],
+        "player_names": [
+          "lorna.li",
+          "Guest B"
+        ],
+        "rating": 1483,
+        "points": 1,
+        "games": 1,
+        "wins": 0,
+        "losses": 1,
+        "rating_change": -17,
+        "derived": true
+      },
+      {
+        "rank": 18,
         "team_id": "pair:485cd7ed-34ef-43f4-aed0-799162348c52|6dfe21eb-7a7c-4926-a791-b135a287b301",
         "team_name": "Guest D / lorna.li",
         "player_ids": [
@@ -11764,7 +11804,7 @@
         "derived": true
       },
       {
-        "rank": 17,
+        "rank": 19,
         "team_id": "pair:2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8|65638f26-9c35-48c9-a1e8-486d80d6a7ac",
         "team_name": "Guest B / virginia.martineznavarro",
         "player_ids": [
@@ -11784,7 +11824,27 @@
         "derived": true
       },
       {
-        "rank": 18,
+        "rank": 20,
+        "team_id": "pair:6dfe21eb-7a7c-4926-a791-b135a287b301|c47d30be-215a-467d-9be7-de1ef3575719",
+        "team_name": "lorna.li / john.wong",
+        "player_ids": [
+          "6dfe21eb-7a7c-4926-a791-b135a287b301",
+          "c47d30be-215a-467d-9be7-de1ef3575719"
+        ],
+        "player_names": [
+          "lorna.li",
+          "john.wong"
+        ],
+        "rating": 1480,
+        "points": 1,
+        "games": 1,
+        "wins": 0,
+        "losses": 1,
+        "rating_change": -20,
+        "derived": true
+      },
+      {
+        "rank": 21,
         "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|65638f26-9c35-48c9-a1e8-486d80d6a7ac",
         "team_name": "Shane Chicharo / virginia.martineznavarro",
         "player_ids": [
@@ -11804,7 +11864,7 @@
         "derived": true
       },
       {
-        "rank": 19,
+        "rank": 22,
         "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
         "team_name": "Shane Chicharo / minh.nguyen",
         "player_ids": [
@@ -11824,7 +11884,7 @@
         "derived": true
       },
       {
-        "rank": 20,
+        "rank": 23,
         "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|485cd7ed-34ef-43f4-aed0-799162348c52",
         "team_name": "Harley Trappitt / Guest D",
         "player_ids": [
@@ -11844,7 +11904,7 @@
         "derived": true
       },
       {
-        "rank": 21,
+        "rank": 24,
         "team_id": "pair:485cd7ed-34ef-43f4-aed0-799162348c52|65638f26-9c35-48c9-a1e8-486d80d6a7ac",
         "team_name": "virginia.martineznavarro / Guest D",
         "player_ids": [
@@ -11864,27 +11924,7 @@
         "derived": true
       },
       {
-        "rank": 22,
-        "team_id": "pair:2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8|6dfe21eb-7a7c-4926-a791-b135a287b301",
-        "team_name": "lorna.li / Guest B",
-        "player_ids": [
-          "6dfe21eb-7a7c-4926-a791-b135a287b301",
-          "2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8"
-        ],
-        "player_names": [
-          "lorna.li",
-          "Guest B"
-        ],
-        "rating": 1464,
-        "points": 2,
-        "games": 2,
-        "wins": 0,
-        "losses": 2,
-        "rating_change": -19,
-        "derived": true
-      },
-      {
-        "rank": 23,
+        "rank": 25,
         "team_id": "af04282c-97a6-480c-b75d-e368e915228f",
         "team_name": "Golden Flamenco Queens",
         "player_ids": [
@@ -11904,7 +11944,7 @@
         "derived": false
       },
       {
-        "rank": 24,
+        "rank": 26,
         "team_id": "pair:6dfe21eb-7a7c-4926-a791-b135a287b301|9a88653d-aab6-46b4-b55d-c75fb057fa61",
         "team_name": "heru.gani / lorna.li",
         "player_ids": [
@@ -11924,7 +11964,7 @@
         "derived": true
       },
       {
-        "rank": 25,
+        "rank": 27,
         "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|2cbec020-0561-4b16-81b5-40b9d3b66973",
         "team_name": "Shane Chicharo / Harley Trappitt",
         "player_ids": [
