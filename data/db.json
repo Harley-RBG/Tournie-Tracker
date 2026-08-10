@@ -827,7 +827,7 @@
     {
       "id": "459dcd71-0ac6-426e-a4ea-52302f8fcd1d",
       "tournament_id": null,
-      "mode": "casual",
+      "mode": "ranked",
       "type": "doubles",
       "game_type": 11,
       "session_id": null,
@@ -11637,6 +11637,26 @@
       },
       {
         "rank": 13,
+        "team_id": "pair:2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+        "team_name": "Guest B / minh.nguyen",
+        "player_ids": [
+          "2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8",
+          "664444c2-ad82-43ab-9a31-66ffb1e91c7f"
+        ],
+        "player_names": [
+          "Guest B",
+          "minh.nguyen"
+        ],
+        "rating": 1498,
+        "points": 4,
+        "games": 2,
+        "wins": 1,
+        "losses": 1,
+        "rating_change": 18,
+        "derived": true
+      },
+      {
+        "rank": 14,
         "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
         "team_name": "Shane Chicharo / minh.nguyen",
         "player_ids": [
@@ -11656,7 +11676,7 @@
         "derived": true
       },
       {
-        "rank": 14,
+        "rank": 15,
         "team_id": "pair:485cd7ed-34ef-43f4-aed0-799162348c52|6dfe21eb-7a7c-4926-a791-b135a287b301",
         "team_name": "Guest D / lorna.li",
         "player_ids": [
@@ -11673,26 +11693,6 @@
         "wins": 0,
         "losses": 1,
         "rating_change": -18,
-        "derived": true
-      },
-      {
-        "rank": 15,
-        "team_id": "pair:2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
-        "team_name": "Guest B / minh.nguyen",
-        "player_ids": [
-          "2d01d1b7-dc5f-4cd0-864e-3c7949ac78e8",
-          "664444c2-ad82-43ab-9a31-66ffb1e91c7f"
-        ],
-        "player_names": [
-          "Guest B",
-          "minh.nguyen"
-        ],
-        "rating": 1480,
-        "points": 1,
-        "games": 1,
-        "wins": 0,
-        "losses": 1,
-        "rating_change": -20,
         "derived": true
       },
       {
@@ -11807,12 +11807,12 @@
           "Shane Chicharo",
           "Harley Trappitt"
         ],
-        "rating": 1442,
-        "points": 7,
-        "games": 5,
+        "rating": 1424,
+        "points": 8,
+        "games": 6,
         "wins": 1,
-        "losses": 4,
-        "rating_change": -19,
+        "losses": 5,
+        "rating_change": -18,
         "derived": true
       }
     ]
