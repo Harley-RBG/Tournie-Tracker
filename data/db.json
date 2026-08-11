@@ -225,6 +225,23 @@
       "primary_weapon": null,
       "weakness_notes": "",
       "created_at": "2026-08-10T04:03:11.780Z"
+    },
+    {
+      "id": "604db281-c601-4c4e-9ca8-e52b2286bae8",
+      "email": "nikola.najdovski@robertbird.com.au",
+      "display_name": "nikola.najdovski",
+      "notes": "",
+      "games_played": 0,
+      "points": 0,
+      "rating": 1500,
+      "best_rating": 1500,
+      "rating_change": null,
+      "handedness": null,
+      "grip": null,
+      "play_style": null,
+      "primary_weapon": null,
+      "weakness_notes": "",
+      "created_at": "2026-08-11T03:59:20.160Z"
     }
   ],
   "matches": [
@@ -13646,6 +13663,26 @@
       },
       {
         "rank": 2,
+        "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|65638f26-9c35-48c9-a1e8-486d80d6a7ac",
+        "team_name": "virginia.martineznavarro / Tyler Smith",
+        "player_ids": [
+          "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
+          "4145bacb-cc0f-4b92-bcfd-1aadaa613e58"
+        ],
+        "player_names": [
+          "virginia.martineznavarro",
+          "Tyler Smith"
+        ],
+        "rating": 1542,
+        "points": 6,
+        "games": 2,
+        "wins": 2,
+        "losses": 0,
+        "rating_change": 20,
+        "derived": true
+      },
+      {
+        "rank": 3,
         "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|737d2e34-85d4-4cbf-b8bf-89409b83f998",
         "team_name": "Tyler Smith / joshua.whiston",
         "player_ids": [
@@ -13665,7 +13702,7 @@
         "derived": true
       },
       {
-        "rank": 3,
+        "rank": 4,
         "team_id": "c6996337-2e26-4445-a7f0-d884dd58ad5a",
         "team_name": "Chop Suey",
         "player_ids": [
@@ -13683,26 +13720,6 @@
         "losses": 1,
         "rating_change": 20,
         "derived": false
-      },
-      {
-        "rank": 4,
-        "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|65638f26-9c35-48c9-a1e8-486d80d6a7ac",
-        "team_name": "virginia.martineznavarro / Tyler Smith",
-        "player_ids": [
-          "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
-          "4145bacb-cc0f-4b92-bcfd-1aadaa613e58"
-        ],
-        "player_names": [
-          "virginia.martineznavarro",
-          "Tyler Smith"
-        ],
-        "rating": 1522,
-        "points": 3,
-        "games": 1,
-        "wins": 1,
-        "losses": 0,
-        "rating_change": 22,
-        "derived": true
       },
       {
         "rank": 5,
@@ -13826,26 +13843,6 @@
       },
       {
         "rank": 11,
-        "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|6dfe21eb-7a7c-4926-a791-b135a287b301",
-        "team_name": "lorna.li / Harley Trappitt",
-        "player_ids": [
-          "6dfe21eb-7a7c-4926-a791-b135a287b301",
-          "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
-        ],
-        "player_names": [
-          "lorna.li",
-          "Harley Trappitt"
-        ],
-        "rating": 1518,
-        "points": 11,
-        "games": 5,
-        "wins": 3,
-        "losses": 2,
-        "rating_change": -22,
-        "derived": true
-      },
-      {
-        "rank": 12,
         "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
         "team_name": "Tyler Smith / Shane Chicharo",
         "player_ids": [
@@ -13865,7 +13862,7 @@
         "derived": true
       },
       {
-        "rank": 13,
+        "rank": 12,
         "team_id": "pair:1d547aab-daf0-4e87-a9e4-bac4cb2ac82a|2cbec020-0561-4b16-81b5-40b9d3b66973",
         "team_name": "Shane Chicharo / saqib.javed",
         "player_ids": [
@@ -13885,7 +13882,7 @@
         "derived": true
       },
       {
-        "rank": 14,
+        "rank": 13,
         "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|737d2e34-85d4-4cbf-b8bf-89409b83f998",
         "team_name": "joshua.whiston / Harley Trappitt",
         "player_ids": [
@@ -13905,7 +13902,7 @@
         "derived": true
       },
       {
-        "rank": 15,
+        "rank": 14,
         "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
         "team_name": "minh.nguyen / Tyler Smith",
         "player_ids": [
@@ -13922,6 +13919,26 @@
         "wins": 2,
         "losses": 2,
         "rating_change": 19,
+        "derived": true
+      },
+      {
+        "rank": 15,
+        "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|6dfe21eb-7a7c-4926-a791-b135a287b301",
+        "team_name": "lorna.li / Harley Trappitt",
+        "player_ids": [
+          "6dfe21eb-7a7c-4926-a791-b135a287b301",
+          "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
+        ],
+        "player_names": [
+          "lorna.li",
+          "Harley Trappitt"
+        ],
+        "rating": 1498,
+        "points": 12,
+        "games": 6,
+        "wins": 3,
+        "losses": 3,
+        "rating_change": -20,
         "derived": true
       },
       {
