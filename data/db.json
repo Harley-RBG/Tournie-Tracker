@@ -14173,7 +14173,8 @@
       "participant_ids": [
         "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
         "4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
-        "65638f26-9c35-48c9-a1e8-486d80d6a7ac"
+        "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
+        "664444c2-ad82-43ab-9a31-66ffb1e91c7f"
       ],
       "bracket_data": null,
       "event_settings": {
@@ -16717,7 +16718,7 @@
   ],
   "derived": {
     "schema_version": 2,
-    "last_rebuilt_at": "2026-08-16T23:23:50.398Z",
+    "last_rebuilt_at": "2026-08-16T23:23:55.622Z",
     "validation": {
       "errors": [],
       "warnings": []
