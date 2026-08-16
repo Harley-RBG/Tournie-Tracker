@@ -14175,7 +14175,8 @@
         "4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
         "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
         "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
-        "2cbec020-0561-4b16-81b5-40b9d3b66973"
+        "2cbec020-0561-4b16-81b5-40b9d3b66973",
+        "9a88653d-aab6-46b4-b55d-c75fb057fa61"
       ],
       "bracket_data": null,
       "event_settings": {
@@ -16719,7 +16720,7 @@
   ],
   "derived": {
     "schema_version": 2,
-    "last_rebuilt_at": "2026-08-16T23:24:01.910Z",
+    "last_rebuilt_at": "2026-08-16T23:24:09.662Z",
     "validation": {
       "errors": [],
       "warnings": []
