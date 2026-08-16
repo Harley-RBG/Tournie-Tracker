@@ -753,35 +753,32 @@ body.live-recorder-fullscreen .fs-table.fs-reference-layout.fs-doubles #fsPlayer
 
 
 
-/* FULLSCREEN_SERVE_UI_CLEANUP_PATCH_V2
-   Final override: remove side-level and pseudo serving banners that can stretch across the table.
-   Serving is now shown by highlighting the actual active player chip only. */
+/* LAYOUT_AND_RECORDER_REFINEMENT_PATCH_V1 */
+.app{max-width:1600px!important;width:min(1600px,100%)!important}
+header{align-items:flex-start!important}
+.topbar{flex:1 1 auto;justify-content:flex-end;flex-wrap:wrap}
+#mainNav{flex:1 1 auto;justify-content:flex-end;flex-wrap:wrap;row-gap:6px}
+#mobileNavToggle{display:none}
+.leaderboard-grid{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;align-items:start!important}
+.leaderboard-card,.leaderboard-doubles-card{width:100%!important;min-width:0!important;flex:1 1 0!important}
+#singlesList,#doublesList{max-height:none!important;overflow:visible!important}
+.leaderboard-list{max-height:none!important;overflow:visible!important}
+#switchInitialServerLiveBtn.server-switch-disabled,#switchInitialServerSetupBtn.server-switch-disabled,.partner-swap-disabled{opacity:.45;cursor:not-allowed}
 body.live-recorder-fullscreen .fs-server-label,
 body.live-recorder-fullscreen .fs-server-label.active,
 body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-server-label,
-body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-server-label.active{
-  display:none!important;
-  visibility:hidden!important;
-  pointer-events:none!important;
-}
+body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-server-label.active{display:none!important;visibility:hidden!important;pointer-events:none!important}
 body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving,
-body.live-recorder-fullscreen .fs-player.is-serving{
-  background:rgba(0,94,184,.94)!important;
-  color:#fff!important;
-  border:1px solid rgba(255,255,255,.35)!important;
-  box-shadow:0 0 24px rgba(0,94,184,.55),0 8px 24px rgba(0,0,0,.36)!important;
-  text-shadow:none!important;
-}
+body.live-recorder-fullscreen .fs-player.is-serving{background:rgba(0,94,184,.94)!important;color:#fff!important;border:1px solid rgba(255,255,255,.35)!important;box-shadow:0 0 24px rgba(0,94,184,.55),0 8px 24px rgba(0,0,0,.36)!important;text-shadow:none!important}
 body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving::before,
-body.live-recorder-fullscreen .fs-player.is-serving::before{
-  content:"● "!important;
-  display:inline!important;
-  font-size:.75em!important;
-}
+body.live-recorder-fullscreen .fs-player.is-serving::before{content:"● "!important;display:inline!important;font-size:.75em!important}
 body.live-recorder-fullscreen .fs-table.fs-reference-layout .fs-player.is-serving::after,
-body.live-recorder-fullscreen .fs-player.is-serving::after{
-  content:none!important;
-  display:none!important;
+body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!important;display:none!important}
+@media(max-width:700px){
+  .leaderboard-grid{grid-template-columns:1fr!important}
+  #mobileNavToggle{display:inline-flex!important;align-items:center;justify-content:center;grid-column:1/-1;min-height:40px}
+  body.mobile-nav-hidden #mainNav{display:none!important}
+  body.mobile-nav-hidden #mobileNavToggle::after{content:""}
 }
 
 </style>
@@ -804,6 +801,7 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
           <button data-tab="admin" id="adminTab" style="display:none">Admin</button>
           <button data-tab="profile" id="profileTab">Profile</button>
         </nav>
+          <button id="mobileNavToggle" type="button" class="ghost" aria-expanded="true" aria-controls="mainNav">Hide Nav</button>
 
         <div style="width:1px;height:36px;background:rgba(255,255,255,0.03);margin:0 8px"></div>
 
@@ -888,7 +886,7 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
               <select id="historyModeFilter" style="min-width:110px">
                 <option value="">All modes</option>
                 <option value="casual">Casual</option>
-                <option value="ranked">Ranked</option>
+                <option value="ranked" selected>Ranked</option>
                 <option value="tournament">Tournament</option>
               </select>
             </div>
@@ -990,6 +988,36 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
               <div style="margin-top:10px;display:flex;gap:8px">
                 <button id="addGuestBtn" class="ghost">Add Guest</button>
                 <button id="challengeBtn" class="ghost">Challenge (ranked)</button>
+                <button id="switchInitialServerSetupBtn" type="button" class="ghost">Switch Initial Server</button>
+                <button id="swapSideAPartnersSetupBtn" type="button" class="ghost">Swap Side A Partners</button>
+                <button id="swapSideBPartnersSetupBtn" type="button" class="ghost">Swap Side B Partners</button>
+              </div>
+
+              <div id="challengeManagerCard" class="card" style="margin-top:12px;padding:10px">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+                  <div>
+                    <div style="font-weight:700;color:#cfe6ff">Challenge Management</div>
+                    <div class="muted">Create, accept, start, decline, expire, cancel, dispute and complete ladder challenges.</div>
+                  </div>
+                  <button id="refreshChallengesBtn" type="button" class="ghost">Refresh</button>
+                </div>
+                <label class="muted" style="margin-top:8px">Challenge type</label>
+                <select id="challengeType">
+                  <option value="singles">Singles</option>
+                  <option value="doubles">Doubles</option>
+                </select>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;margin-top:8px">
+                  <div><label class="muted">Challenger</label><select id="challengeChallengerA"></select></div>
+                  <div class="challenge-doubles-only"><label class="muted">Challenger partner</label><select id="challengeChallengerC"></select></div>
+                  <div><label class="muted">Defender</label><select id="challengeDefenderB"></select></div>
+                  <div class="challenge-doubles-only"><label class="muted">Defender partner</label><select id="challengeDefenderD"></select></div>
+                </div>
+                <div style="display:grid;grid-template-columns:minmax(110px,160px) 1fr;gap:8px;margin-top:8px;align-items:end">
+                  <div><label class="muted">Expires in days</label><input id="challengeExpiryDays" type="number" min="1" max="60" value="14"></div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap"><button id="createChallengeBtn" type="button" class="primary">Create Challenge</button><button id="loadChallengeToMatchBtn" type="button" class="ghost">Load Selected Challenge</button></div>
+                </div>
+                <div id="challengeCreateMsg" class="muted" style="margin-top:6px"></div>
+                <div id="challengeList" class="list" style="margin-top:10px"></div>
               </div>
             </div>
 
@@ -1043,21 +1071,19 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
                     <div style="font-weight:700;color:#cfe6ff;margin-right:auto">Hits per rally</div>
                     <label><input id="rallyTrackingEnabled" type="checkbox" checked> Track hits</label>
                   </div>
-                  <div class="point-hint" id="rallyHint">0 = server fault, 1 = server ace. Numpad + / - edits the current point.</div>
-                  <div class="rally-toggle-row">
-                    <div style="font-weight:700;color:#cfe6ff;margin-right:auto">Hits per rally</div>
-                    <label><input id="rallyTrackingEnabled" type="checkbox" checked> Track hits</label>
-                  </div>
-                  <div class="point-hint" id="rallyHint">0 = server fault, 1 = server ace. Numpad + / - edits the current point.</div>
+                  <div class="point-hint" id="rallyHint">1 = serve ace, 2 = serve + return, 3 = serve + return + third ball. Numpad + / - edits the current point.</div>
                 </div>
                 <div class="rally-stepper">
                   <button id="rallyHitsDown" type="button" class="ghost">−</button>
-                  <input id="rallyHits" type="number" min="0" step="1" value="0" inputmode="numeric">
+                  <input id="rallyHits" type="number" min="1" step="1" value="1" inputmode="numeric">
                   <button id="rallyHitsUp" type="button" class="ghost">+</button>
                 </div>
               </div>
               <div class="live-controls">
                 <button id="switchSides" class="ghost">Switch Sides</button>
+                <button id="switchInitialServerLiveBtn" type="button" class="ghost">Switch Initial Server</button>
+                <button id="swapSideAPartnersLiveBtn" type="button" class="ghost">Swap Side A Partners</button>
+                <button id="swapSideBPartnersLiveBtn" type="button" class="ghost">Swap Side B Partners</button>
                 <button id="startMatchBtn" class="primary">Start Match</button>
               </div>
 
@@ -1116,7 +1142,7 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
                     <label><input id="fsRallyTrackingEnabled" type="checkbox" checked> Track hits</label>
                     <div class="fs-rally-stepper">
                       <button id="fsRallyHitsDown" type="button" class="ghost">−</button>
-                      <input id="fsRallyHits" type="number" min="0" step="1" value="0" inputmode="numeric">
+                      <input id="fsRallyHits" type="number" min="1" step="1" value="1" inputmode="numeric">
                       <button id="fsRallyHitsUp" type="button" class="ghost">+</button>
                     </div>
                   </div>
@@ -1325,6 +1351,22 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
           </div>
         </div>
 
+        <div class="card" id="dbHealthCard" style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+            <div>
+              <div style="font-weight:700;color:#cfe6ff">Database Health &amp; Audit</div>
+              <div class="muted">Validation, derived rebuild status, rating events, recent admin changes and challenge ladder state.</div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="ghost" type="button" onclick="renderDbHealthPanel()">Refresh Health</button>
+              <button class="primary" type="button" onclick="manualRebuildAndSave()">Rebuild Derived + Save</button>
+            </div>
+          </div>
+          <div id="dbHealthSummary" class="stat-bar" style="margin-top:10px"></div>
+          <div id="dbHealthDetails" class="list" style="margin-top:10px"></div>
+          <div id="auditLogPreview" class="list" style="margin-top:10px"></div>
+        </div>
+
         <div class="card" id="adminPlayersCard" style="margin-top:12px">
           <div style="font-weight:700;color:#cfe6ff">Players</div>
           <div class="muted" style="margin-top:6px">Claimed vs unclaimed</div>
@@ -1360,6 +1402,9 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
   <div id="settingsModal" class="modal-overlay" style="display:none">
     <div class="modal">
       <h2>&#9881; Settings</h2>
+      <label>GitHub Personal Access Token (PAT)</label>
+      <input id="settingsPat" type="password" placeholder="github_pat_...">
+      <p class="note">Required to save data. Create a fine-grained PAT with <code>Contents: Read &amp; Write</code> for the <code>Harley-RBG/Tournie-Tracker</code> repo only. Stored in this browser&rsquo;s localStorage &mdash; do not share this device.</p>
       <label>Logged in as</label>
       <input id="settingsUser" placeholder="Not logged in" readonly style="opacity:0.6;cursor:default">
       <label style="margin-top:12px">Admin Emails <span style="opacity:.6;font-weight:400">(comma-separated)</span></label>
@@ -1409,6 +1454,21 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
       <h2>Edit Match</h2>
       <div id="editMatchInfo" class="muted" style="margin:6px 0 10px;font-size:12px"></div>
       <input type="hidden" id="editMatchId">
+      <label>Match type</label>
+      <select id="editMatchType">
+        <option value="singles">Singles</option>
+        <option value="doubles">Doubles</option>
+      </select>
+      <label>Side A Player</label>
+      <select id="editPlayerA"></select>
+      <label>Side B Player</label>
+      <select id="editPlayerB"></select>
+      <div id="editDoublesPlayers">
+        <label>Side A Partner</label>
+        <select id="editPlayerC"></select>
+        <label>Side B Partner</label>
+        <select id="editPlayerD"></select>
+      </div>
       <label>Score — Side A</label>
       <input id="editScoreA" type="number" min="0" max="99">
       <label>Score — Side B</label>
@@ -1419,7 +1479,7 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
         <option value="ranked">Ranked</option>
         <option value="tournament">Tournament</option>
       </select>
-      <p class="note">Saving will recalculate all Elo ratings and player stats from scratch.</p>
+      <p class="note">Saving updates this history record only, remaps point servers for changed players, and recalculates Elo, H2H, player stats and leaderboards from match history.</p>
       <div class="modal-actions">
         <button id="editMatchClose" class="ghost">Cancel</button>
         <button id="editMatchSave" class="primary">Save &amp; Recalculate</button>
@@ -1429,10 +1489,10 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{
 
 <script>
 /* ============================
-  RBG-TT  —  Cloudflare Worker + GitHub
-  Identity in localStorage.
-  Data synced to data/db.json via Worker endpoints.
-  ============================ */
+   RBG-TT  —  Local + GitHub Pages
+   No backend. Identity in localStorage.
+   Data synced to data/db.json via GitHub Contents API.
+   ============================ */
 
 const $ = id => document.getElementById(id);
 
@@ -1441,8 +1501,12 @@ const API_BASE = 'https://rbg-tt-api.harley-trappitt.workers.dev';
 
 const LS_USER = 'tt_user';
 
+// Kept only so old localStorage/settings code does not break.
+// New saves go through Cloudflare Worker, not a user PAT.
+const LS_PAT = 'tt_gh_pat';
+
 /* ---------- In-memory state ---------- */
-const EMPTY_DATA = () => ({ players: [], matches: [], sessions: [], points: [], tournaments: [], rankings: { singles: [], doubles: [] }, player_stats: [], settings: { admins: [] } });
+const EMPTY_DATA = () => ({ players: [], matches: [], sessions: [], points: [], tournaments: [], rankings: { singles: [], doubles: [] }, player_stats: [], doubles_teams: [], rating_events: [], challenges: [], challenge_ladders: { singles: [], doubles: [] }, audit_log: [], derived: { schema_version: 2, last_rebuilt_at: null, validation: { errors: [], warnings: [] } }, settings: { admins: [] } });
 let appData     = EMPTY_DATA();
 let _dbSha      = null;
 let saveInProgress = false;
@@ -1451,11 +1515,13 @@ let currentPlayer = null; // entry in appData.players matching currentUser.email
 let currentMatch  = {
   a: null, b: null, c: null, d: null,
   scoreA: 0, scoreB: 0,
-  mode: 'casual',
+  mode: 'ranked',
   type: 'singles',
   gameType: 11,
   winBy2: true,
   tournament: null,
+  rankingContext: 'standard',
+  challengeId: null,
   serveOrder: [],
   firstServer: 'A',
   sessionFormat: 1,
@@ -1465,6 +1531,497 @@ let currentMatch  = {
   gameNumber:    1,
   pointLog:      []  // live per-point capture, flushed on game complete
 };
+
+
+/* ============================================================
+   IMPLEMENTATION STAGE: Final export with all phases, Phase 3A and profile insights
+   Data integrity, rating events, DB health, challenge ladder
+   ============================================================ */
+function cloneForAudit(value) {
+  try { return JSON.parse(JSON.stringify(value)); } catch { return null; }
+}
+
+function ensureDataShape() {
+  appData.players ??= [];
+  appData.matches ??= [];
+  appData.sessions ??= [];
+  appData.points ??= [];
+  appData.tournaments ??= [];
+  appData.rankings ??= { singles: [], doubles: [] };
+  appData.rankings.singles ??= [];
+  appData.rankings.doubles ??= [];
+  appData.player_stats ??= [];
+  appData.doubles_teams ??= [];
+  appData.rating_events ??= [];
+  appData.challenges ??= [];
+  appData.challenge_ladders ??= { singles: [], doubles: [] };
+  appData.challenge_ladders.singles ??= [];
+  appData.challenge_ladders.doubles ??= [];
+  appData.audit_log ??= [];
+  appData.derived ??= {};
+  appData.derived.schema_version ??= 2;
+  appData.derived.validation ??= { errors: [], warnings: [] };
+  appData.settings ??= { admins: [] };
+  appData.settings.admins ??= [];
+}
+
+function currentActorEmail() { return currentUser?.email || currentPlayer?.email || 'unknown'; }
+function recordAuditEvent(type, entityType, entityId, beforeValue, afterValue, reason = '') {
+  ensureDataShape();
+  appData.audit_log.push({ id: crypto.randomUUID(), type, entity_type: entityType, entity_id: entityId || null, actor_email: currentActorEmail(), reason, before: cloneForAudit(beforeValue), after: cloneForAudit(afterValue), created_at: new Date().toISOString() });
+}
+
+function challengeEntityKey(type, ids) {
+  const clean = (ids || []).filter(Boolean);
+  if (type === 'doubles') return clean.sort().join('|');
+  return clean[0] || null;
+}
+function challengeEntityName(type, key) {
+  if (!key) return '';
+  if (type === 'doubles' && typeof doublesPairName === 'function') return doublesPairName(key);
+  return appData.players.find(p => p.id === key)?.display_name || key;
+}
+function ratingEventId(scope, entityId, matchId) { return `${scope}:${entityId}:${matchId}`.replace(/[^a-zA-Z0-9:_|.-]/g, '_'); }
+function appendRatingEvent(evt) {
+  ensureDataShape();
+  if (!evt || !evt.scope || !evt.entity_id || !evt.match_id) return;
+  const id = evt.id || ratingEventId(evt.scope, evt.entity_id, evt.match_id);
+  if (appData.rating_events.some(e => e.id === id)) return;
+  const before = Number(evt.rating_before ?? 1500);
+  const after = Number(evt.rating_after ?? before);
+  appData.rating_events.push({ id, scope: evt.scope, entity_id: evt.entity_id, entity_name: evt.entity_name || '', match_id: evt.match_id, match_type: evt.match_type || '', rating_before: before, rating_after: after, delta: after - before, result: evt.result || '', opponent_entity_id: evt.opponent_entity_id || null, opponent_entity_name: evt.opponent_entity_name || '', created_at: evt.created_at || new Date().toISOString() });
+}
+
+function validateDbReferences(db = appData) {
+  const errors = [], warnings = [];
+  const playerIds = new Set((db.players || []).map(p => p.id));
+  const matchIds = new Set((db.matches || []).map(m => m.id));
+  (db.players || []).forEach(p => { if (!p.id) errors.push('Player without id found.'); if (!p.display_name) warnings.push(`Player ${p.id || '(missing id)'} has no display_name.`); });
+  (db.matches || []).forEach(m => {
+    if (!m.id) errors.push('Match without id found.');
+    if (!m.player_a || !playerIds.has(m.player_a)) errors.push(`Match ${m.id || '(missing id)'} has invalid player_a.`);
+    if (!m.player_b || !playerIds.has(m.player_b)) errors.push(`Match ${m.id || '(missing id)'} has invalid player_b.`);
+    if ((m.type || 'singles') === 'doubles') {
+      ['player_c','player_d'].forEach(k => { if (!m[k] || !playerIds.has(m[k])) errors.push(`Doubles match ${m.id} has invalid ${k}.`); });
+      const ids = [m.player_a, m.player_b, m.player_c, m.player_d].filter(Boolean);
+      if (new Set(ids).size !== ids.length) errors.push(`Doubles match ${m.id} has duplicate players.`);
+    }
+    const sideA = [m.player_a, m.player_c].filter(Boolean), sideB = [m.player_b, m.player_d].filter(Boolean);
+    if (m.winner && !sideA.includes(m.winner) && !sideB.includes(m.winner)) errors.push(`Match ${m.id} winner is not on either side.`);
+    if (typeof m.score_a !== 'number' || typeof m.score_b !== 'number') warnings.push(`Match ${m.id} score is not numeric.`);
+  });
+  (db.points || []).forEach(pt => {
+    const gid = pt.game_id || pt.match_id;
+    if (gid && !matchIds.has(gid)) errors.push(`Point ${pt.id || '(missing id)'} references missing match/game ${gid}.`);
+    if (pt.server_id && !playerIds.has(pt.server_id)) errors.push(`Point ${pt.id || '(missing id)'} references missing server ${pt.server_id}.`);
+    if (pt.winner_side && !['A','B'].includes(pt.winner_side)) errors.push(`Point ${pt.id || '(missing id)'} has invalid winner_side.`);
+  });
+  return { errors, warnings };
+}
+
+function rebuildChallengeLadders() {
+  ensureDataShape();
+  const applyExistingOrder = (scope, keys) => {
+    const existing = new Map((appData.challenge_ladders[scope] || []).map(x => [x.entity_id || x.player_id || x.pair_key, x]));
+    return [...keys].filter(Boolean).map(key => existing.get(key) || { entity_id: key, position: null, challenge_wins: 0, challenge_losses: 0 })
+      .sort((a,b) => (Number(a.position || 999999) - Number(b.position || 999999)) || String(a.entity_id || '').localeCompare(String(b.entity_id || '')))
+      .map((x,i) => ({ ...x, entity_id: x.entity_id || x.player_id || x.pair_key, position: x.position || i + 1 }));
+  };
+  const singlesIds = new Set((appData.matches || []).filter(m => (m.type || 'singles') === 'singles').flatMap(m => [m.player_a, m.player_b].filter(Boolean)));
+  const pairKeys = new Set((appData.matches || []).filter(m => m.type === 'doubles').flatMap(m => [challengeEntityKey('doubles',[m.player_a,m.player_c]), challengeEntityKey('doubles',[m.player_b,m.player_d])].filter(Boolean)));
+  appData.challenge_ladders.singles = applyExistingOrder('singles', singlesIds).map(x => ({ ...x, player_id: x.entity_id }));
+  appData.challenge_ladders.doubles = applyExistingOrder('doubles', pairKeys).map(x => ({ ...x, pair_key: x.entity_id }));
+}
+
+function applyChallengeResult(matchRecord) {
+  ensureDataShape();
+  const type = matchRecord.type === 'doubles' ? 'doubles' : 'singles';
+  const ladder = appData.challenge_ladders[type] || [];
+  const challengerKey = type === 'doubles' ? challengeEntityKey(type,[matchRecord.player_a, matchRecord.player_c]) : matchRecord.player_a;
+  const defenderKey = type === 'doubles' ? challengeEntityKey(type,[matchRecord.player_b, matchRecord.player_d]) : matchRecord.player_b;
+  if (!challengerKey || !defenderKey) return;
+  let challenger = ladder.find(x => (x.entity_id || x.player_id || x.pair_key) === challengerKey);
+  let defender = ladder.find(x => (x.entity_id || x.player_id || x.pair_key) === defenderKey);
+  if (!challenger) { challenger = { entity_id: challengerKey, position: ladder.length + 1, challenge_wins: 0, challenge_losses: 0 }; ladder.push(challenger); }
+  if (!defender) { defender = { entity_id: defenderKey, position: ladder.length + 1, challenge_wins: 0, challenge_losses: 0 }; ladder.push(defender); }
+  const before = cloneForAudit({ challenger, defender, ladder });
+  const challengerWon = matchRecord.winner === matchRecord.player_a || matchRecord.winner === matchRecord.player_c;
+  if (challengerWon) {
+    challenger.challenge_wins = Number(challenger.challenge_wins || 0) + 1;
+    defender.challenge_losses = Number(defender.challenge_losses || 0) + 1;
+    const cPos = Number(challenger.position || ladder.length), dPos = Number(defender.position || ladder.length);
+    if (cPos > dPos) {
+      ladder.forEach(x => { const pos = Number(x.position || 999999); if (pos >= dPos && pos < cPos) x.position = pos + 1; });
+      challenger.position = dPos;
+    }
+  } else {
+    challenger.challenge_losses = Number(challenger.challenge_losses || 0) + 1;
+    defender.challenge_wins = Number(defender.challenge_wins || 0) + 1;
+  }
+  appData.challenge_ladders[type] = ladder.sort((a,b)=>(a.position||999999)-(b.position||999999)).map((x,i)=>({ ...x, position: i + 1, ...(type === 'singles' ? { player_id: x.entity_id } : { pair_key: x.entity_id }) }));
+  const challenge = appData.challenges.find(c => c.id === matchRecord.challenge_id) || { id: matchRecord.challenge_id || crypto.randomUUID(), type, status: 'completed', challenger_entity_id: challengerKey, defender_entity_id: defenderKey, created_at: matchRecord.created_at };
+  challenge.previous_status = challenge.status || 'pending'; challenge.status = 'completed'; challenge.match_id = matchRecord.id; challenge.completed_at = matchRecord.created_at; challenge.winner_entity_id = challengerWon ? challengerKey : defenderKey; challenge.ladder_after = cloneForAudit(appData.challenge_ladders[type]);
+  if (!appData.challenges.some(c => c.id === challenge.id)) appData.challenges.push(challenge);
+  recordAuditEvent('challenge_completed', 'challenge', challenge.id, before, challenge, 'Challenge-context match completed');
+}
+
+function ratingTimelineHtml(scope, entityId, title = 'Rating Timeline', limit = 10) {
+  ensureDataShape();
+  const rows = (appData.rating_events || []).filter(ev => ev.scope === scope && ev.entity_id === entityId).sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||''))).slice(0, limit);
+  if (!rows.length) return '';
+  const all = rows.flatMap(ev => [Number(ev.rating_before || 1500), Number(ev.rating_after || 1500)]);
+  const min = Math.min(...all), max = Math.max(...all), span = Math.max(1, max - min);
+  const rowHtml = rows.map(ev => { const after = Number(ev.rating_after || 1500), pos = Math.max(0, Math.min(100, Math.round((after - min) / span * 100))), delta = Number(ev.delta || 0), color = delta >= 0 ? '#4ade80' : '#f87171', sign = delta >= 0 ? '+' : '', label = ev.opponent_entity_name ? ` vs ${ev.opponent_entity_name}` : ''; return `<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span class="small"><strong style="color:${color}">${sign}${delta}</strong> · ${ev.rating_before} → ${ev.rating_after}${label}</span><span class="muted" style="font-size:11px;white-space:nowrap">${ev.created_at ? new Date(ev.created_at).toLocaleDateString() : ''}</span></div><div style="height:5px;background:rgba(255,255,255,0.08);border-radius:999px;margin-top:5px;overflow:hidden"><div style="width:${pos}%;height:100%;background:${color};border-radius:999px"></div></div></div>`; }).join('');
+  return `<div class="card" style="padding:10px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">${title}</div><div class="muted" style="font-size:11px">${rows.length} recent event${rows.length === 1 ? '' : 's'}</div></div>${rowHtml}</div>`;
+}
+function renderPlayerRatingTimeline(playerId) { return ratingTimelineHtml('singles', playerId, 'Singles Rating Timeline', 10); }
+function renderDoublesRatingTimeline(pairKey) { return ratingTimelineHtml('doubles', pairKey, 'Doubles Pair Rating Timeline', 10); }
+
+
+function buildSinglesRankHistory(playerId, limit = 12) {
+  ensureDataShape();
+  const players = appData.players || [];
+  const ratings = new Map(players.map(p => [p.id, 1500]));
+  const events = (appData.rating_events || [])
+    .filter(ev => ev.scope === 'singles' && ev.match_id)
+    .sort((a,b) => String(a.created_at || '').localeCompare(String(b.created_at || '')));
+  const byMatch = new Map();
+  events.forEach(ev => {
+    if (!byMatch.has(ev.match_id)) byMatch.set(ev.match_id, []);
+    byMatch.get(ev.match_id).push(ev);
+  });
+  const history = [];
+  byMatch.forEach(group => {
+    group.forEach(ev => ratings.set(ev.entity_id, Number(ev.rating_after || ev.rating_before || 1500)));
+    const target = group.find(ev => ev.entity_id === playerId);
+    if (target) {
+      const ordered = [...ratings.entries()].sort((a,b) => b[1] - a[1]);
+      const rank = ordered.findIndex(([id]) => id === playerId) + 1;
+      history.push({
+        match_id: target.match_id,
+        created_at: target.created_at,
+        rating: Number(target.rating_after || 1500),
+        delta: Number(target.delta || 0),
+        result: target.result || '',
+        opponent: target.opponent_entity_name || 'Unknown',
+        rank
+      });
+    }
+  });
+  return history.slice(-limit).reverse();
+}
+
+function renderPlayerRankingHistory(playerId) {
+  const rows = buildSinglesRankHistory(playerId, 12);
+  if (!rows.length) return '';
+  const bestRank = Math.min(...rows.map(r => r.rank || 999999));
+  const latest = rows[0];
+  const start = rows[rows.length - 1];
+  const direction = latest.rank && start.rank ? start.rank - latest.rank : 0;
+  const rowHtml = rows.map(r => {
+    const delta = Number(r.delta || 0);
+    const colour = delta >= 0 ? '#4ade80' : '#f87171';
+    const sign = delta >= 0 ? '+' : '';
+    return `<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+        <span class="small"><strong>#${r.rank}</strong> · ${r.rating} <span style="color:${colour}">(${sign}${delta})</span> vs ${r.opponent}</span>
+        <span class="muted" style="font-size:11px;white-space:nowrap">${r.created_at ? new Date(r.created_at).toLocaleDateString() : ''}</span>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="card" style="padding:10px;margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:6px">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Ranking History</div>
+      <div class="muted" style="font-size:11px">Best #${bestRank}${direction ? ` · ${direction > 0 ? '+' : ''}${direction} rank movement` : ''}</div>
+    </div>
+    ${rowHtml}
+  </div>`;
+}
+
+function getPlayerMatchSide(match, playerId) {
+  return (match.player_a === playerId || match.player_c === playerId) ? 'A' : 'B';
+}
+
+function playerMatchOpponentLabel(match, playerId) {
+  const onA = getPlayerMatchSide(match, playerId) === 'A';
+  if (match.type === 'doubles') {
+    const oppKey = onA ? challengeEntityKey('doubles', [match.player_b, match.player_d]) : challengeEntityKey('doubles', [match.player_a, match.player_c]);
+    return challengeEntityName('doubles', oppKey) || 'Unknown pair';
+  }
+  const oppId = onA ? match.player_b : match.player_a;
+  return appData.players.find(p => p.id === oppId)?.display_name || 'Unknown';
+}
+
+function renderRecentMatchInsights(playerId, limit = 8) {
+  const matches = (appData.matches || [])
+    .filter(m => [m.player_a, m.player_b, m.player_c, m.player_d].includes(playerId))
+    .sort((a,b) => String(b.created_at || '').localeCompare(String(a.created_at || '')))
+    .slice(0, limit);
+  if (!matches.length) return '';
+  const rows = matches.map(m => {
+    const side = getPlayerMatchSide(m, playerId);
+    const won = side === 'A' ? m.winner === m.player_a : m.winner === m.player_b;
+    const scored = side === 'A' ? Number(m.score_a || 0) : Number(m.score_b || 0);
+    const conceded = side === 'A' ? Number(m.score_b || 0) : Number(m.score_a || 0);
+    const margin = scored - conceded;
+    const mode = m.ranking_context === 'challenge' ? 'challenge' : (m.mode || 'casual');
+    const modeColour = mode === 'challenge' ? '#38bdf8' : mode === 'ranked' ? '#cfe6ff' : '#94a3b8';
+    return `<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+        <span><strong style="color:${won ? '#4ade80' : '#f87171'};margin-right:6px">${won ? 'W' : 'L'}</strong><span class="small">${scored}–${conceded} vs ${playerMatchOpponentLabel(m, playerId)}</span></span>
+        <span class="muted" style="font-size:11px;white-space:nowrap"><span style="color:${modeColour}">${mode}</span> · ${m.created_at ? new Date(m.created_at).toLocaleDateString() : ''}</span>
+      </div>
+      <div class="muted" style="font-size:11px;margin-left:22px">${m.type || 'singles'} · margin ${margin >= 0 ? '+' : ''}${margin}${m.challenge_id ? ' · linked challenge' : ''}</div>
+    </div>`;
+  }).join('');
+  return `<div class="card" style="padding:10px;margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:6px">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Recent Match Insights</div>
+      <div class="muted" style="font-size:11px">Last ${matches.length}</div>
+    </div>
+    ${rows}
+  </div>`;
+}
+
+function renderPlayerActivityHeatmap(playerId) {
+  const matches = (appData.matches || []).filter(m => [m.player_a, m.player_b, m.player_c, m.player_d].includes(playerId));
+  if (!matches.length) return '';
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const buckets = Array.from({length:7}, () => ({ morning:0, midday:0, evening:0, late:0 }));
+  matches.forEach(m => {
+    const dt = new Date(m.created_at || Date.now());
+    if (Number.isNaN(dt.getTime())) return;
+    const h = dt.getHours();
+    const slot = h < 11 ? 'morning' : h < 15 ? 'midday' : h < 19 ? 'evening' : 'late';
+    buckets[dt.getDay()][slot]++;
+  });
+  const max = Math.max(1, ...buckets.flatMap(d => Object.values(d)));
+  const slotLabels = [{key:'morning', label:'AM'}, {key:'midday', label:'Midday'}, {key:'evening', label:'PM'}, {key:'late', label:'Late'}];
+  const cell = (count) => {
+    const opacity = count ? 0.22 + (count / max) * 0.68 : 0.06;
+    return `<div title="${count} match${count === 1 ? '' : 'es'}" style="height:20px;border-radius:5px;background:rgba(34,211,238,${opacity});display:flex;align-items:center;justify-content:center;font-size:10px;color:${count ? '#e0f7ff' : 'rgba(255,255,255,0.20)'}">${count || ''}</div>`;
+  };
+  const grid = `<div style="display:grid;grid-template-columns:54px repeat(4,1fr);gap:4px;align-items:center">
+    <div></div>${slotLabels.map(s => `<div class="muted" style="font-size:10px;text-align:center">${s.label}</div>`).join('')}
+    ${days.map((d,i) => `<div class="muted" style="font-size:10px">${d}</div>${slotLabels.map(s => cell(buckets[i][s.key])).join('')}`).join('')}
+  </div>`;
+  return `<div class="card" style="padding:10px;margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:6px">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Match Activity Heatmap</div>
+      <div class="muted" style="font-size:11px">${matches.length} matches</div>
+    </div>
+    ${grid}
+  </div>`;
+}
+
+function renderDbHealthPanel() {
+  ensureDataShape();
+  const summary = $('dbHealthSummary'), details = $('dbHealthDetails'), audit = $('auditLogPreview');
+  if (!summary || !details || !audit) return;
+  const validation = appData.derived?.validation || validateDbReferences(appData);
+  const errCount = validation.errors?.length || 0, warnCount = validation.warnings?.length || 0;
+  const lastRebuilt = appData.derived?.last_rebuilt_at ? new Date(appData.derived.last_rebuilt_at).toLocaleString() : 'Not rebuilt this session';
+  summary.innerHTML = `<div class="stat-pill"><div class="val" style="color:${errCount?'#f87171':'#4ade80'}">${errCount}</div><div class="lbl">Validation Errors</div></div><div class="stat-pill"><div class="val" style="color:${warnCount?'#facc15':'#4ade80'}">${warnCount}</div><div class="lbl">Warnings</div></div><div class="stat-pill"><div class="val">${appData.rating_events.length}</div><div class="lbl">Rating Events</div></div><div class="stat-pill"><div class="val">${appData.audit_log.length}</div><div class="lbl">Audit Events</div></div><div class="stat-pill"><div class="val">${appData.challenges.length}</div><div class="lbl">Challenges</div></div><div class="stat-pill"><div class="val" style="font-size:12px">${lastRebuilt}</div><div class="lbl">Last Rebuild</div></div>`;
+  const problemRows = [...(validation.errors||[]).slice(0,8).map(x=>`<div style="color:#f87171;padding:4px 0">Error: ${x}</div>`), ...(validation.warnings||[]).slice(0,8).map(x=>`<div style="color:#facc15;padding:4px 0">Warning: ${x}</div>`)];
+  details.innerHTML = problemRows.length ? `<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Validation Details</div>${problemRows.join('')}` : '<div class="muted">No validation errors or warnings currently recorded.</div>';
+  const recentAudit = [...(appData.audit_log || [])].slice(-10).reverse();
+  audit.innerHTML = recentAudit.length ? `<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Recent Audit Events</div>` + recentAudit.map(ev=>`<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><div style="display:flex;justify-content:space-between;gap:8px"><span class="small"><strong>${ev.type}</strong> · ${ev.entity_type || 'entity'} ${ev.entity_id ? String(ev.entity_id).slice(0,8) : ''}</span><span class="muted" style="font-size:11px;white-space:nowrap">${ev.created_at ? new Date(ev.created_at).toLocaleString() : ''}</span></div><div class="muted" style="font-size:11px">${ev.actor_email || 'unknown'}${ev.reason ? ' · ' + ev.reason : ''}</div></div>`).join('') : '<div class="muted">No audit events recorded yet.</div>';
+}
+
+function rebuildDerivedState(reason = 'rebuild') {
+  ensureDataShape(); window.__captureDoublesRatingEvents = true; recalculateAllStats(); if (typeof window.rebuildDoublesTeamRankings === 'function') window.rebuildDoublesTeamRankings(); window.__captureDoublesRatingEvents = false; rebuildChallengeLadders(); const validation = validateDbReferences(appData); appData.derived.last_rebuilt_at = new Date().toISOString(); appData.derived.last_rebuild_reason = reason; appData.derived.validation = validation; renderDbHealthPanel(); renderChallengeManager(); return validation;
+}
+function prepareDataForSave(reason = 'save') { const validation = rebuildDerivedState(reason); if (validation.errors.length) { console.error('RBG-TT validation failed', validation.errors, validation.warnings); alert('Data validation failed. Save blocked. Check console.\n\n' + validation.errors.slice(0,5).join('\n')); return false; } if (validation.warnings.length) console.warn('RBG-TT validation warnings', validation.warnings); return true; }
+async function manualRebuildAndSave() { if (!isAdmin()) return alert('Admin access required.'); if (!confirm('Rebuild derived stats, ratings, rankings, validation, rating events and then save the DB?')) return; const before = cloneForAudit(appData.derived || {}); const validation = rebuildDerivedState('manual admin rebuild'); const after = cloneForAudit(appData.derived || {}); recordAuditEvent('derived_rebuild','derived','manual',before,after,'Manual admin rebuild and save'); if (validation.errors.length) return; const ok = await writeData('Manual derived rebuild'); if (ok) { renderLeaderboard(); renderHistory(); renderDbHealthPanel(); alert('Derived data rebuilt and saved.'); } }
+
+
+/* ---------- Challenge Management UI - Phase 3A ---------- */
+const CHALLENGE_STATUSES = ['pending', 'accepted', 'declined', 'expired', 'completed', 'cancelled', 'disputed'];
+const CHALLENGE_ACTIVE_STATUSES = ['pending', 'accepted', 'disputed'];
+let selectedChallengeId = null;
+
+function challengeStatusLabel(status) {
+  const colours = { pending:'#facc15', accepted:'#38bdf8', declined:'#f87171', expired:'#94a3b8', completed:'#4ade80', cancelled:'#f87171', disputed:'#fb923c' };
+  return `<span style="color:${colours[status] || '#cbd5e1'};font-weight:700;text-transform:capitalize">${status || 'pending'}</span>`;
+}
+
+function getChallengeParticipantsFromForm() {
+  const type = $('challengeType')?.value || 'singles';
+  const a = $('challengeChallengerA')?.value || null;
+  const c = type === 'doubles' ? ($('challengeChallengerC')?.value || null) : null;
+  const b = $('challengeDefenderB')?.value || null;
+  const d = type === 'doubles' ? ($('challengeDefenderD')?.value || null) : null;
+  const challengerIds = type === 'doubles' ? [a, c] : [a];
+  const defenderIds = type === 'doubles' ? [b, d] : [b];
+  return { type, a, b, c, d, challengerIds, defenderIds, challengerKey: challengeEntityKey(type, challengerIds), defenderKey: challengeEntityKey(type, defenderIds) };
+}
+
+function populateChallengeSelectors() {
+  const ids = ['challengeChallengerA','challengeChallengerC','challengeDefenderB','challengeDefenderD'];
+  const selects = ids.map(id => $(id)).filter(Boolean);
+  if (!selects.length) return;
+  const sorted = [...(appData.players || [])].sort((a,b) => a.display_name.localeCompare(b.display_name));
+  selects.forEach(sel => { sel.innerHTML = '<option value="">Select player</option>'; });
+  sorted.forEach(p => selects.forEach(sel => sel.insertAdjacentHTML('beforeend', `<option value="${p.id}">${p.display_name}</option>`)));
+  syncChallengeTypeUI();
+}
+
+function syncChallengeTypeUI() {
+  const type = $('challengeType')?.value || 'singles';
+  document.querySelectorAll('.challenge-doubles-only').forEach(el => el.style.display = type === 'doubles' ? '' : 'none');
+}
+
+function expireOverdueChallenges() {
+  ensureDataShape();
+  const now = Date.now();
+  let changed = false;
+  (appData.challenges || []).forEach(ch => {
+    if (['pending','accepted'].includes(ch.status) && ch.expires_at && Date.parse(ch.expires_at) < now) {
+      const before = cloneForAudit(ch);
+      ch.status = 'expired';
+      ch.expired_at = new Date().toISOString();
+      recordAuditEvent('challenge_expired', 'challenge', ch.id, before, ch, 'Challenge expired automatically in frontend');
+      changed = true;
+    }
+  });
+  return changed;
+}
+
+function challengeCanBeCreated(type, challengerKey, defenderKey) {
+  if (!challengerKey || !defenderKey) return 'Select all required challenger and defender players.';
+  if (challengerKey === defenderKey) return 'Challenger and defender must be different.';
+  const existing = (appData.challenges || []).find(ch => ch.type === type && CHALLENGE_ACTIVE_STATUSES.includes(ch.status) && ch.challenger_entity_id === challengerKey && ch.defender_entity_id === defenderKey);
+  if (existing) return 'An active challenge already exists for this same challenger and defender.';
+  return '';
+}
+
+async function createChallengeFromForm() {
+  ensureDataShape();
+  const form = getChallengeParticipantsFromForm();
+  const allIds = [...form.challengerIds, ...form.defenderIds].filter(Boolean);
+  if (form.type === 'doubles' && allIds.length !== 4) return alert('Select all four players for a doubles challenge.');
+  if (new Set(allIds).size !== allIds.length) return alert('Each player in a challenge must be different.');
+  const issue = challengeCanBeCreated(form.type, form.challengerKey, form.defenderKey);
+  if (issue) return alert(issue);
+  const expiryDays = Math.max(1, Number($('challengeExpiryDays')?.value || 14));
+  const now = new Date();
+  const challenge = {
+    id: crypto.randomUUID(),
+    type: form.type,
+    status: 'pending',
+    challenger_entity_id: form.challengerKey,
+    defender_entity_id: form.defenderKey,
+    challenger_player_ids: form.challengerIds,
+    defender_player_ids: form.defenderIds,
+    created_by: currentActorEmail(),
+    created_at: now.toISOString(),
+    expires_at: new Date(now.getTime() + expiryDays * 24 * 60 * 60 * 1000).toISOString(),
+    accepted_at: null,
+    completed_at: null,
+    match_id: null,
+    notes: ''
+  };
+  appData.challenges.push(challenge);
+  selectedChallengeId = challenge.id;
+  recordAuditEvent('challenge_create', 'challenge', challenge.id, null, challenge, 'Challenge created from recorder challenge manager');
+  const ok = await writeData('Create challenge');
+  if (ok) {
+    $('challengeCreateMsg').textContent = 'Challenge created.';
+    renderChallengeManager();
+  }
+}
+
+async function setChallengeStatus(id, status) {
+  if (!CHALLENGE_STATUSES.includes(status)) return alert('Unsupported challenge status.');
+  const ch = (appData.challenges || []).find(x => x.id === id);
+  if (!ch) return alert('Challenge not found.');
+  if (ch.status === 'completed' && status !== 'disputed') return alert('Completed challenges can only be disputed.');
+  const before = cloneForAudit(ch);
+  ch.status = status;
+  if (status === 'accepted') ch.accepted_at = new Date().toISOString();
+  if (status === 'declined') ch.declined_at = new Date().toISOString();
+  if (status === 'cancelled') ch.cancelled_at = new Date().toISOString();
+  if (status === 'disputed') ch.disputed_at = new Date().toISOString();
+  if (status === 'expired') ch.expired_at = new Date().toISOString();
+  recordAuditEvent(`challenge_${status}`, 'challenge', ch.id, before, ch, `Challenge status changed to ${status}`);
+  const ok = await writeData(`Challenge ${status}`);
+  if (ok) renderChallengeManager();
+}
+
+function challengeActionButtons(ch) {
+  const buttons = [];
+  if (ch.status === 'pending') {
+    buttons.push(`<button class="ghost" style="font-size:11px;padding:3px 8px" onclick="setChallengeStatus('${ch.id}','accepted')">Accept</button>`);
+    buttons.push(`<button class="ghost" style="font-size:11px;padding:3px 8px" onclick="setChallengeStatus('${ch.id}','declined')">Decline</button>`);
+  }
+  if (['pending','accepted'].includes(ch.status)) {
+    buttons.push(`<button class="primary" style="font-size:11px;padding:3px 8px" onclick="loadChallengeIntoMatch('${ch.id}')">Load Match</button>`);
+    buttons.push(`<button class="ghost" style="font-size:11px;padding:3px 8px" onclick="setChallengeStatus('${ch.id}','cancelled')">Cancel</button>`);
+    buttons.push(`<button class="ghost" style="font-size:11px;padding:3px 8px" onclick="setChallengeStatus('${ch.id}','expired')">Expire</button>`);
+  }
+  if (ch.status === 'completed') buttons.push(`<button class="ghost" style="font-size:11px;padding:3px 8px" onclick="setChallengeStatus('${ch.id}','disputed')">Dispute</button>`);
+  if (ch.status === 'disputed') buttons.push(`<button class="ghost" style="font-size:11px;padding:3px 8px" onclick="setChallengeStatus('${ch.id}','completed')">Resolve</button>`);
+  return buttons.join(' ');
+}
+
+function renderChallengeManager() {
+  ensureDataShape();
+  expireOverdueChallenges();
+  const list = $('challengeList');
+  if (!list) return;
+  const challenges = [...(appData.challenges || [])].sort((a,b) => String(b.created_at || '').localeCompare(String(a.created_at || '')));
+  if (!challenges.length) {
+    list.innerHTML = '<div class="muted">No challenges yet. Use the form above to create the first pending challenge.</div>';
+    return;
+  }
+  list.innerHTML = challenges.map(ch => {
+    const selected = selectedChallengeId === ch.id;
+    const challenger = challengeEntityName(ch.type, ch.challenger_entity_id);
+    const defender = challengeEntityName(ch.type, ch.defender_entity_id);
+    const expiry = ch.expires_at ? new Date(ch.expires_at).toLocaleDateString() : 'No expiry';
+    const matchLink = ch.match_id ? ` · Match ${String(ch.match_id).slice(0,8)}` : '';
+    return `<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.06);background:${selected?'rgba(34,211,238,0.08)':'transparent'}">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap">
+        <div style="cursor:pointer" onclick="selectChallenge('${ch.id}')">
+          <div class="small"><strong>${challenger}</strong> challenges <strong>${defender}</strong> · ${ch.type}</div>
+          <div class="muted" style="font-size:11px">${challengeStatusLabel(ch.status)} · Expires ${expiry}${matchLink}</div>
+        </div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">${challengeActionButtons(ch)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectChallenge(id) {
+  selectedChallengeId = id;
+  renderChallengeManager();
+}
+
+function loadChallengeIntoMatch(id) {
+  const ch = (appData.challenges || []).find(x => x.id === id);
+  if (!ch) return alert('Challenge not found.');
+  if (!['pending','accepted','disputed'].includes(ch.status)) return alert('Only pending, accepted or disputed challenges can be loaded into a match.');
+  selectedChallengeId = id;
+  const challengerIds = ch.challenger_player_ids || String(ch.challenger_entity_id || '').split('|').filter(Boolean);
+  const defenderIds = ch.defender_player_ids || String(ch.defender_entity_id || '').split('|').filter(Boolean);
+  $('matchMode').value = 'ranked';
+  $('matchType').value = ch.type;
+  $('doublesSection').style.display = ch.type === 'doubles' ? 'block' : 'none';
+  $('playerA').value = challengerIds[0] || '';
+  $('playerB').value = defenderIds[0] || '';
+  $('playerC').value = ch.type === 'doubles' ? (challengerIds[1] || '') : '';
+  $('playerD').value = ch.type === 'doubles' ? (defenderIds[1] || '') : '';
+  currentMatch.rankingContext = 'challenge';
+  currentMatch.challengeId = ch.id;
+  if ($('matchStatus')) $('matchStatus').textContent = `Loaded challenge: ${challengeEntityName(ch.type, ch.challenger_entity_id)} vs ${challengeEntityName(ch.type, ch.defender_entity_id)}`;
+  updatePartnerSwapButtons();
+  renderChallengeManager();
+}
+
+function loadSelectedChallengeIntoMatch() {
+  if (!selectedChallengeId) return alert('Select a challenge from the list first.');
+  loadChallengeIntoMatch(selectedChallengeId);
+}
 
 /* ---------- Navigation ---------- */
 const tabs        = Array.from(document.querySelectorAll('nav button[data-tab]'));
@@ -1484,8 +2041,20 @@ tabs.forEach(btn => btn.addEventListener('click', () => {
   const tab = btn.dataset.tab;
   for (const k in tabSections) tabSections[k].style.display = (k === tab) ? 'block' : 'none';
   if (tab === 'history') renderHistory();
+  if (tab === 'admin') renderDbHealthPanel();
+  if (tab === 'recorder') { populateChallengeSelectors(); renderChallengeManager(); }
   if (tab === 'recorder' && !$('tab-recorder').classList.contains('mobile-show-score')) showRecorderPane('setup');
 }));
+
+/* Mobile nav hide/show */
+const mobileNavToggle = $('mobileNavToggle');
+if (mobileNavToggle) {
+  mobileNavToggle.onclick = () => {
+    const hidden = document.body.classList.toggle('mobile-nav-hidden');
+    mobileNavToggle.textContent = hidden ? 'Show Nav' : 'Hide Nav';
+    mobileNavToggle.setAttribute('aria-expanded', String(!hidden));
+  };
+}
 
 /* ---------- Theme toggle ---------- */
 $('themeToggle').addEventListener('change', e => {
@@ -1519,6 +2088,11 @@ async function readData() {
     appData.player_stats ??= [];
     appData.settings ??= { admins: [] };
     appData.settings.admins ??= [];
+    ensureDataShape();
+    appData.derived.validation = validateDbReferences(appData);
+    renderDbHealthPanel();
+    populateChallengeSelectors();
+    renderChallengeManager();
 
     return true;
   } catch (e) {
@@ -1528,6 +2102,7 @@ async function readData() {
   }
 }
 async function writeData(msg = 'Update RBG-TT data') {
+  if (!prepareDataForSave(msg)) return false;
   try {
     const res = await fetch(`${API_BASE}/save-db`, {
       method: 'POST',
@@ -1548,6 +2123,8 @@ async function writeData(msg = 'Update RBG-TT data') {
       return false;
     }
 
+    renderDbHealthPanel();
+    renderChallengeManager();
     return true;
   } catch (e) {
     console.error('writeData failed', e);
@@ -1570,11 +2147,13 @@ function updateAuthUI() {
   // Admin-only elements
   const admin = isAdmin();
   if ($('adminTab')) $('adminTab').style.display = admin ? 'inline-block' : 'none';
-  ['adminActionsCard', 'adminPlayersCard'].forEach(id => {
+  ['adminActionsCard', 'adminPlayersCard', 'dbHealthCard'].forEach(id => {
     const el = $(id); if (el) el.style.display = admin ? '' : 'none';
   });
   if ($('createTournamentWrap'))
     $('createTournamentWrap').style.display = admin ? '' : 'none';
+
+  if (admin) renderDbHealthPanel();
 
   if (!admin && document.querySelector('nav button[data-tab="admin"]')?.classList.contains('active')) {
     tabs.forEach(b => b.classList.remove('active'));
@@ -1645,6 +2224,7 @@ $('signOutBtn').onclick = () => {
 
 /* ---------- Settings modal ---------- */
 $('openSettingsBtn').onclick = () => {
+  $('settingsPat').value    = localStorage.getItem(LS_PAT) || '';
   $('settingsUser').value   = currentUser
     ? `${currentUser.displayName} (${currentUser.email})`
     : 'Not logged in';
@@ -1659,13 +2239,16 @@ $('settingsModal').addEventListener('click', e => {
 $('settingsClose').onclick = () => { $('settingsModal').style.display = 'none'; };
 
 $('settingsSave').onclick = async () => {
+  const pat = $('settingsPat').value.trim();
+  if (pat) localStorage.setItem(LS_PAT, pat);
+  else     localStorage.removeItem(LS_PAT);
   // Save admin list to shared data
   const admins = $('settingsAdmins').value
     .split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
   appData.settings ??= {};
   appData.settings.admins = admins;
   $('settingsModal').style.display = 'none';
-  await writeData('Update settings');
+  if (pat) await writeData('Update settings');
 };
 
 /* ---------- Refresh buttons ---------- */
@@ -1774,6 +2357,8 @@ function isAdmin() {
    Recalculate all stats from match history (used after edit/delete)
    ============================================================ */
 function recalculateAllStats() {
+  ensureDataShape();
+  appData.rating_events = [];
   // Reset computed fields
   appData.players.forEach(p => {
     p.games_played  = 0;
@@ -1794,7 +2379,11 @@ function recalculateAllStats() {
       [pa, pb, pc, pd].filter(Boolean).forEach(p => { p.games_played++; });
       if (m.mode === 'ranked' && m.type !== 'doubles') {
         const sideAWon = m.winner === m.player_a;
+        const beforeA = pa.rating || 1500;
+        const beforeB = pb.rating || 1500;
         applyEloUpdate(pa, pb, sideAWon);
+        appendRatingEvent({ scope: 'singles', entity_id: pa.id, entity_name: pa.display_name, match_id: m.id, match_type: m.type || 'singles', rating_before: beforeA, rating_after: pa.rating || 1500, result: sideAWon ? 'win' : 'loss', opponent_entity_id: pb.id, opponent_entity_name: pb.display_name, created_at: m.created_at });
+        appendRatingEvent({ scope: 'singles', entity_id: pb.id, entity_name: pb.display_name, match_id: m.id, match_type: m.type || 'singles', rating_before: beforeB, rating_after: pb.rating || 1500, result: sideAWon ? 'loss' : 'win', opponent_entity_id: pa.id, opponent_entity_name: pa.display_name, created_at: m.created_at });
         pa.points = (pa.points || 0) + (sideAWon ? 3 : 1);
         pb.points = (pb.points || 0) + (sideAWon ? 1 : 3);
       }
@@ -1858,19 +2447,43 @@ $('historyModeFilter').addEventListener('change', renderHistory);
 /* ---------- Edit Match ---------- */
 let _editMatchId = null;
 
+function editPlayerOptionsHtml(selectedId) {
+  return [...appData.players]
+    .sort((a,b)=>(a.display_name||'').localeCompare(b.display_name||''))
+    .map(p => `<option value="${p.id}" ${p.id === selectedId ? 'selected' : ''}>${p.display_name}</option>`)
+    .join('');
+}
+
+function syncEditMatchTypeUI() {
+  const isDoubles = $('editMatchType')?.value === 'doubles';
+  if ($('editDoublesPlayers')) $('editDoublesPlayers').style.display = isDoubles ? 'block' : 'none';
+}
+
+function populateEditMatchPlayers(m) {
+  if (!m) return;
+  $('editPlayerA').innerHTML = editPlayerOptionsHtml(m.player_a);
+  $('editPlayerB').innerHTML = editPlayerOptionsHtml(m.player_b);
+  $('editPlayerC').innerHTML = editPlayerOptionsHtml(m.player_c);
+  $('editPlayerD').innerHTML = editPlayerOptionsHtml(m.player_d);
+  syncEditMatchTypeUI();
+}
+
 window.showEditMatch = function(id) {
   const m = appData.matches.find(x => x.id === id);
   if (!m) return;
   const pa = appData.players.find(p => p.id === m.player_a)?.display_name || '?';
   const pb = appData.players.find(p => p.id === m.player_b)?.display_name || '?';
   _editMatchId = id;
-  $('editMatchInfo').textContent = `${pa} vs ${pb} \u00b7 ${new Date(m.created_at).toLocaleDateString()}`;
+  $('editMatchInfo').textContent = `${pa} vs ${pb} · ${new Date(m.created_at).toLocaleDateString()}`;
+  $('editMatchType').value = m.type || 'singles';
+  populateEditMatchPlayers(m);
   $('editScoreA').value = m.score_a;
   $('editScoreB').value = m.score_b;
   $('editMode').value   = m.mode;
   $('editMatchModal').style.display = 'flex';
 };
 
+$('editMatchType').addEventListener('change', syncEditMatchTypeUI);
 $('editMatchModal').addEventListener('click', e => {
   if (e.target === $('editMatchModal')) $('editMatchModal').style.display = 'none';
 });
@@ -1879,20 +2492,47 @@ $('editMatchClose').onclick = () => { $('editMatchModal').style.display = 'none'
 $('editMatchSave').onclick = async () => {
   const m = appData.matches.find(x => x.id === _editMatchId);
   if (!m) return;
+  const beforeMatch = cloneForAudit(m);
+  const oldRoles = {
+    [m.player_a]: $('editPlayerA').value,
+    [m.player_b]: $('editPlayerB').value,
+    ...(m.player_c ? { [m.player_c]: $('editPlayerC').value } : {}),
+    ...(m.player_d ? { [m.player_d]: $('editPlayerD').value } : {})
+  };
+  const newType = $('editMatchType').value;
+  const newA = $('editPlayerA').value;
+  const newB = $('editPlayerB').value;
+  const newC = newType === 'doubles' ? $('editPlayerC').value : null;
+  const newD = newType === 'doubles' ? $('editPlayerD').value : null;
+  const required = newType === 'doubles' ? [newA, newB, newC, newD] : [newA, newB];
+  if (required.some(id => !id)) return alert('Select all required players for this match.');
+  if (new Set(required).size !== required.length) return alert('Each player in a match must be different.');
+
   const newSA = Number($('editScoreA').value);
   const newSB = Number($('editScoreB').value);
   const newMode = $('editMode').value;
 
+  m.type = newType;
+  m.player_a = newA;
+  m.player_b = newB;
+  m.player_c = newC;
+  m.player_d = newD;
   m.score_a = newSA;
   m.score_b = newSB;
   m.mode    = newMode;
   m.winner  = newSA > newSB ? m.player_a : m.player_b;
 
+  // Remap point server ids for this game if a player was corrected.
+  (appData.points || []).forEach(pt => {
+    if (pt.game_id === m.id && oldRoles[pt.server_id]) pt.server_id = oldRoles[pt.server_id];
+  });
+
+  recordAuditEvent('match_edit', 'match', m.id, beforeMatch, m, 'Match history edit modal');
   recalculateAllStats();
   $('editMatchModal').style.display = 'none';
   const ok = await writeData(`Edit match ${_editMatchId.slice(0,8)}`);
   if (ok) { renderHistory(); renderLeaderboard(); }
-  else    alert('Save failed via Cloudflare Worker.');
+  else    alert('Save failed. Check your PAT in ⚙ Settings.');
 };
 
 /* ---------- Delete Match ---------- */
@@ -1903,44 +2543,68 @@ window.confirmDeleteMatch = function(id) {
   const pb = appData.players.find(p => p.id === m.player_b)?.display_name || '?';
   if (!confirm(`Delete match: ${pa} ${m.score_a}\u2013${m.score_b} ${pb}?\n\nAll ratings and stats will be recalculated.`)) return;
 
+  const beforeDelete = cloneForAudit(m);
+  const beforePoints = cloneForAudit((appData.points || []).filter(pt => pt.game_id === id || pt.match_id === id));
   appData.matches = appData.matches.filter(x => x.id !== id);
-  appData.points  = appData.points.filter(pt => pt.game_id !== id);
+  appData.points  = appData.points.filter(pt => pt.game_id !== id && pt.match_id !== id);
+  recordAuditEvent('match_delete', 'match', id, { match: beforeDelete, points: beforePoints }, null, 'Admin deleted match from history');
   recalculateAllStats();
 
   writeData(`Delete match ${id.slice(0,8)}`).then(ok => {
     if (ok) { renderHistory(); renderLeaderboard(); }
-    else alert('Save failed via Cloudflare Worker.');
+    else alert('Save failed. Check your PAT in \u2699 Settings.');
   });
 };
 
 /* ============================================================
    Rankings & Leaderboard
    ============================================================ */
+function singlesGameCountForPlayer(playerId) {
+  return (appData.matches || []).filter(m => m.type === 'singles' && (m.player_a === playerId || m.player_b === playerId)).length;
+}
+
+function singlesWinsLossesForPlayer(playerId) {
+  let wins = 0, losses = 0;
+  (appData.matches || []).forEach(m => {
+    if (m.type !== 'singles' || (m.player_a !== playerId && m.player_b !== playerId)) return;
+    const won = m.player_a === playerId ? m.winner === m.player_a : m.winner === m.player_b;
+    won ? wins++ : losses++;
+  });
+  return { wins, losses };
+}
+
 function renderLeaderboard() {
   const sEl = $('singlesList'), dEl = $('doublesList');
   sEl.innerHTML = ''; dEl.innerHTML = '';
 
-  // Singles: use ranked array, or fallback to all players sorted by Elo
-  const singles = appData.rankings.singles.length
-    ? appData.rankings.singles
-    : [...appData.players].filter(p=>(p.games_played||0)>0)
-        .sort((a,b)=>(b.rating||1500)-(a.rating||1500))
-        .map((p,i)=>({ player_id:p.id, player_name:p.display_name, rank:i+1, rating:p.rating||1500, games:p.games_played||0 }));
+  // Singles leaderboard must be singles-only. Doubles games still contribute to
+  // player profiles, but not to the singles leaderboard game readout.
+  const rankedSingles = (appData.rankings.singles || [])
+    .map(r => ({ ...r, games: singlesGameCountForPlayer(r.player_id) }))
+    .filter(r => r.games > 0);
+
+  const singles = rankedSingles.length
+    ? rankedSingles
+    : [...appData.players]
+        .map(p => ({ p, games: singlesGameCountForPlayer(p.id) }))
+        .filter(x => x.games > 0)
+        .sort((a,b)=>(b.p.rating||1500)-(a.p.rating||1500))
+        .map((x,i)=>({ player_id:x.p.id, player_name:x.p.display_name, rank:i+1, rating:x.p.rating||1500, games:x.games }));
 
   if (!singles.length) {
-    sEl.innerHTML = '<div class="muted">No players with games yet.</div>';
+    sEl.innerHTML = '<div class="muted">No players with singles games yet.</div>';
   } else {
     singles.forEach(r => {
       const p = appData.players.find(x=>x.id===r.player_id) || { id: r.player_id, display_name: r.player_name||'Unknown' };
       const rc = p.rating_change;
-      const rcHtml = rc!=null ? ` <span style="font-size:11px;color:${rc>=0?'#4ade80':'#f87171'}">${rc>=0?'+':''}${rc}</span>` : '';
+      const wl = singlesWinsLossesForPlayer(p.id || r.player_id);
       const el = document.createElement('div');
       el.className = 'lb-row';
       el.innerHTML = `
         <div class="lb-rank">#${r.rank}</div>
         <div class="lb-main">
           <div class="lb-name" onclick="openPlayerProfile('${p.id || r.player_id}')">${p.display_name}</div>
-          <div class="muted lb-meta">${r.rating || 1500} Elo &middot; ${r.games || p.games_played || 0} games</div>
+          <div class="muted lb-meta">${r.rating || 1500} Elo &middot; ${r.games || 0} singles games &middot; ${wl.wins}W ${wl.losses}L</div>
         </div>
         ${rc != null ? `<div class="lb-change" style="color:${rc >= 0 ? '#4ade80' : '#f87171'}">${rc >= 0 ? '+' : ''}${rc}</div>` : ''}
       `;
@@ -1948,28 +2612,32 @@ function renderLeaderboard() {
     });
   }
 
-  const doubles = appData.rankings.doubles;
+  const doubles = appData.rankings.doubles || [];
   dEl.innerHTML = doubles.length
-  ? doubles.map(r => `
+  ? doubles.map(r => {
+    const key = doublesPairKey(r.player_ids || []);
+    return `
     <div class="lb-row">
       <div class="lb-rank">#${r.rank}</div>
       <div class="lb-main">
-        <div class="lb-name">${r.team_name || 'Team'}</div>
+        <div class="lb-name" onclick="openDoublesProfile('${key}')">${r.team_name || 'Team'}</div>
         <div class="muted lb-meta">${r.points || 0} pts</div>
       </div>
-    </div>
-  `).join('')
+    </div>`;
+  }).join('')
     : '<div class="muted">No doubles rankings yet.</div>';
 }
 
 function rebuildSinglesRankings() {
   appData.rankings.singles = [...appData.players]
-    .filter(p => (p.games_played || 0) > 0)
-    .sort((a, b) => (b.rating || 1500) - (a.rating || 1500))
-    .map((p, i) => ({ player_id: p.id, player_name: p.display_name, rank: i + 1, rating: p.rating || 1500, games: p.games_played || 0 }));
+    .map(p => ({ p, games: singlesGameCountForPlayer(p.id) }))
+    .filter(x => x.games > 0)
+    .sort((a, b) => (b.p.rating || 1500) - (a.p.rating || 1500))
+    .map((x, i) => ({ player_id: x.p.id, player_name: x.p.display_name, rank: i + 1, rating: x.p.rating || 1500, games: x.games }));
 }
 
 /* ============================================================
+   STATS ENGINE START - Phase 2C isolation marker
    Elo Rating System  (K=40 for <30 games, K=20 thereafter)
    ============================================================ */
 function eloExpected(rA, rB) { return 1 / (1 + Math.pow(10, (rB - rA) / 400)); }
@@ -2101,7 +2769,121 @@ function computePlayerStats(playerId) {
   };
 }
 
+
+function doublesPairKey(ids) {
+  return [...new Set((ids || []).filter(Boolean))].sort().join('|');
+}
+function doublesPairName(key) {
+  return String(key || '').split('|').filter(Boolean).map(id => appData.players.find(p => p.id === id)?.display_name || 'Unknown').join(' / ') || 'Unknown Pair';
+}
+function computeDoublesPairStats(key) {
+  const ms = (appData.matches || [])
+    .filter(m => m.type === 'doubles' && (doublesPairKey([m.player_a, m.player_c]) === key || doublesPairKey([m.player_b, m.player_d]) === key))
+    .sort((a,b)=>a.created_at.localeCompare(b.created_at));
+  let wins=0, losses=0, pf=0, pa=0, rankedW=0, rankedL=0;
+  const h2h = {};
+  const pct = (n,d) => d ? Math.round(n/d*100) : 0;
+  ms.forEach(m => {
+    const onA = doublesPairKey([m.player_a, m.player_c]) === key;
+    const won = onA ? m.winner === m.player_a : m.winner === m.player_b;
+    won ? wins++ : losses++;
+    if (m.mode === 'ranked') won ? rankedW++ : rankedL++;
+    pf += onA ? m.score_a : m.score_b;
+    pa += onA ? m.score_b : m.score_a;
+    const oppKey = onA ? doublesPairKey([m.player_b, m.player_d]) : doublesPairKey([m.player_a, m.player_c]);
+    h2h[oppKey] ??= { w:0, l:0 };
+    won ? h2h[oppKey].w++ : h2h[oppKey].l++;
+  });
+  return {
+    matches: ms,
+    total: wins + losses,
+    wins, losses,
+    win_pct: pct(wins, wins + losses),
+    ranked_wins: rankedW,
+    ranked_losses: rankedL,
+    ranked_win_pct: pct(rankedW, rankedW + rankedL),
+    points_for: pf,
+    points_against: pa,
+    point_diff: pf - pa,
+    avg_scored: ms.length ? (pf / ms.length).toFixed(1) : '0.0',
+    avg_conceded: ms.length ? (pa / ms.length).toFixed(1) : '0.0',
+    h2h,
+    recent_form: ms.slice(-10).map(m => {
+      const onA = doublesPairKey([m.player_a, m.player_c]) === key;
+      return onA ? m.winner === m.player_a : m.winner === m.player_b;
+    })
+  };
+}
+function openDoublesProfile(key) {
+  tabs.forEach(b => b.classList.remove('active'));
+  tabs.find(b => b.dataset.tab === 'profile')?.classList.add('active');
+  for (const k in tabSections) tabSections[k].style.display = k === 'profile' ? 'block' : 'none';
+  renderDoublesProfile(key);
+}
+function renderDoublesProfile(key) {
+  const el = $('profileContent');
+  const ids = String(key || '').split('|').filter(Boolean);
+  if (ids.length !== 2) { el.innerHTML = '<div class="muted">Doubles pair not found.</div>'; return; }
+  if ($('editProfile')) $('editProfile').style.display = 'none';
+  const stats = computeDoublesPairStats(key);
+  const ranking = (appData.rankings.doubles || []).find(r => doublesPairKey(r.player_ids || []) === key);
+  const rank = ranking?.rank ?? '—';
+  const rating = ranking?.rating || 1500;
+  const name = ranking?.team_name || doublesPairName(key);
+  el.innerHTML = `
+    <div style="margin-bottom:12px">
+      <div style="font-size:17px;font-weight:700;color:#fff">${name}</div>
+      <div class="muted">Doubles pair profile · ${doublesPairName(key)}</div>
+    </div>
+    <div class="stat-bar">
+      <div class="stat-pill"><div class="val">${rating}</div><div class="lbl">Doubles Elo</div></div>
+      <div class="stat-pill"><div class="val">#${rank}</div><div class="lbl">Doubles Rank</div></div>
+      <div class="stat-pill"><div class="val">${stats.win_pct}%</div><div class="lbl">Win Rate</div></div>
+      <div class="stat-pill"><div class="val">${stats.wins}–${stats.losses}</div><div class="lbl">W–L</div></div>
+      <div class="stat-pill"><div class="val">${stats.point_diff>=0?'+':''}${stats.point_diff}</div><div class="lbl">Pt Diff</div></div>
+      <div class="stat-pill"><div class="val">${stats.total}</div><div class="lbl">Matches</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-bottom:12px">
+      <div class="card" style="padding:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Performance</div>
+        <div class="muted" style="margin-bottom:3px">Avg scored: <strong style="color:#cfe6ff">${stats.avg_scored}</strong></div>
+        <div class="muted" style="margin-bottom:3px">Avg conceded: <strong style="color:#cfe6ff">${stats.avg_conceded}</strong></div>
+        <div class="muted" style="margin-bottom:3px">Points for/against: <strong style="color:#cfe6ff">${stats.points_for}–${stats.points_against}</strong></div>
+      </div>
+      <div class="card" style="padding:10px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">By Mode</div>
+        <div class="muted" style="margin-bottom:3px">Ranked: <strong style="color:#cfe6ff">${stats.ranked_wins}W ${stats.ranked_losses}L (${stats.ranked_win_pct}%)</strong></div>
+        <div class="muted" style="margin-bottom:3px">Leaderboard points: <strong style="color:#cfe6ff">${ranking?.points || 0}</strong></div>
+      </div>
+    </div>`;
+  const pairTimeline = renderDoublesRatingTimeline(key);
+  if (pairTimeline) el.insertAdjacentHTML('beforeend', pairTimeline);
+  if (stats.recent_form.length) {
+    const chips = stats.recent_form.map(w=>`<span class="form-chip ${w?'win':'loss'}">${w?'W':'L'}</span>`).join('');
+    el.insertAdjacentHTML('beforeend', `<div style="margin-bottom:14px"><div class="muted" style="margin-bottom:6px;font-size:12px">Recent form (last ${stats.recent_form.length})</div><div style="display:flex;gap:4px;flex-wrap:wrap">${chips}</div></div>`);
+  }
+  const h2hPairs = Object.entries(stats.h2h).sort((a,b)=>(b[1].w+b[1].l)-(a[1].w+a[1].l));
+  if (h2hPairs.length) {
+    const rows = h2hPairs.map(([oppKey,r])=>{
+      const total = r.w + r.l, p = Math.round(r.w / total * 100);
+      return `<div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><div style="display:flex;justify-content:space-between;gap:8px"><span class="small" style="cursor:pointer;color:#cfe6ff" onclick="openDoublesProfile('${oppKey}')">${doublesPairName(oppKey)}</span><span class="muted" style="font-size:12px">${r.w}–${r.l} <span style="color:${p>=50?'#4ade80':'#f87171'}">(${p}%)</span></span></div><div class="h2h-bar"><div class="h2h-bar-fill" style="width:${p}%"></div></div></div>`;
+    }).join('');
+    el.insertAdjacentHTML('beforeend', `<div class="card" style="padding:10px;margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Pair Head to Head</div>${rows}</div>`);
+  }
+  if (stats.matches.length) {
+    const rows = stats.matches.slice(-20).reverse().map(m => {
+      const onA = doublesPairKey([m.player_a, m.player_c]) === key;
+      const won = onA ? m.winner === m.player_a : m.winner === m.player_b;
+      const sA = doublesPairName(doublesPairKey([m.player_a, m.player_c]));
+      const sB = doublesPairName(doublesPairKey([m.player_b, m.player_d]));
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span><strong style="color:${won?'#4ade80':'#f87171'};margin-right:6px">${won?'W':'L'}</strong><span class="small">${sA} ${m.score_a}–${m.score_b} ${sB}</span></span><span class="muted" style="font-size:11px;white-space:nowrap">${m.mode} · ${new Date(m.created_at).toLocaleDateString()}</span></div>`;
+    }).join('');
+    el.insertAdjacentHTML('beforeend', `<div class="card" style="padding:10px;margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Recent Doubles Matches</div>${rows}</div>`);
+  }
+}
+
 /* ============================================================
+   STATS ENGINE END - renderers below consume derived data
    Profile Renderer
    ============================================================ */
 function renderProfile(playerId) {
@@ -2155,6 +2937,15 @@ function renderProfile(playerId) {
         <div style="display:flex;gap:4px;flex-wrap:wrap">${chips}</div>
       </div>`);
   }
+
+  const ratingTimeline = renderPlayerRatingTimeline(playerId);
+  if (ratingTimeline) el.insertAdjacentHTML('beforeend', ratingTimeline);
+  const rankingHistory = renderPlayerRankingHistory(playerId);
+  if (rankingHistory) el.insertAdjacentHTML('beforeend', rankingHistory);
+  const recentMatchInsights = renderRecentMatchInsights(playerId, 8);
+  if (recentMatchInsights) el.insertAdjacentHTML('beforeend', recentMatchInsights);
+  const activityHeatmap = renderPlayerActivityHeatmap(playerId);
+  if (activityHeatmap) el.insertAdjacentHTML('beforeend', activityHeatmap);
 
   // Stats cards
   function skillVal(v) { return v ? `<strong style="color:#cfe6ff">${v}${typeof v==='number'&&v<=10?'/10':''}</strong>` : `<span style="opacity:.35">—</span>`; }
@@ -2630,6 +3421,9 @@ function populatePlayerSelectors() {
   if (!admin && currentPlayer) selSt.setAttribute('disabled', '');
   else selSt.removeAttribute('disabled');
 
+  populateChallengeSelectors();
+  renderChallengeManager();
+
   if (currentPlayer) {
     selSt.value = currentPlayer.id;
     loadStatsForPlayer(currentPlayer.id);
@@ -2692,6 +3486,10 @@ $('statsPlayerSelect').addEventListener('change', () => {
 $('matchType').addEventListener('change', () => {
   $('doublesSection').style.display = $('matchType').value === 'doubles' ? 'block' : 'none';
 });
+if ($('challengeType')) $('challengeType').addEventListener('change', syncChallengeTypeUI);
+if ($('createChallengeBtn')) $('createChallengeBtn').onclick = createChallengeFromForm;
+if ($('refreshChallengesBtn')) $('refreshChallengesBtn').onclick = () => { populateChallengeSelectors(); renderChallengeManager(); };
+if ($('loadChallengeToMatchBtn')) $('loadChallengeToMatchBtn').onclick = loadSelectedChallengeIntoMatch;
 
 /* ---------- Serve order helper ---------- */
 function buildServeOrder() {
@@ -2737,7 +3535,7 @@ function startQuickMatch(type) {
   populatePlayerSelectors();
   $('matchType').value = type;
   $('doublesSection').style.display = type === 'doubles' ? 'block' : 'none';
-  $('matchMode').value = 'casual';
+  $('matchMode').value = 'ranked';
   $('playerA').value = a; $('playerB').value = b;
   if (type === 'doubles') { $('playerC').value = c; $('playerD').value = d; }
   $('sessionFormat').value = '1'; $('firstServerSelect').value = 'A';
@@ -2773,44 +3571,26 @@ function updateRallyTrackingUI() {
   if (control) control.classList.toggle('rally-disabled', !enabled);
   if (input) input.disabled = !enabled;
   ['rallyHitsUp','rallyHitsDown'].forEach(id => { if ($(id)) $(id).disabled = !enabled; });
-  if (!enabled) setRallyHitsValue(0, false);
+  if (!enabled) setRallyHitsValue(1, false);
   if ($('fsRallyTrackingEnabled')) $('fsRallyTrackingEnabled').checked = enabled;
   if ($('fsRallyHits')) $('fsRallyHits').disabled = !enabled;
   ['fsRallyHitsUp','fsRallyHitsDown'].forEach(id => { if ($(id)) $(id).disabled = !enabled; });
   if ($('fsRallyHits')) $('fsRallyHits').value = $('rallyHits')?.value || 0;
 }
-function isRallyTrackingEnabled() { return !!$('rallyTrackingEnabled')?.checked; }
-function updateRallyTrackingUI() {
-  const enabled = isRallyTrackingEnabled();
-  const control = $('rallyControl');
-  const input = $('rallyHits');
-  if (control) control.classList.toggle('rally-disabled', !enabled);
-  if (input) input.disabled = !enabled;
-  ['rallyHitsUp','rallyHitsDown'].forEach(id => { if ($(id)) $(id).disabled = !enabled; });
-  if (!enabled) setRallyHitsValue(0, false);
-  if ($('fsRallyTrackingEnabled')) $('fsRallyTrackingEnabled').checked = enabled;
-  if ($('fsRallyHits')) $('fsRallyHits').disabled = !enabled;
-  ['fsRallyHitsUp','fsRallyHitsDown'].forEach(id => { if ($(id)) $(id).disabled = !enabled; });
-  if ($('fsRallyHits')) $('fsRallyHits').value = $('rallyHits')?.value || 0;
-}
-function getRallyHitsValue() { return Math.max(0, Number($('rallyHits')?.value || 0)); }
+function getRallyHitsValue() { return Math.max(1, Number($('rallyHits')?.value || 1)); }
 function setRallyHitsValue(v, applyToLast = true) {
-  const next = Math.max(0, Number(v) || 0);
+  const next = Math.max(1, Number(v) || 1);
   if ($('rallyHits')) $('rallyHits').value = next;
   if ($('fsRallyHits')) $('fsRallyHits').value = next;
   if (applyToLast && isRallyTrackingEnabled() && currentMatch.pointLog.length) { const pt = currentMatch.pointLog[currentMatch.pointLog.length - 1]; pt.hits_per_rally = next; pt.rally_length = next; }
-  if ($('fsRallyHits')) $('fsRallyHits').value = next;
-  if (applyToLast && isRallyTrackingEnabled() && currentMatch.pointLog.length) { const pt = currentMatch.pointLog[currentMatch.pointLog.length - 1]; pt.hits_per_rally = next; pt.rally_length = next; }
 }
-function resetRallyHitsForNextPoint() { setRallyHitsValue(0, false); }
-function adjustRallyHits(delta) { if (!isRallyTrackingEnabled()) return; setRallyHitsValue(getRallyHitsValue() + delta, true); }
+function resetRallyHitsForNextPoint() { setRallyHitsValue(1, false); }
 function adjustRallyHits(delta) { if (!isRallyTrackingEnabled()) return; setRallyHitsValue(getRallyHitsValue() + delta, true); }
 function toggleRecorderFullscreen() {
   const entering = !document.body.classList.contains('live-recorder-fullscreen');
   document.body.classList.toggle('live-recorder-fullscreen', entering);
   const btn = $('fullscreenRecorderBtn');
   if (btn) btn.textContent = entering ? 'Exit Fullscreen' : 'Fullscreen';
-  if (entering) { applyFullscreenScaleSettings(); wireFullscreenRecorderControls(); renderFullscreenRecorderUI(); }
   if (entering) { applyFullscreenScaleSettings(); wireFullscreenRecorderControls(); renderFullscreenRecorderUI(); }
   const target = $('tab-recorder');
   if (entering && target?.requestFullscreen) target.requestFullscreen().catch(() => {});
@@ -2824,12 +3604,10 @@ if ($('rallyHitsUp')) $('rallyHitsUp').onclick = () => adjustRallyHits(1);
 if ($('rallyHitsDown')) $('rallyHitsDown').onclick = () => adjustRallyHits(-1);
 if ($('rallyHits')) $('rallyHits').addEventListener('change', () => setRallyHitsValue(getRallyHitsValue(), true));
 if ($('rallyTrackingEnabled')) $('rallyTrackingEnabled').addEventListener('change', updateRallyTrackingUI);
-if ($('rallyTrackingEnabled')) $('rallyTrackingEnabled').addEventListener('change', updateRallyTrackingUI);
 document.addEventListener('fullscreenchange', () => {
   if (!document.fullscreenElement) {
     document.body.classList.remove('live-recorder-fullscreen');
     if ($('fullscreenRecorderBtn')) $('fullscreenRecorderBtn').textContent = 'Fullscreen';
-    $('fsScalePanel')?.classList.remove('open');
     $('fsScalePanel')?.classList.remove('open');
   }
 });
@@ -2885,9 +3663,7 @@ function renderFullscreenRecorderUI() {
   ['A','B','C','D'].forEach(k => $('fsPlayer' + k)?.classList.remove('is-serving'));
   const roleMap = { [currentMatch.a]:'A', [currentMatch.b]:'B', [currentMatch.c]:'C', [currentMatch.d]:'D' };
   if (serverId && roleMap[serverId] && $('fsPlayer' + roleMap[serverId])) $('fsPlayer' + roleMap[serverId]).classList.add('is-serving');
-  // Fullscreen serving indicator cleanup:
-  // keep serving state on the actual player chip only. Side-level labels caused
-  // large blue overlay artefacts in fullscreen singles and doubles table view.
+  // Fullscreen serving indicator cleanup: use the actual player chip only.
   const serverOnA = serverId === currentMatch.a || serverId === currentMatch.c;
   const servingRole = roleMap[serverId] || null;
   ['a','b','c','d'].forEach(r => {
@@ -2919,8 +3695,110 @@ function wireFullscreenRecorderControls() {
   if ($('fsRallyTrackingEnabled')) $('fsRallyTrackingEnabled').addEventListener('change', e => { if ($('rallyTrackingEnabled')) $('rallyTrackingEnabled').checked = e.target.checked; updateRallyTrackingUI(); renderFullscreenRecorderUI(); });
   if ($('fsRallyHitsUp')) $('fsRallyHitsUp').onclick = () => { adjustRallyHits(1); renderFullscreenRecorderUI(); };
   if ($('fsRallyHitsDown')) $('fsRallyHitsDown').onclick = () => { adjustRallyHits(-1); renderFullscreenRecorderUI(); };
-  if ($('fsRallyHits')) $('fsRallyHits').addEventListener('change', e => { setRallyHitsValue(Math.max(0, Number(e.target.value || 0)), true); renderFullscreenRecorderUI(); });
+  if ($('fsRallyHits')) $('fsRallyHits').addEventListener('change', e => { setRallyHitsValue(Math.max(1, Number(e.target.value || 1)), true); renderFullscreenRecorderUI(); });
 }
+
+
+function hasScoredPointInCurrentMatch() {
+  return (currentMatch.scoreA || 0) > 0 || (currentMatch.scoreB || 0) > 0 || (currentMatch.pointLog || []).length > 0;
+}
+function initialServerLabel(side) {
+  return `Initial Server: Side ${side}`;
+}
+function updateInitialServerButtons() {
+  const active = !!currentMatch.serveOrder.length;
+  const canSwitch = !active || !hasScoredPointInCurrentMatch();
+  const side = active ? currentMatch.firstServer : ($('firstServerSelect')?.value || 'A');
+  ['switchInitialServerSetupBtn','switchInitialServerLiveBtn'].forEach(id => {
+    const btn = $(id);
+    if (!btn) return;
+    btn.disabled = !canSwitch;
+    btn.classList.toggle('server-switch-disabled', !canSwitch);
+    btn.textContent = initialServerLabel(side);
+    btn.title = canSwitch ? 'Switch which side serves first. Teams stay on their current sides.' : 'Initial server can only be changed before the first point.';
+  });
+}
+function switchInitialServerBeforeFirstPoint() {
+  if (currentMatch.serveOrder.length && hasScoredPointInCurrentMatch()) {
+    alert('Initial server can only be changed before the first point is recorded.');
+    updateInitialServerButtons();
+    return;
+  }
+  const current = currentMatch.serveOrder.length ? currentMatch.firstServer : ($('firstServerSelect')?.value || 'A');
+  const next = current === 'A' ? 'B' : 'A';
+  if ($('firstServerSelect')) $('firstServerSelect').value = next;
+  currentMatch.firstServer = next;
+  if (currentMatch.serveOrder.length) {
+    currentMatch.serveOrder = buildServeOrder();
+    updateScoreUI();
+    renderLivePlayerSelectors();
+  }
+  updateInitialServerButtons();
+}
+if ($('switchInitialServerSetupBtn')) $('switchInitialServerSetupBtn').onclick = switchInitialServerBeforeFirstPoint;
+if ($('switchInitialServerLiveBtn')) $('switchInitialServerLiveBtn').onclick = switchInitialServerBeforeFirstPoint;
+if ($('firstServerSelect')) $('firstServerSelect').addEventListener('change', () => {
+  if (!currentMatch.serveOrder.length) { updateInitialServerButtons(); updatePartnerSwapButtons(); }
+});
+updateInitialServerButtons();
+
+function isDoublesContext() {
+  return currentMatch.serveOrder.length ? currentMatch.type === 'doubles' : $('matchType')?.value === 'doubles';
+}
+function updatePartnerSwapButtons() {
+  const isDoubles = isDoublesContext();
+  const active = !!currentMatch.serveOrder.length;
+  const canSwap = isDoubles && (!active || !hasScoredPointInCurrentMatch());
+  ['swapSideAPartnersSetupBtn','swapSideAPartnersLiveBtn','swapSideBPartnersSetupBtn','swapSideBPartnersLiveBtn'].forEach(id => {
+    const btn = $(id);
+    if (!btn) return;
+    btn.style.display = isDoubles ? '' : 'none';
+    btn.disabled = !canSwap;
+    btn.classList.toggle('partner-swap-disabled', !canSwap);
+    btn.title = canSwap ? 'Swap the main player with their partner on this side before the first point.' : 'Partner swap is only available for doubles before the first point.';
+  });
+}
+function swapPartnerSelection(side) {
+  if (!isDoublesContext()) {
+    updatePartnerSwapButtons();
+    return;
+  }
+  if (currentMatch.serveOrder.length && hasScoredPointInCurrentMatch()) {
+    alert('Partners can only be swapped before the first point is recorded.');
+    updatePartnerSwapButtons();
+    return;
+  }
+  if (currentMatch.serveOrder.length) {
+    if (side === 'A') [currentMatch.a, currentMatch.c] = [currentMatch.c, currentMatch.a];
+    else [currentMatch.b, currentMatch.d] = [currentMatch.d, currentMatch.b];
+    if ($('playerA')) $('playerA').value = currentMatch.a || '';
+    if ($('playerB')) $('playerB').value = currentMatch.b || '';
+    if ($('playerC')) $('playerC').value = currentMatch.c || '';
+    if ($('playerD')) $('playerD').value = currentMatch.d || '';
+    currentMatch.serveOrder = buildServeOrder();
+    renderLivePlayerSelectors();
+    updateScoreUI();
+  } else {
+    if (side === 'A') {
+      const a = $('playerA')?.value || '';
+      const c = $('playerC')?.value || '';
+      if ($('playerA')) $('playerA').value = c;
+      if ($('playerC')) $('playerC').value = a;
+    } else {
+      const b = $('playerB')?.value || '';
+      const d = $('playerD')?.value || '';
+      if ($('playerB')) $('playerB').value = d;
+      if ($('playerD')) $('playerD').value = b;
+    }
+  }
+  updatePartnerSwapButtons();
+}
+if ($('swapSideAPartnersSetupBtn')) $('swapSideAPartnersSetupBtn').onclick = () => swapPartnerSelection('A');
+if ($('swapSideAPartnersLiveBtn')) $('swapSideAPartnersLiveBtn').onclick = () => swapPartnerSelection('A');
+if ($('swapSideBPartnersSetupBtn')) $('swapSideBPartnersSetupBtn').onclick = () => swapPartnerSelection('B');
+if ($('swapSideBPartnersLiveBtn')) $('swapSideBPartnersLiveBtn').onclick = () => swapPartnerSelection('B');
+if ($('matchType')) $('matchType').addEventListener('change', updatePartnerSwapButtons);
+updatePartnerSwapButtons();
 
 $('startMatchBtn').onclick = () => {
   if (currentMatch.serveOrder.length) { completeGame(); return; }
@@ -2949,6 +3827,8 @@ $('startMatchBtn').onclick = () => {
     winBy2:        $('winBy2Check').checked,
     firstServer:   firstSrv,
     tournament:    $('matchTournament').value || null,
+    rankingContext: currentMatch.rankingContext || 'standard',
+    challengeId: currentMatch.challengeId || null,
     sessionFormat: fmt,
     sessionId:     fmt > 1 ? crypto.randomUUID() : null,
     gamesA:        0,
@@ -2959,7 +3839,6 @@ $('startMatchBtn').onclick = () => {
 
   renderLivePlayerSelectors();
   document.querySelector('.live-score-panel')?.classList?.add('match-active-clean');
-  updateRallyTrackingUI();
   updateRallyTrackingUI();
   resetRallyHitsForNextPoint();
 
@@ -2976,6 +3855,8 @@ $('startMatchBtn').onclick = () => {
   updateScoreUI();
   $('startMatchBtn').textContent = 'Complete Game';
   $('startMatchBtn').classList.add('is-complete');
+  updateInitialServerButtons();
+  updatePartnerSwapButtons();
   setRecorderMode('live');
 };
 
@@ -2983,7 +3864,7 @@ $('resetMatchBtn').onclick = () => {
   Object.assign(currentMatch, {
     a: null, b: null, c: null, d: null,
     scoreA: 0, scoreB: 0,
-    mode: 'casual', type: 'singles', gameType: 11, winBy2: true,
+    mode: 'ranked', type: 'singles', gameType: 11, winBy2: true,
     tournament: null, serveOrder: [], firstServer: 'A',
     sessionFormat: 1, sessionId: null, gamesA: 0, gamesB: 0, gameNumber: 1,
     pointLog: []
@@ -2999,6 +3880,10 @@ $('resetMatchBtn').onclick = () => {
   $('matchStatus').textContent = 'Idle';
   $('startMatchBtn').textContent = 'Start Match';
   $('startMatchBtn').classList.remove('is-complete');
+  $('startMatchBtn').disabled = false;
+  saveInProgress = false;
+  updateInitialServerButtons();
+  updatePartnerSwapButtons();
   setRecorderMode('choice');
 };
 
@@ -3008,7 +3893,8 @@ function updateScoreUI() {
   updateServeIndicator();
   if (currentMatch.serveOrder.length) renderLivePlayerSelectors();
   renderFullscreenRecorderUI();
-  renderFullscreenRecorderUI();
+  updateInitialServerButtons();
+  updatePartnerSwapButtons();
 }
 
 /* ---------- Serve logic (TT standard rules) ----------
@@ -3078,8 +3964,6 @@ function logPoint(winnerSide) {
     pressure_flag:  Math.max(sA, sB) >= gt - 2,  // last 3+ pts of a game
     hits_per_rally: isRallyTrackingEnabled() ? getRallyHitsValue() : null,  // null = tracking disabled for this point
     rally_length:   isRallyTrackingEnabled() ? getRallyHitsValue() : null,  // numeric rally count when enabled
-    hits_per_rally: isRallyTrackingEnabled() ? getRallyHitsValue() : null,  // null = tracking disabled for this point
-    rally_length:   isRallyTrackingEnabled() ? getRallyHitsValue() : null,  // numeric rally count when enabled
     end_type:       null                  // tagged later: 'winner'|'forced_error' etc.
   });
 }
@@ -3100,8 +3984,7 @@ $('subPointA').onclick = () => {
     if (currentMatch.pointLog.length) currentMatch.pointLog.pop(); // undo
     updateScoreUI();
     const last = currentMatch.pointLog[currentMatch.pointLog.length - 1];
-    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
-    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
+    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 1) : 0, false);
   }
 };
 $('subPointB').onclick = () => {
@@ -3110,8 +3993,7 @@ $('subPointB').onclick = () => {
     if (currentMatch.pointLog.length) currentMatch.pointLog.pop(); // undo
     updateScoreUI();
     const last = currentMatch.pointLog[currentMatch.pointLog.length - 1];
-    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
-    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 0) : 0, false);
+    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 1) : 0, false);
   }
 };
 
@@ -3137,11 +4019,15 @@ function checkAutoComplete() {
 
 async function completeGame() {
   if (saveInProgress) return;
-    saveInProgress = true;
-    if ($('startMatchBtn')) $('startMatchBtn').disabled = true;
+  saveInProgress = true;
+  if ($('startMatchBtn')) $('startMatchBtn').disabled = true;
   const pa = appData.players.find(p => p.id === currentMatch.a);
   const pb = appData.players.find(p => p.id === currentMatch.b);
-  if (!pa || !pb) return alert('Players not set. Use \u201cStart Match\u201d first.');
+  if (!pa || !pb) {
+    saveInProgress = false;
+    if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
+    return alert('Players not set. Use \u201cStart Match\u201d first.');
+  }
 
   const pc       = currentMatch.c ? appData.players.find(p => p.id === currentMatch.c) : null;
   const pd       = currentMatch.d ? appData.players.find(p => p.id === currentMatch.d) : null;
@@ -3170,9 +4056,13 @@ async function completeGame() {
     score_b:       currentMatch.scoreB,
     winner:        sideAWon ? currentMatch.a : currentMatch.b,
     win_by_2:      currentMatch.winBy2,
+    ranking_context: currentMatch.rankingContext || 'standard',
+    challenge_id:  currentMatch.challengeId || null,
     created_at:    new Date().toISOString()
   };
   appData.matches.push(matchRecord);
+  recordAuditEvent('match_create', 'match', matchRecord.id, null, matchRecord, matchRecord.ranking_context === 'challenge' ? 'Challenge match recorded' : 'Match recorded');
+  if (matchRecord.ranking_context === 'challenge') applyChallengeResult(matchRecord);
 
   // Commit live point log (with game reference)
   const pointCount = currentMatch.pointLog.length;
@@ -3254,19 +4144,28 @@ async function completeGame() {
         `Game ${currentMatch.gameNumber} of ${currentMatch.sessionFormat} \u00b7 ${currentMatch.gamesA}\u2013${currentMatch.gamesB} in games`;
       $('matchActions').textContent =
         `Game ${currentMatch.gameNumber - 1} done \u2014 ${sideAWon ? sideAName : sideBName} leads. Next server: Side ${currentMatch.firstServer}.`;
+      saveInProgress = false;
+      if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
+      updateInitialServerButtons();
     }
     return;
   }
 
   /* ---- Single game rematch prompt ---- */
   $('matchActions').textContent = `Recorded \u2014 Winner: ${winnerName}`;
+  saveInProgress = false;
+  if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
   setTimeout(() => {
     if (confirm('Rematch with same players?')) {
       currentMatch.scoreA = 0; currentMatch.scoreB = 0;
+      currentMatch.pointLog = [];
+      resetRallyHitsForNextPoint();
       updateScoreUI();
       $('matchStatus').textContent  = `${currentMatch.mode} \u00b7 ${currentMatch.type} \u00b7 rematch`;
       $('matchActions').textContent = '';
     } else {
+      saveInProgress = false;
+      if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
       $('resetMatchBtn').click();
     }
   }, 200);
@@ -3488,6 +4387,10 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
       b.rating_change = newRb - rb;
       a.rating = newRa;
       b.rating = newRb;
+      if (window.__captureDoublesRatingEvents) {
+        appendRatingEvent({ scope: 'doubles', entity_id: a.key, entity_name: teamPlayersLabel(a.team), match_id: m.id, match_type: 'doubles', rating_before: ra, rating_after: newRa, result: aWon ? 'win' : 'loss', opponent_entity_id: b.key, opponent_entity_name: teamPlayersLabel(b.team), created_at: m.created_at });
+        appendRatingEvent({ scope: 'doubles', entity_id: b.key, entity_name: teamPlayersLabel(b.team), match_id: m.id, match_type: 'doubles', rating_before: rb, rating_after: newRb, result: aWon ? 'loss' : 'win', opponent_entity_id: a.key, opponent_entity_name: teamPlayersLabel(a.team), created_at: m.created_at });
+      }
       a.games++; b.games++;
       if (aWon){ a.wins++; b.losses++; a.points += 3; b.points += 1; }
       else { b.wins++; a.losses++; b.points += 3; a.points += 1; }
@@ -3513,6 +4416,7 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
     appData.rankings.doubles = rankings;
     return rankings;
   }
+  window.rebuildDoublesTeamRankings = rebuildDoublesTeamRankings;
 
   function renderDoublesLeaderboard(){
     ensureDoublesTeams();
@@ -3530,7 +4434,7 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
         <div class="lb-row">
           <div class="lb-rank">#${r.rank}</div>
           <div class="lb-main">
-            <div class="lb-name">${r.team_name || 'Unnamed Team'}</div>
+            <div class="lb-name" onclick="openDoublesProfile('${doublesPairKey(r.player_ids || [])}')">${r.team_name || 'Unnamed Team'}</div>
             <div class="muted lb-meta">${(r.player_names || []).join(' / ')}</div>
             <div class="muted lb-meta">${r.rating || 1500} Elo &middot; ${r.points || 0} pts &middot; ${r.wins || 0}W ${r.losses || 0}L &middot; ${r.games || 0} ranked games</div>
           </div>
