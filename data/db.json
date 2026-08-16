@@ -14161,7 +14161,85 @@
       "end_type": null
     }
   ],
-  "tournaments": [],
+  "tournaments": [
+    {
+      "id": "7a7b3096-84f5-4b87-8b3e-7fdc88bb41c7",
+      "name": "Test Cup 2026",
+      "start_date": "2026-08-16",
+      "format": "groups_to_knockout",
+      "category_type": "open_doubles",
+      "max_players": 8,
+      "status": "scheduled",
+      "participant_ids": [],
+      "bracket_data": null,
+      "event_settings": {
+        "category_type": "open_doubles",
+        "entry_type": "doubles",
+        "format": "groups_to_knockout",
+        "match_rules": {
+          "match_format": "best_of_5",
+          "game_to": 11,
+          "win_by_2": true
+        },
+        "scheduling": {
+          "tables_allocated": 2,
+          "slot_minutes": 25
+        },
+        "seeding": {
+          "method": "rating",
+          "serpentine_groups": true
+        },
+        "format_settings": {
+          "group_size": 4,
+          "advance_per_group": 2,
+          "consolation_enabled": false,
+          "team_size": 3,
+          "doubles_pairing": "random"
+        },
+        "eligibility": {
+          "min_rating": null,
+          "max_rating": null,
+          "allow_unrated": true
+        }
+      },
+      "events": [
+        {
+          "id": "6d3e622a-1b09-4a54-920a-c7df4d9b11d2",
+          "name": "Open Doubles",
+          "category_type": "open_doubles",
+          "entry_type": "doubles",
+          "format": "groups_to_knockout",
+          "match_rules": {
+            "match_format": "best_of_5",
+            "game_to": 11,
+            "win_by_2": true
+          },
+          "scheduling": {
+            "tables_allocated": 2,
+            "slot_minutes": 25
+          },
+          "seeding": {
+            "method": "rating",
+            "serpentine_groups": true
+          },
+          "format_settings": {
+            "group_size": 4,
+            "advance_per_group": 2,
+            "consolation_enabled": false,
+            "team_size": 3,
+            "doubles_pairing": "random"
+          },
+          "eligibility": {
+            "min_rating": null,
+            "max_rating": null,
+            "allow_unrated": true
+          },
+          "status": "entries_open"
+        }
+      ],
+      "created_at": "2026-08-16T23:23:26.213Z"
+    }
+  ],
   "rankings": {
     "singles": [
       {
@@ -16635,12 +16713,12 @@
   ],
   "derived": {
     "schema_version": 2,
-    "last_rebuilt_at": "2026-08-16T23:22:12.854Z",
+    "last_rebuilt_at": "2026-08-16T23:23:26.215Z",
     "validation": {
       "errors": [],
       "warnings": []
     },
-    "last_rebuild_reason": "Delete tournament"
+    "last_rebuild_reason": "Create tournament Test Cup 2026"
   },
   "settings": {
     "admins": [
