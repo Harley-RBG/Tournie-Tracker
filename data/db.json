@@ -14170,7 +14170,9 @@
       "category_type": "open_doubles",
       "max_players": 8,
       "status": "scheduled",
-      "participant_ids": [],
+      "participant_ids": [
+        "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
+      ],
       "bracket_data": null,
       "event_settings": {
         "category_type": "open_doubles",
@@ -16713,12 +16715,12 @@
   ],
   "derived": {
     "schema_version": 2,
-    "last_rebuilt_at": "2026-08-16T23:23:26.215Z",
+    "last_rebuilt_at": "2026-08-16T23:23:36.591Z",
     "validation": {
       "errors": [],
       "warnings": []
     },
-    "last_rebuild_reason": "Create tournament Test Cup 2026"
+    "last_rebuild_reason": "Add participant to Test Cup 2026"
   },
   "settings": {
     "admins": [
