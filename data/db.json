@@ -14169,7 +14169,7 @@
       "format": "groups_to_knockout",
       "category_type": "open_doubles",
       "max_players": 8,
-      "status": "scheduled",
+      "status": "in_progress",
       "participant_ids": [
         "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
         "4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
@@ -14180,7 +14180,121 @@
         "6dfe21eb-7a7c-4926-a791-b135a287b301",
         "737d2e34-85d4-4cbf-b8bf-89409b83f998"
       ],
-      "bracket_data": null,
+      "bracket_data": {
+        "type": "groups_to_knockout",
+        "groups": [
+          {
+            "id": "50f0ce7b-b379-499f-b436-2073ddd0f068",
+            "name": "Group A",
+            "player_ids": [
+              "4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
+              "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
+              "6dfe21eb-7a7c-4926-a791-b135a287b301",
+              "9a88653d-aab6-46b4-b55d-c75fb057fa61"
+            ],
+            "matches": [
+              {
+                "id": "9e6391ef-96c3-460a-8fe2-963f1f1de576",
+                "player_a": "4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
+                "player_b": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
+                "winner": null,
+                "status": "pending"
+              },
+              {
+                "id": "78e8fbbb-2a2f-4fec-927b-13d914c48266",
+                "player_a": "4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
+                "player_b": "6dfe21eb-7a7c-4926-a791-b135a287b301",
+                "winner": null,
+                "status": "pending"
+              },
+              {
+                "id": "7d89d461-f32c-4b52-9a95-3e91016ce1bb",
+                "player_a": "4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
+                "player_b": "9a88653d-aab6-46b4-b55d-c75fb057fa61",
+                "winner": null,
+                "status": "pending"
+              },
+              {
+                "id": "254be39f-6a06-44a4-a90f-d617c7a57c26",
+                "player_a": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
+                "player_b": "6dfe21eb-7a7c-4926-a791-b135a287b301",
+                "winner": null,
+                "status": "pending"
+              },
+              {
+                "id": "277892f9-32cb-4632-a299-44cabd516e94",
+                "player_a": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
+                "player_b": "9a88653d-aab6-46b4-b55d-c75fb057fa61",
+                "winner": null,
+                "status": "pending"
+              },
+              {
+                "id": "9c218123-be07-4b37-a027-38ea44360ed0",
+                "player_a": "6dfe21eb-7a7c-4926-a791-b135a287b301",
+                "player_b": "9a88653d-aab6-46b4-b55d-c75fb057fa61",
+                "winner": null,
+                "status": "pending"
+              }
+            ]
+          },
+          {
+            "id": "716ea005-3d1f-4680-be2f-e284affaf027",
+            "name": "Group B",
+            "player_ids": [
+              "2cbec020-0561-4b16-81b5-40b9d3b66973",
+              "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
+              "737d2e34-85d4-4cbf-b8bf-89409b83f998",
+              "664444c2-ad82-43ab-9a31-66ffb1e91c7f"
+            ],
+            "matches": [
+              {
+                "id": "50896a3a-a004-4fa6-8bfa-21c0e1513e80",
+                "player_a": "2cbec020-0561-4b16-81b5-40b9d3b66973",
+                "player_b": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
+                "winner": null,
+                "status": "pending"
+              },
+              {
+                "id": "7f2337a0-fbaf-4392-84c2-3f2a8e3aaffc",
+                "player_a": "2cbec020-0561-4b16-81b5-40b9d3b66973",
+                "player_b": "737d2e34-85d4-4cbf-b8bf-89409b83f998",
+                "winner": null,
+                "status": "pending"
+              },
+              {
+                "id": "bc5e70cb-4060-436e-a74f-9d7715483201",
+                "player_a": "2cbec020-0561-4b16-81b5-40b9d3b66973",
+                "player_b": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+                "winner": null,
+                "status": "pending"
+              },
+              {
+                "id": "0f9ab8d9-4260-455c-87af-e9ff28786375",
+                "player_a": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
+                "player_b": "737d2e34-85d4-4cbf-b8bf-89409b83f998",
+                "winner": null,
+                "status": "pending"
+              },
+              {
+                "id": "2c8bd8e9-95ab-49e0-a3dd-3aacd6b14d5a",
+                "player_a": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
+                "player_b": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+                "winner": null,
+                "status": "pending"
+              },
+              {
+                "id": "2e89478d-8d52-47aa-8492-ac980f8e093e",
+                "player_a": "737d2e34-85d4-4cbf-b8bf-89409b83f998",
+                "player_b": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+                "winner": null,
+                "status": "pending"
+              }
+            ]
+          }
+        ],
+        "advance_per_group": 2,
+        "knockout_rounds": null
+      },
       "event_settings": {
         "category_type": "open_doubles",
         "entry_type": "doubles",
@@ -16722,12 +16836,12 @@
   ],
   "derived": {
     "schema_version": 2,
-    "last_rebuilt_at": "2026-08-16T23:24:19.841Z",
+    "last_rebuilt_at": "2026-08-16T23:24:24.150Z",
     "validation": {
       "errors": [],
       "warnings": []
     },
-    "last_rebuild_reason": "Add participant to Test Cup 2026"
+    "last_rebuild_reason": "Generate groups for Test Cup 2026"
   },
   "settings": {
     "admins": [
