@@ -14171,7 +14171,8 @@
       "max_players": 8,
       "status": "scheduled",
       "participant_ids": [
-        "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
+        "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
+        "4145bacb-cc0f-4b92-bcfd-1aadaa613e58"
       ],
       "bracket_data": null,
       "event_settings": {
@@ -16715,7 +16716,7 @@
   ],
   "derived": {
     "schema_version": 2,
-    "last_rebuilt_at": "2026-08-16T23:23:36.591Z",
+    "last_rebuilt_at": "2026-08-16T23:23:43.007Z",
     "validation": {
       "errors": [],
       "warnings": []
