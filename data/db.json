@@ -242,6 +242,23 @@
                         "primary_weapon":  null,
                         "weakness_notes":  "",
                         "created_at":  "2026-08-14T08:22:57.531Z"
+                    },
+                    {
+                        "id":  "604db281-c601-4c4e-9ca8-e52b2286bae8",
+                        "email":  "nikola.najdovski@robertbird.com.au",
+                        "display_name":  "nikola.najdovski",
+                        "notes":  "",
+                        "games_played":  10,
+                        "points":  4,
+                        "rating":  1508,
+                        "best_rating":  1508,
+                        "rating_change":  25,
+                        "handedness":  null,
+                        "grip":  null,
+                        "play_style":  null,
+                        "primary_weapon":  null,
+                        "weakness_notes":  "",
+                        "created_at":  "2026-08-11T03:59:20.160Z"
                     }
                 ],
     "matches":  [

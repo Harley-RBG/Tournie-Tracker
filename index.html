@@ -2347,6 +2347,20 @@ window.editPlayer = async function(id) {
 window.deletePlayer = async function(id) {
   const p = appData.players.find(x => x.id === id);
   if (!p) return;
+  const linkedMatches = (appData.matches || []).filter(m => [m.player_a, m.player_b, m.player_c, m.player_d].includes(id));
+  const linkedSessions = (appData.sessions || []).filter(s => [s.player_a, s.player_b, s.player_c, s.player_d].includes(id));
+  const linkedPoints = (appData.points || []).filter(pt => pt.server_id === id);
+  const linkedChallenges = (appData.challenges || []).filter(ch => (ch.challenger_player_ids || []).includes(id) || (ch.defender_player_ids || []).includes(id));
+  if (linkedMatches.length || linkedSessions.length || linkedPoints.length || linkedChallenges.length) {
+    return alert(
+      `Cannot delete player \u201c${p.display_name}\u201d. This player is referenced by existing history.\n\n` +
+      `Matches: ${linkedMatches.length}\n` +
+      `Sessions: ${linkedSessions.length}\n` +
+      `Points: ${linkedPoints.length}\n` +
+      `Challenges: ${linkedChallenges.length}\n\n` +
+      `Edit or delete those records first, then try again.`
+    );
+  }
   if (!confirm(`Delete player \u201c${p.display_name}\u201d? This cannot be undone.`)) return;
   appData.players = appData.players.filter(x => x.id !== id);
   await writeData(`Delete player ${p.display_name}`);
