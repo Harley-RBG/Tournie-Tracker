@@ -180,8 +180,12 @@ function githubFileUrl(env) {
   const owner = env.GH_OWNER || "Harley-RBG";
   const repo = env.GH_REPO || "Tournie-Tracker";
   const file = env.GH_FILE || "data/db.json";
-
   return `https://api.github.com/repos/${owner}/${repo}/contents/${file}`;
+}
+function githubBlobUrl(env, sha) {
+  const owner = env.GH_OWNER || "Harley-RBG";
+  const repo = env.GH_REPO || "Tournie-Tracker";
+  return `https://api.github.com/repos/${owner}/${repo}/git/blobs/${sha}`;
 }
 
 function safeJson(text) {
@@ -223,8 +227,40 @@ async function getDb(env) {
   }
 
   const file = await res.json();
-  const jsonText = atob(file.content.replace(/\n/g, ""));
-  const data = JSON.parse(jsonText);
+  const decodeContent = (content) => atob(String(content || "").replace(/\n/g, ""));
+  let jsonText = "";
+  let data = null;
+  let parseErr = null;
+
+  // Prefer content returned by Contents API when it is complete.
+  if (file.encoding === "base64" && typeof file.content === "string" && file.content.length) {
+    try {
+      jsonText = decodeContent(file.content);
+      data = JSON.parse(jsonText);
+    } catch (err) {
+      parseErr = err;
+    }
+  }
+
+  // Fallback for large files where Contents API payload can be partial.
+  if (!data) {
+    const blobRes = await fetch(githubBlobUrl(env, file.sha), {
+      method: "GET",
+      headers: githubHeaders(env)
+    });
+    if (!blobRes.ok) {
+      const blobText = await blobRes.text();
+      throw new Error(
+        `GitHub blob read failed: ${blobRes.status} ${blobText}${parseErr ? ` (contents parse error: ${parseErr.message || String(parseErr)})` : ""}`
+      );
+    }
+    const blob = await blobRes.json();
+    if (!blob || blob.encoding !== "base64" || typeof blob.content !== "string") {
+      throw new Error("GitHub blob read returned unexpected payload.");
+    }
+    jsonText = decodeContent(blob.content);
+    data = JSON.parse(jsonText);
+  }
 
   return {
     sha: file.sha,
