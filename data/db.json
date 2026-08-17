@@ -167,7 +167,7 @@
       "email": "guest_guest_d@guest.local",
       "display_name": "Guest D",
       "notes": "Quick-start guest player",
-      "games_played": 2,
+      "games_played": 1,
       "points": 0,
       "rating": 1500,
       "best_rating": 1500,
@@ -197,7 +197,7 @@
       "email": "saqib.javed@robertbird.com.au",
       "display_name": "saqib.javed",
       "notes": "",
-      "games_played": 9,
+      "games_played": 10,
       "points": 0,
       "rating": 1500,
       "best_rating": 1500,
@@ -415,7 +415,7 @@
       "session_id": null,
       "game_number": null,
       "player_a": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
-      "player_b": "485cd7ed-34ef-43f4-aed0-799162348c52",
+      "player_b": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
       "player_c": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
       "player_d": "6dfe21eb-7a7c-4926-a791-b135a287b301",
       "score_a": 11,
@@ -14930,7 +14930,7 @@
       "game_id": "fdcaa143-8dd0-4b70-981a-625c389ebb4c",
       "session_id": null,
       "point_number": 3,
-      "server_id": "485cd7ed-34ef-43f4-aed0-799162348c52",
+      "server_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
       "winner_side": "A",
       "score_a_before": 2,
       "score_b_before": 0,
@@ -15154,7 +15154,7 @@
       "game_id": "fdcaa143-8dd0-4b70-981a-625c389ebb4c",
       "session_id": null,
       "point_number": 19,
-      "server_id": "485cd7ed-34ef-43f4-aed0-799162348c52",
+      "server_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
       "winner_side": "A",
       "score_a_before": 9,
       "score_b_before": 9,
@@ -15210,7 +15210,7 @@
       "game_id": "fdcaa143-8dd0-4b70-981a-625c389ebb4c",
       "session_id": null,
       "point_number": 20,
-      "server_id": "485cd7ed-34ef-43f4-aed0-799162348c52",
+      "server_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
       "winner_side": "A",
       "score_a_before": 10,
       "score_b_before": 9,
@@ -15336,7 +15336,7 @@
       "game_id": "fdcaa143-8dd0-4b70-981a-625c389ebb4c",
       "session_id": null,
       "point_number": 4,
-      "server_id": "485cd7ed-34ef-43f4-aed0-799162348c52",
+      "server_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
       "winner_side": "B",
       "score_a_before": 3,
       "score_b_before": 0,
@@ -15406,7 +15406,7 @@
       "game_id": "fdcaa143-8dd0-4b70-981a-625c389ebb4c",
       "session_id": null,
       "point_number": 12,
-      "server_id": "485cd7ed-34ef-43f4-aed0-799162348c52",
+      "server_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
       "winner_side": "B",
       "score_a_before": 7,
       "score_b_before": 4,
@@ -15434,7 +15434,7 @@
       "game_id": "fdcaa143-8dd0-4b70-981a-625c389ebb4c",
       "session_id": null,
       "point_number": 11,
-      "server_id": "485cd7ed-34ef-43f4-aed0-799162348c52",
+      "server_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
       "winner_side": "A",
       "score_a_before": 6,
       "score_b_before": 4,
@@ -21575,14 +21575,14 @@
       },
       {
         "rank": 23,
-        "team_id": "pair:485cd7ed-34ef-43f4-aed0-799162348c52|6dfe21eb-7a7c-4926-a791-b135a287b301",
-        "team_name": "Guest D / lorna.li",
+        "team_id": "pair:1d547aab-daf0-4e87-a9e4-bac4cb2ac82a|6dfe21eb-7a7c-4926-a791-b135a287b301",
+        "team_name": "saqib.javed / lorna.li",
         "player_ids": [
-          "485cd7ed-34ef-43f4-aed0-799162348c52",
+          "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
           "6dfe21eb-7a7c-4926-a791-b135a287b301"
         ],
         "player_names": [
-          "Guest D",
+          "saqib.javed",
           "lorna.li"
         ],
         "rating": 1482,
@@ -23067,15 +23067,15 @@
       "rating_after": 1556,
       "delta": 18,
       "result": "win",
-      "opponent_entity_id": "485cd7ed-34ef-43f4-aed0-799162348c52|6dfe21eb-7a7c-4926-a791-b135a287b301",
-      "opponent_entity_name": "Guest D / lorna.li",
+      "opponent_entity_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a|6dfe21eb-7a7c-4926-a791-b135a287b301",
+      "opponent_entity_name": "saqib.javed / lorna.li",
       "created_at": "2026-08-04T02:50:50.356Z"
     },
     {
-      "id": "doubles:485cd7ed-34ef-43f4-aed0-799162348c52|6dfe21eb-7a7c-4926-a791-b135a287b301:fdcaa143-8dd0-4b70-981a-625c389ebb4c",
+      "id": "doubles:1d547aab-daf0-4e87-a9e4-bac4cb2ac82a|6dfe21eb-7a7c-4926-a791-b135a287b301:fdcaa143-8dd0-4b70-981a-625c389ebb4c",
       "scope": "doubles",
-      "entity_id": "485cd7ed-34ef-43f4-aed0-799162348c52|6dfe21eb-7a7c-4926-a791-b135a287b301",
-      "entity_name": "Guest D / lorna.li",
+      "entity_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a|6dfe21eb-7a7c-4926-a791-b135a287b301",
+      "entity_name": "saqib.javed / lorna.li",
       "match_id": "fdcaa143-8dd0-4b70-981a-625c389ebb4c",
       "match_type": "doubles",
       "rating_before": 1500,
@@ -24429,13 +24429,6 @@
         "pair_key": "4145bacb-cc0f-4b92-bcfd-1aadaa613e58|737d2e34-85d4-4cbf-b8bf-89409b83f998"
       },
       {
-        "entity_id": "485cd7ed-34ef-43f4-aed0-799162348c52|6dfe21eb-7a7c-4926-a791-b135a287b301",
-        "position": 19,
-        "challenge_wins": 0,
-        "challenge_losses": 0,
-        "pair_key": "485cd7ed-34ef-43f4-aed0-799162348c52|6dfe21eb-7a7c-4926-a791-b135a287b301"
-      },
-      {
         "entity_id": "65638f26-9c35-48c9-a1e8-486d80d6a7ac|6dfe21eb-7a7c-4926-a791-b135a287b301",
         "position": 20,
         "challenge_wins": 0,
@@ -24560,6 +24553,13 @@
         "challenge_wins": 0,
         "challenge_losses": 0,
         "pair_key": "65638f26-9c35-48c9-a1e8-486d80d6a7ac|664444c2-ad82-43ab-9a31-66ffb1e91c7f"
+      },
+      {
+        "entity_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a|6dfe21eb-7a7c-4926-a791-b135a287b301",
+        "position": 36,
+        "challenge_wins": 0,
+        "challenge_losses": 0,
+        "pair_key": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a|6dfe21eb-7a7c-4926-a791-b135a287b301"
       }
     ]
   },
@@ -25223,16 +25223,61 @@
         "created_at": "2026-08-04T02:44:34.686Z"
       },
       "created_at": "2026-08-17T01:28:34.765Z"
+    },
+    {
+      "id": "09c8a3dc-7514-4518-a2c7-75f224334595",
+      "type": "match_edit",
+      "entity_type": "match",
+      "entity_id": "fdcaa143-8dd0-4b70-981a-625c389ebb4c",
+      "actor_email": "harley.trappitt@robertbird.com.au",
+      "reason": "Match history edit modal",
+      "before": {
+        "id": "fdcaa143-8dd0-4b70-981a-625c389ebb4c",
+        "tournament_id": null,
+        "mode": "ranked",
+        "type": "doubles",
+        "game_type": 11,
+        "session_id": null,
+        "game_number": null,
+        "player_a": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
+        "player_b": "485cd7ed-34ef-43f4-aed0-799162348c52",
+        "player_c": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
+        "player_d": "6dfe21eb-7a7c-4926-a791-b135a287b301",
+        "score_a": 11,
+        "score_b": 9,
+        "winner": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
+        "win_by_2": true,
+        "created_at": "2026-08-04T02:50:50.356Z"
+      },
+      "after": {
+        "id": "fdcaa143-8dd0-4b70-981a-625c389ebb4c",
+        "tournament_id": null,
+        "mode": "ranked",
+        "type": "doubles",
+        "game_type": 11,
+        "session_id": null,
+        "game_number": null,
+        "player_a": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
+        "player_b": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
+        "player_c": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
+        "player_d": "6dfe21eb-7a7c-4926-a791-b135a287b301",
+        "score_a": 11,
+        "score_b": 9,
+        "winner": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
+        "win_by_2": true,
+        "created_at": "2026-08-04T02:50:50.356Z"
+      },
+      "created_at": "2026-08-17T01:28:43.238Z"
     }
   ],
   "derived": {
     "schema_version": 2,
-    "last_rebuilt_at": "2026-08-17T01:28:34.767Z",
+    "last_rebuilt_at": "2026-08-17T01:28:43.239Z",
     "validation": {
       "errors": [],
       "warnings": []
     },
-    "last_rebuild_reason": "Edit match 5eafc036"
+    "last_rebuild_reason": "Edit match fdcaa143"
   },
   "settings": {
     "admins": [
