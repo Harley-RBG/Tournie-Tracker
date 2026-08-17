@@ -2077,6 +2077,7 @@ async function readData() {
     }
 
     const decoded = await res.json();
+    _dbSha = res.headers.get('x-db-sha') || null;
 
     appData = Object.assign(EMPTY_DATA(), decoded);
     appData.rankings ??= { singles: [], doubles: [] };
@@ -2089,10 +2090,7 @@ async function readData() {
     appData.settings ??= { admins: [] };
     appData.settings.admins ??= [];
     ensureDataShape();
-    appData.derived.validation = validateDbReferences(appData);
-    renderDbHealthPanel();
-    populateChallengeSelectors();
-    renderChallengeManager();
+    rebuildDerivedState('data load');
 
     return true;
   } catch (e) {
@@ -2103,6 +2101,10 @@ async function readData() {
 }
 async function writeData(msg = 'Update RBG-TT data') {
   if (!prepareDataForSave(msg)) return false;
+  if (!_dbSha) {
+    alert('Save blocked: data version missing. Please refresh and try again.');
+    return false;
+  }
   try {
     const res = await fetch(`${API_BASE}/save-db`, {
       method: 'POST',
@@ -2112,6 +2114,7 @@ async function writeData(msg = 'Update RBG-TT data') {
       },
       body: JSON.stringify({
         message: msg,
+        baseSha: _dbSha,
         data: appData
       })
     });
@@ -2119,10 +2122,15 @@ async function writeData(msg = 'Update RBG-TT data') {
     const result = await res.json().catch(() => ({}));
 
     if (!res.ok || result.ok === false) {
+      if (res.status === 409) {
+        alert('Save blocked: newer data exists on the server. Refresh to load latest data, then reapply your change.');
+        return false;
+      }
       alert('Save failed: ' + (result.error || res.status));
       return false;
     }
 
+    if (result.db_sha) _dbSha = result.db_sha;
     renderDbHealthPanel();
     renderChallengeManager();
     return true;

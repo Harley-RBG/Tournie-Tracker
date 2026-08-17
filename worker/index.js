@@ -74,7 +74,14 @@ export default {
 
       if (url.pathname === "/data" && request.method === "GET") {
         const db = await getDb(env);
-        return corsJson(db.data, env);
+        return new Response(JSON.stringify(db.data, null, 2), {
+          status: 200,
+          headers: {
+            ...corsHeaders(env),
+            "Content-Type": "application/json",
+            "X-DB-SHA": db.sha
+          }
+        });
       }
 
       if (url.pathname === "/save-match" && request.method === "POST") {
@@ -97,6 +104,12 @@ export default {
         }
 
         const current = await getDb(env);
+        if (!payload.baseSha || typeof payload.baseSha !== "string") {
+          return corsJson({ ok: false, error: "Missing baseSha. Refresh the app and try saving again." }, env, 409);
+        }
+        if (payload.baseSha !== current.sha) {
+          return corsJson({ ok: false, error: "Data is stale. Refresh before saving to avoid overwriting newer changes." }, env, 409);
+        }
         const db = normaliseDb(payload.data);
 
         const result = await putDb(
@@ -108,7 +121,8 @@ export default {
 
         return corsJson({
           ok: true,
-          commit: result.commit?.sha || null
+          commit: result.commit?.sha || null,
+          db_sha: result.content?.sha || null
         }, env);
       }
 
@@ -131,6 +145,7 @@ function corsHeaders(env) {
     "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN || "*",
     "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Expose-Headers": "X-DB-SHA",
     "Access-Control-Max-Age": "86400"
   };
 }
