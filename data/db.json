@@ -77,16 +77,16 @@
       "email": "harley.trappitt@robertbird.com.au",
       "display_name": "Harley Trappitt",
       "notes": "",
-      "games_played": 73,
-      "points": 56,
+      "games_played": 72,
+      "points": 55,
       "created_at": "2026-07-22T11:37:42.700Z",
       "handedness": "Right",
       "grip": "Shakehand",
       "play_style": "All-round",
       "primary_weapon": "Slice Serve, Backhand Topspin",
       "weakness_notes": "",
-      "rating_change": -10,
-      "rating": 1530,
+      "rating_change": -11,
+      "rating": 1540,
       "best_rating": 1551
     },
     {
@@ -248,11 +248,11 @@
       "email": "nikola.najdovski@robertbird.com.au",
       "display_name": "nikola.najdovski",
       "notes": "",
-      "games_played": 13,
-      "points": 10,
-      "rating": 1551,
-      "best_rating": 1551,
-      "rating_change": 21,
+      "games_played": 12,
+      "points": 7,
+      "rating": 1530,
+      "best_rating": 1530,
+      "rating_change": 22,
       "handedness": null,
       "grip": null,
       "play_style": null,
@@ -1669,26 +1669,6 @@
       "ranking_context": "standard",
       "challenge_id": null,
       "created_at": "2026-08-17T02:11:33.844Z"
-    },
-    {
-      "id": "87ad9ead-050b-4c18-9266-551967e5573c",
-      "tournament_id": null,
-      "mode": "ranked",
-      "type": "singles",
-      "game_type": 11,
-      "session_id": null,
-      "game_number": null,
-      "player_a": "604db281-c601-4c4e-9ca8-e52b2286bae8",
-      "player_b": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
-      "player_c": null,
-      "player_d": null,
-      "score_a": 11,
-      "score_b": 9,
-      "winner": "604db281-c601-4c4e-9ca8-e52b2286bae8",
-      "win_by_2": true,
-      "ranking_context": "standard",
-      "challenge_id": null,
-      "created_at": "2026-08-17T02:11:53.432Z"
     },
     {
       "id": "6e6a6b69-526d-4cb7-b843-721c6b5bcc61",
@@ -24172,25 +24152,25 @@
   "rankings": {
     "singles": [
       {
-        "player_id": "604db281-c601-4c4e-9ca8-e52b2286bae8",
-        "player_name": "nikola.najdovski",
-        "rank": 1,
-        "rating": 1551,
-        "games": 4
-      },
-      {
         "player_id": "4145bacb-cc0f-4b92-bcfd-1aadaa613e58",
         "player_name": "Tyler Smith",
-        "rank": 2,
+        "rank": 1,
         "rating": 1548,
         "games": 11
       },
       {
         "player_id": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
         "player_name": "Harley Trappitt",
+        "rank": 2,
+        "rating": 1540,
+        "games": 25
+      },
+      {
+        "player_id": "604db281-c601-4c4e-9ca8-e52b2286bae8",
+        "player_name": "nikola.najdovski",
         "rank": 3,
         "rating": 1530,
-        "games": 26
+        "games": 3
       },
       {
         "player_id": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
@@ -26071,36 +26051,6 @@
       "opponent_entity_id": "604db281-c601-4c4e-9ca8-e52b2286bae8",
       "opponent_entity_name": "nikola.najdovski",
       "created_at": "2026-08-17T02:11:33.844Z"
-    },
-    {
-      "id": "singles:604db281-c601-4c4e-9ca8-e52b2286bae8:87ad9ead-050b-4c18-9266-551967e5573c",
-      "scope": "singles",
-      "entity_id": "604db281-c601-4c4e-9ca8-e52b2286bae8",
-      "entity_name": "nikola.najdovski",
-      "match_id": "87ad9ead-050b-4c18-9266-551967e5573c",
-      "match_type": "singles",
-      "rating_before": 1530,
-      "rating_after": 1551,
-      "delta": 21,
-      "result": "win",
-      "opponent_entity_id": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
-      "opponent_entity_name": "Harley Trappitt",
-      "created_at": "2026-08-17T02:11:53.432Z"
-    },
-    {
-      "id": "singles:0ee464bb-7764-45f8-b22f-7091b89c1ab5:87ad9ead-050b-4c18-9266-551967e5573c",
-      "scope": "singles",
-      "entity_id": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
-      "entity_name": "Harley Trappitt",
-      "match_id": "87ad9ead-050b-4c18-9266-551967e5573c",
-      "match_type": "singles",
-      "rating_before": 1540,
-      "rating_after": 1530,
-      "delta": -10,
-      "result": "loss",
-      "opponent_entity_id": "604db281-c601-4c4e-9ca8-e52b2286bae8",
-      "opponent_entity_name": "nikola.najdovski",
-      "created_at": "2026-08-17T02:11:53.432Z"
     },
     {
       "id": "doubles:2cbec020-0561-4b16-81b5-40b9d3b66973|65638f26-9c35-48c9-a1e8-486d80d6a7ac:9d1624ed-a6b0-43be-8154-d00754b72080",
@@ -29232,16 +29182,49 @@
         "created_at": "2026-08-17T02:11:53.432Z"
       },
       "created_at": "2026-08-17T02:56:07.978Z"
+    },
+    {
+      "id": "ef268cf8-bf83-4b36-ae2c-a239b7d900b2",
+      "type": "match_delete",
+      "entity_type": "match",
+      "entity_id": "87ad9ead-050b-4c18-9266-551967e5573c",
+      "actor_email": "harley.trappitt@robertbird.com.au",
+      "reason": "Admin deleted match from history",
+      "before": {
+        "match": {
+          "id": "87ad9ead-050b-4c18-9266-551967e5573c",
+          "tournament_id": null,
+          "mode": "ranked",
+          "type": "singles",
+          "game_type": 11,
+          "session_id": null,
+          "game_number": null,
+          "player_a": "604db281-c601-4c4e-9ca8-e52b2286bae8",
+          "player_b": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
+          "player_c": null,
+          "player_d": null,
+          "score_a": 11,
+          "score_b": 9,
+          "winner": "604db281-c601-4c4e-9ca8-e52b2286bae8",
+          "win_by_2": true,
+          "ranking_context": "standard",
+          "challenge_id": null,
+          "created_at": "2026-08-17T02:11:53.432Z"
+        },
+        "points": []
+      },
+      "after": null,
+      "created_at": "2026-08-17T02:56:16.882Z"
     }
   ],
   "derived": {
     "schema_version": 2,
-    "last_rebuilt_at": "2026-08-17T02:56:07.981Z",
+    "last_rebuilt_at": "2026-08-17T02:56:16.884Z",
     "validation": {
       "errors": [],
       "warnings": []
     },
-    "last_rebuild_reason": "Edit match 87ad9ead"
+    "last_rebuild_reason": "Delete match 87ad9ead"
   },
   "settings": {
     "admins": [
