@@ -17,7 +17,7 @@
       "email": "shane.chicharo@robertbird.com.au",
       "display_name": "Shane Chicharo",
       "notes": "",
-      "games_played": 32,
+      "games_played": 33,
       "points": 17,
       "created_at": "2026-07-22T10:50:28.917Z",
       "rating_change": 25,
@@ -53,7 +53,7 @@
       "email": "minh.nguyen@robertbird.com.au",
       "display_name": "minh.nguyen",
       "notes": "",
-      "games_played": 40,
+      "games_played": 41,
       "points": 20,
       "created_at": "2026-07-22T10:51:40.904Z",
       "rating": 1442,
@@ -65,7 +65,7 @@
       "email": "lorna.li@robertbird.com.au",
       "display_name": "lorna.li",
       "notes": "",
-      "games_played": 19,
+      "games_played": 20,
       "points": 0,
       "created_at": "2026-07-22T10:51:54.648Z",
       "rating": 1500,
@@ -197,7 +197,7 @@
       "email": "saqib.javed@robertbird.com.au",
       "display_name": "saqib.javed",
       "notes": "",
-      "games_played": 11,
+      "games_played": 12,
       "points": 0,
       "rating": 1500,
       "best_rating": 1500,
@@ -1849,6 +1849,26 @@
       "ranking_context": "standard",
       "challenge_id": null,
       "created_at": "2026-08-17T02:52:55.129Z"
+    },
+    {
+      "id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "tournament_id": null,
+      "mode": "ranked",
+      "type": "doubles",
+      "game_type": 11,
+      "session_id": null,
+      "game_number": null,
+      "player_a": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+      "player_b": "6dfe21eb-7a7c-4926-a791-b135a287b301",
+      "player_c": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
+      "player_d": "2cbec020-0561-4b16-81b5-40b9d3b66973",
+      "score_a": 11,
+      "score_b": 4,
+      "winner": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+      "win_by_2": true,
+      "ranking_context": "standard",
+      "challenge_id": null,
+      "created_at": "2026-08-21T02:55:25.621Z"
     }
   ],
   "sessions": [],
@@ -24146,6 +24166,216 @@
       "hits_per_rally": null,
       "rally_length": null,
       "end_type": null
+    },
+    {
+      "id": "d4f3b39f-0892-4a91-963a-f5b253023400",
+      "game_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "session_id": null,
+      "point_number": 1,
+      "server_id": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+      "winner_side": "A",
+      "score_a_before": 0,
+      "score_b_before": 0,
+      "pressure_flag": false,
+      "hits_per_rally": 1,
+      "rally_length": 1,
+      "end_type": null
+    },
+    {
+      "id": "44671346-4490-4b2e-b06e-ef5b94a92ec5",
+      "game_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "session_id": null,
+      "point_number": 2,
+      "server_id": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+      "winner_side": "B",
+      "score_a_before": 1,
+      "score_b_before": 0,
+      "pressure_flag": false,
+      "hits_per_rally": 1,
+      "rally_length": 1,
+      "end_type": null
+    },
+    {
+      "id": "86d0c50d-7037-4025-97f8-7de307709534",
+      "game_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "session_id": null,
+      "point_number": 3,
+      "server_id": "6dfe21eb-7a7c-4926-a791-b135a287b301",
+      "winner_side": "A",
+      "score_a_before": 1,
+      "score_b_before": 1,
+      "pressure_flag": false,
+      "hits_per_rally": 1,
+      "rally_length": 1,
+      "end_type": null
+    },
+    {
+      "id": "66b41d10-b71c-4da1-8837-56174bed299b",
+      "game_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "session_id": null,
+      "point_number": 4,
+      "server_id": "6dfe21eb-7a7c-4926-a791-b135a287b301",
+      "winner_side": "A",
+      "score_a_before": 2,
+      "score_b_before": 1,
+      "pressure_flag": false,
+      "hits_per_rally": 1,
+      "rally_length": 1,
+      "end_type": null
+    },
+    {
+      "id": "1169512c-0fb3-4dc4-a797-d4e5861482f7",
+      "game_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "session_id": null,
+      "point_number": 5,
+      "server_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
+      "winner_side": "B",
+      "score_a_before": 3,
+      "score_b_before": 1,
+      "pressure_flag": false,
+      "hits_per_rally": 1,
+      "rally_length": 1,
+      "end_type": null
+    },
+    {
+      "id": "310e34d3-89a5-482f-85d1-3c0c4746ff8e",
+      "game_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "session_id": null,
+      "point_number": 6,
+      "server_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
+      "winner_side": "A",
+      "score_a_before": 3,
+      "score_b_before": 2,
+      "pressure_flag": false,
+      "hits_per_rally": 1,
+      "rally_length": 1,
+      "end_type": null
+    },
+    {
+      "id": "f9cdc807-a4ef-4a72-bcfc-5041bab68c58",
+      "game_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "session_id": null,
+      "point_number": 7,
+      "server_id": "2cbec020-0561-4b16-81b5-40b9d3b66973",
+      "winner_side": "A",
+      "score_a_before": 4,
+      "score_b_before": 2,
+      "pressure_flag": false,
+      "hits_per_rally": 1,
+      "rally_length": 1,
+      "end_type": null
+    },
+    {
+      "id": "4dccf083-8fc3-4de8-856e-b80f2bbcdbb3",
+      "game_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "session_id": null,
+      "point_number": 8,
+      "server_id": "2cbec020-0561-4b16-81b5-40b9d3b66973",
+      "winner_side": "A",
+      "score_a_before": 5,
+      "score_b_before": 2,
+      "pressure_flag": false,
+      "hits_per_rally": 1,
+      "rally_length": 1,
+      "end_type": null
+    },
+    {
+      "id": "e6d36411-f93c-4853-bc05-91ca8751537b",
+      "game_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "session_id": null,
+      "point_number": 9,
+      "server_id": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+      "winner_side": "A",
+      "score_a_before": 6,
+      "score_b_before": 2,
+      "pressure_flag": false,
+      "hits_per_rally": 1,
+      "rally_length": 1,
+      "end_type": null
+    },
+    {
+      "id": "5ae6071e-bc81-46f2-a3fe-e22eae1db02d",
+      "game_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "session_id": null,
+      "point_number": 10,
+      "server_id": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+      "winner_side": "B",
+      "score_a_before": 7,
+      "score_b_before": 2,
+      "pressure_flag": false,
+      "hits_per_rally": 1,
+      "rally_length": 1,
+      "end_type": null
+    },
+    {
+      "id": "00fc1502-d2ae-4d2b-9877-675ef9007752",
+      "game_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "session_id": null,
+      "point_number": 11,
+      "server_id": "6dfe21eb-7a7c-4926-a791-b135a287b301",
+      "winner_side": "B",
+      "score_a_before": 7,
+      "score_b_before": 3,
+      "pressure_flag": false,
+      "hits_per_rally": 1,
+      "rally_length": 1,
+      "end_type": null
+    },
+    {
+      "id": "28411584-abe9-4110-aae2-084ba7524fdc",
+      "game_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "session_id": null,
+      "point_number": 12,
+      "server_id": "6dfe21eb-7a7c-4926-a791-b135a287b301",
+      "winner_side": "A",
+      "score_a_before": 7,
+      "score_b_before": 4,
+      "pressure_flag": false,
+      "hits_per_rally": 1,
+      "rally_length": 1,
+      "end_type": null
+    },
+    {
+      "id": "fa73a088-d694-4ac0-9824-d2dd2755d26c",
+      "game_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "session_id": null,
+      "point_number": 13,
+      "server_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
+      "winner_side": "A",
+      "score_a_before": 8,
+      "score_b_before": 4,
+      "pressure_flag": false,
+      "hits_per_rally": 1,
+      "rally_length": 1,
+      "end_type": null
+    },
+    {
+      "id": "c12ef41f-268e-42ab-85e6-1cce431e4620",
+      "game_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "session_id": null,
+      "point_number": 14,
+      "server_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
+      "winner_side": "A",
+      "score_a_before": 9,
+      "score_b_before": 4,
+      "pressure_flag": true,
+      "hits_per_rally": 1,
+      "rally_length": 1,
+      "end_type": null
+    },
+    {
+      "id": "c3ac1383-f39e-4113-9507-a18c616a09f6",
+      "game_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "session_id": null,
+      "point_number": 15,
+      "server_id": "2cbec020-0561-4b16-81b5-40b9d3b66973",
+      "winner_side": "A",
+      "score_a_before": 10,
+      "score_b_before": 4,
+      "pressure_flag": true,
+      "hits_per_rally": 1,
+      "rally_length": 1,
+      "end_type": null
     }
   ],
   "tournaments": [],
@@ -24251,6 +24481,26 @@
       },
       {
         "rank": 3,
+        "team_id": "pair:1d547aab-daf0-4e87-a9e4-bac4cb2ac82a|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+        "team_name": "saqib.javed / minh.nguyen",
+        "player_ids": [
+          "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
+          "664444c2-ad82-43ab-9a31-66ffb1e91c7f"
+        ],
+        "player_names": [
+          "saqib.javed",
+          "minh.nguyen"
+        ],
+        "rating": 1541,
+        "points": 6,
+        "games": 2,
+        "wins": 2,
+        "losses": 0,
+        "rating_change": 19,
+        "derived": true
+      },
+      {
+        "rank": 4,
         "team_id": "2fa740f7-8058-4775-adfb-8d6adf57ab27",
         "team_name": "Bomb Squad",
         "player_ids": [
@@ -24270,7 +24520,7 @@
         "derived": false
       },
       {
-        "rank": 4,
+        "rank": 5,
         "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|737d2e34-85d4-4cbf-b8bf-89409b83f998",
         "team_name": "Tyler Smith / joshua.whiston",
         "player_ids": [
@@ -24290,7 +24540,7 @@
         "derived": true
       },
       {
-        "rank": 5,
+        "rank": 6,
         "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|604db281-c601-4c4e-9ca8-e52b2286bae8",
         "team_name": "Harley Trappitt / nikola.najdovski",
         "player_ids": [
@@ -24310,7 +24560,7 @@
         "derived": true
       },
       {
-        "rank": 6,
+        "rank": 7,
         "team_id": "pair:664444c2-ad82-43ab-9a31-66ffb1e91c7f|737d2e34-85d4-4cbf-b8bf-89409b83f998",
         "team_name": "joshua.whiston / minh.nguyen",
         "player_ids": [
@@ -24330,7 +24580,7 @@
         "derived": true
       },
       {
-        "rank": 7,
+        "rank": 8,
         "team_id": "pair:604db281-c601-4c4e-9ca8-e52b2286bae8|65638f26-9c35-48c9-a1e8-486d80d6a7ac",
         "team_name": "nikola.najdovski / virginia.martineznavarro",
         "player_ids": [
@@ -24347,26 +24597,6 @@
         "wins": 2,
         "losses": 0,
         "rating_change": 14,
-        "derived": true
-      },
-      {
-        "rank": 8,
-        "team_id": "pair:1d547aab-daf0-4e87-a9e4-bac4cb2ac82a|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
-        "team_name": "saqib.javed / minh.nguyen",
-        "player_ids": [
-          "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
-          "664444c2-ad82-43ab-9a31-66ffb1e91c7f"
-        ],
-        "player_names": [
-          "saqib.javed",
-          "minh.nguyen"
-        ],
-        "rating": 1522,
-        "points": 3,
-        "games": 1,
-        "wins": 1,
-        "losses": 0,
-        "rating_change": 22,
         "derived": true
       },
       {
@@ -24711,6 +24941,26 @@
       },
       {
         "rank": 26,
+        "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|6dfe21eb-7a7c-4926-a791-b135a287b301",
+        "team_name": "lorna.li / Shane Chicharo",
+        "player_ids": [
+          "6dfe21eb-7a7c-4926-a791-b135a287b301",
+          "2cbec020-0561-4b16-81b5-40b9d3b66973"
+        ],
+        "player_names": [
+          "lorna.li",
+          "Shane Chicharo"
+        ],
+        "rating": 1481,
+        "points": 1,
+        "games": 1,
+        "wins": 0,
+        "losses": 1,
+        "rating_change": -19,
+        "derived": true
+      },
+      {
+        "rank": 27,
         "team_id": "pair:1d547aab-daf0-4e87-a9e4-bac4cb2ac82a|604db281-c601-4c4e-9ca8-e52b2286bae8",
         "team_name": "nikola.najdovski / saqib.javed",
         "player_ids": [
@@ -24730,7 +24980,7 @@
         "derived": true
       },
       {
-        "rank": 27,
+        "rank": 28,
         "team_id": "pair:65638f26-9c35-48c9-a1e8-486d80d6a7ac|737d2e34-85d4-4cbf-b8bf-89409b83f998",
         "team_name": "virginia.martineznavarro / joshua.whiston",
         "player_ids": [
@@ -24750,7 +25000,7 @@
         "derived": true
       },
       {
-        "rank": 28,
+        "rank": 29,
         "team_id": "pair:65638f26-9c35-48c9-a1e8-486d80d6a7ac|c47d30be-215a-467d-9be7-de1ef3575719",
         "team_name": "john.wong / virginia.martineznavarro",
         "player_ids": [
@@ -24770,7 +25020,7 @@
         "derived": true
       },
       {
-        "rank": 29,
+        "rank": 30,
         "team_id": "pair:604db281-c601-4c4e-9ca8-e52b2286bae8|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
         "team_name": "nikola.najdovski / minh.nguyen",
         "player_ids": [
@@ -24790,7 +25040,7 @@
         "derived": true
       },
       {
-        "rank": 30,
+        "rank": 31,
         "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|604db281-c601-4c4e-9ca8-e52b2286bae8",
         "team_name": "nikola.najdovski / Tyler Smith",
         "player_ids": [
@@ -24810,7 +25060,7 @@
         "derived": true
       },
       {
-        "rank": 31,
+        "rank": 32,
         "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
         "team_name": "minh.nguyen / Tyler Smith",
         "player_ids": [
@@ -24830,7 +25080,7 @@
         "derived": true
       },
       {
-        "rank": 32,
+        "rank": 33,
         "team_id": "pair:4145bacb-cc0f-4b92-bcfd-1aadaa613e58|6dfe21eb-7a7c-4926-a791-b135a287b301",
         "team_name": "lorna.li / Tyler Smith",
         "player_ids": [
@@ -24850,7 +25100,7 @@
         "derived": true
       },
       {
-        "rank": 33,
+        "rank": 34,
         "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
         "team_name": "Shane Chicharo / minh.nguyen",
         "player_ids": [
@@ -24870,7 +25120,7 @@
         "derived": true
       },
       {
-        "rank": 34,
+        "rank": 35,
         "team_id": "pair:6dfe21eb-7a7c-4926-a791-b135a287b301|c47d30be-215a-467d-9be7-de1ef3575719",
         "team_name": "lorna.li / john.wong",
         "player_ids": [
@@ -24890,7 +25140,7 @@
         "derived": true
       },
       {
-        "rank": 35,
+        "rank": 36,
         "team_id": "pair:6dfe21eb-7a7c-4926-a791-b135a287b301|9a88653d-aab6-46b4-b55d-c75fb057fa61",
         "team_name": "heru.gani / lorna.li",
         "player_ids": [
@@ -24910,7 +25160,7 @@
         "derived": true
       },
       {
-        "rank": 36,
+        "rank": 37,
         "team_id": "pair:2cbec020-0561-4b16-81b5-40b9d3b66973|65638f26-9c35-48c9-a1e8-486d80d6a7ac",
         "team_name": "Shane Chicharo / virginia.martineznavarro",
         "player_ids": [
@@ -24930,7 +25180,7 @@
         "derived": true
       },
       {
-        "rank": 37,
+        "rank": 38,
         "team_id": "af04282c-97a6-480c-b75d-e368e915228f",
         "team_name": "Golden Flamenco Queens",
         "player_ids": [
@@ -24950,7 +25200,7 @@
         "derived": false
       },
       {
-        "rank": 38,
+        "rank": 39,
         "team_id": "pair:0ee464bb-7764-45f8-b22f-7091b89c1ab5|2cbec020-0561-4b16-81b5-40b9d3b66973",
         "team_name": "Shane Chicharo / Harley Trappitt",
         "player_ids": [
@@ -27671,6 +27921,36 @@
       "opponent_entity_id": "2cbec020-0561-4b16-81b5-40b9d3b66973|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
       "opponent_entity_name": "Shane Chicharo / minh.nguyen",
       "created_at": "2026-08-17T02:52:55.129Z"
+    },
+    {
+      "id": "doubles:1d547aab-daf0-4e87-a9e4-bac4cb2ac82a|664444c2-ad82-43ab-9a31-66ffb1e91c7f:2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "scope": "doubles",
+      "entity_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+      "entity_name": "saqib.javed / minh.nguyen",
+      "match_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "match_type": "doubles",
+      "rating_before": 1522,
+      "rating_after": 1541,
+      "delta": 19,
+      "result": "win",
+      "opponent_entity_id": "2cbec020-0561-4b16-81b5-40b9d3b66973|6dfe21eb-7a7c-4926-a791-b135a287b301",
+      "opponent_entity_name": "lorna.li / Shane Chicharo",
+      "created_at": "2026-08-21T02:55:25.621Z"
+    },
+    {
+      "id": "doubles:2cbec020-0561-4b16-81b5-40b9d3b66973|6dfe21eb-7a7c-4926-a791-b135a287b301:2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "scope": "doubles",
+      "entity_id": "2cbec020-0561-4b16-81b5-40b9d3b66973|6dfe21eb-7a7c-4926-a791-b135a287b301",
+      "entity_name": "lorna.li / Shane Chicharo",
+      "match_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "match_type": "doubles",
+      "rating_before": 1500,
+      "rating_after": 1481,
+      "delta": -19,
+      "result": "loss",
+      "opponent_entity_id": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a|664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+      "opponent_entity_name": "saqib.javed / minh.nguyen",
+      "created_at": "2026-08-21T02:55:25.621Z"
     }
   ],
   "challenges": [
@@ -28020,6 +28300,13 @@
         "challenge_wins": 0,
         "challenge_losses": 0,
         "pair_key": "2cbec020-0561-4b16-81b5-40b9d3b66973|737d2e34-85d4-4cbf-b8bf-89409b83f998"
+      },
+      {
+        "entity_id": "2cbec020-0561-4b16-81b5-40b9d3b66973|6dfe21eb-7a7c-4926-a791-b135a287b301",
+        "position": 39,
+        "challenge_wins": 0,
+        "challenge_losses": 0,
+        "pair_key": "2cbec020-0561-4b16-81b5-40b9d3b66973|6dfe21eb-7a7c-4926-a791-b135a287b301"
       }
     ]
   },
@@ -29215,16 +29502,46 @@
       },
       "after": null,
       "created_at": "2026-08-17T02:56:16.882Z"
+    },
+    {
+      "id": "cef829b8-66d1-454b-b136-e16d737f3250",
+      "type": "match_create",
+      "entity_type": "match",
+      "entity_id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+      "actor_email": "virginia.martineznavarro@robertbird.com.au",
+      "reason": "Match recorded",
+      "before": null,
+      "after": {
+        "id": "2f1b23a4-5658-480b-b53e-f9653a8c0795",
+        "tournament_id": null,
+        "mode": "ranked",
+        "type": "doubles",
+        "game_type": 11,
+        "session_id": null,
+        "game_number": null,
+        "player_a": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+        "player_b": "6dfe21eb-7a7c-4926-a791-b135a287b301",
+        "player_c": "1d547aab-daf0-4e87-a9e4-bac4cb2ac82a",
+        "player_d": "2cbec020-0561-4b16-81b5-40b9d3b66973",
+        "score_a": 11,
+        "score_b": 4,
+        "winner": "664444c2-ad82-43ab-9a31-66ffb1e91c7f",
+        "win_by_2": true,
+        "ranking_context": "standard",
+        "challenge_id": null,
+        "created_at": "2026-08-21T02:55:25.621Z"
+      },
+      "created_at": "2026-08-21T02:55:25.622Z"
     }
   ],
   "derived": {
     "schema_version": 2,
-    "last_rebuilt_at": "2026-08-17T02:56:16.884Z",
+    "last_rebuilt_at": "2026-08-21T02:55:25.631Z",
     "validation": {
       "errors": [],
       "warnings": []
     },
-    "last_rebuild_reason": "Delete match 87ad9ead"
+    "last_rebuild_reason": "Record game: minh.nguyen/saqib.javed vs lorna.li/Shane Chicharo"
   },
   "settings": {
     "admins": [
