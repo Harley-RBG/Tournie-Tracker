@@ -28589,7 +28589,7 @@
     {
       "id": "cfff5a77-1382-421e-8fb3-9e4b4c2e8d1b",
       "type": "singles",
-      "status": "pending",
+      "status": "cancelled",
       "challenger_entity_id": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
       "defender_entity_id": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
       "challenger_player_ids": [
@@ -28604,7 +28604,8 @@
       "accepted_at": null,
       "completed_at": null,
       "match_id": null,
-      "notes": ""
+      "notes": "",
+      "cancelled_at": "2026-08-23T02:51:43.887Z"
     }
   ],
   "challenge_ladders": {
@@ -30224,16 +30225,66 @@
         "created_at": "2026-08-21T03:04:50.292Z"
       },
       "created_at": "2026-08-21T03:04:50.293Z"
+    },
+    {
+      "id": "7455ab96-2b3b-43c5-8f9f-587482d21eee",
+      "type": "challenge_cancelled",
+      "entity_type": "challenge",
+      "entity_id": "cfff5a77-1382-421e-8fb3-9e4b4c2e8d1b",
+      "actor_email": "harley.trappitt@robertbird.com.au",
+      "reason": "Challenge status changed to cancelled",
+      "before": {
+        "id": "cfff5a77-1382-421e-8fb3-9e4b4c2e8d1b",
+        "type": "singles",
+        "status": "pending",
+        "challenger_entity_id": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
+        "defender_entity_id": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
+        "challenger_player_ids": [
+          "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
+        ],
+        "defender_player_ids": [
+          "65638f26-9c35-48c9-a1e8-486d80d6a7ac"
+        ],
+        "created_by": "harley.trappitt@robertbird.com.au",
+        "created_at": "2026-08-16T23:19:51.468Z",
+        "expires_at": "2026-08-30T23:19:51.468Z",
+        "accepted_at": null,
+        "completed_at": null,
+        "match_id": null,
+        "notes": ""
+      },
+      "after": {
+        "id": "cfff5a77-1382-421e-8fb3-9e4b4c2e8d1b",
+        "type": "singles",
+        "status": "cancelled",
+        "challenger_entity_id": "0ee464bb-7764-45f8-b22f-7091b89c1ab5",
+        "defender_entity_id": "65638f26-9c35-48c9-a1e8-486d80d6a7ac",
+        "challenger_player_ids": [
+          "0ee464bb-7764-45f8-b22f-7091b89c1ab5"
+        ],
+        "defender_player_ids": [
+          "65638f26-9c35-48c9-a1e8-486d80d6a7ac"
+        ],
+        "created_by": "harley.trappitt@robertbird.com.au",
+        "created_at": "2026-08-16T23:19:51.468Z",
+        "expires_at": "2026-08-30T23:19:51.468Z",
+        "accepted_at": null,
+        "completed_at": null,
+        "match_id": null,
+        "notes": "",
+        "cancelled_at": "2026-08-23T02:51:43.887Z"
+      },
+      "created_at": "2026-08-23T02:51:43.887Z"
     }
   ],
   "derived": {
     "schema_version": 2,
-    "last_rebuilt_at": "2026-08-21T03:04:50.305Z",
+    "last_rebuilt_at": "2026-08-23T02:51:43.890Z",
     "validation": {
       "errors": [],
       "warnings": []
     },
-    "last_rebuild_reason": "Record game: Shane Chicharo/minh.nguyen vs virginia.martineznavarro/saqib.javed"
+    "last_rebuild_reason": "Challenge cancelled"
   },
   "settings": {
     "admins": [
