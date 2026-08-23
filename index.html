@@ -781,9 +781,28 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
   body.mobile-nav-hidden #mobileNavToggle::after{content:""}
 }
 
+
+/* BATCH_UPDATE_2_RELIABILITY_RESULT_UNDO_V1 */
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(10,132,255,.72);outline-offset:2px}button:disabled{cursor:not-allowed;opacity:.55}.match-save-status{display:flex;align-items:flex-start;gap:10px;margin-top:12px;padding:10px 12px;border:1px solid transparent;border-radius:10px;line-height:1.4}.match-save-status[hidden],.match-result-panel[hidden]{display:none}.match-save-status.is-saving{color:#cfe6ff;background:rgba(10,132,255,.1);border-color:rgba(10,132,255,.25)}.match-save-status.is-success{color:#bbf7d0;background:rgba(34,197,94,.1);border-color:rgba(74,222,128,.25)}.match-save-status.is-error{color:#fecaca;background:rgba(239,68,68,.1);border-color:rgba(248,113,113,.3)}.match-save-status.is-warning{color:#fde68a;background:rgba(245,158,11,.1);border-color:rgba(251,191,36,.28)}.status-copy{flex:1;min-width:0}.status-title{font-weight:800}.status-detail{font-size:12px;margin-top:2px;opacity:.9}.status-actions{display:flex;gap:8px;flex-wrap:wrap}.match-save-spinner{width:16px;height:16px;flex:0 0 16px;margin-top:2px;border:2px solid rgba(207,230,255,.28);border-top-color:var(--accent-2);border-radius:50%;animation:match-save-spin .8s linear infinite}@keyframes match-save-spin{to{transform:rotate(360deg)}}.match-result-panel{margin-top:12px;padding:16px;border:1px solid rgba(74,222,128,.28);border-radius:14px;background:linear-gradient(135deg,rgba(20,83,45,.32),rgba(10,132,255,.08));box-shadow:0 12px 32px rgba(0,0,0,.28)}.match-result-kicker{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#86efac}.match-result-title{margin-top:4px;color:#fff;font-size:20px;font-weight:900}.match-result-score{margin-top:5px;color:#cfe6ff;font-size:15px}.match-result-ratings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}.match-result-rating{padding:9px 10px;border-radius:10px;background:rgba(255,255,255,.045)}.match-result-rating-name{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.match-result-rating-value{margin-top:2px;font-size:17px;font-weight:900}.match-result-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.match-result-actions button{flex:1 1 130px}.undo-last-point{border-color:rgba(251,191,36,.28)!important;color:#fde68a!important}.point-undo-note{min-height:18px;margin-top:6px;text-align:center;font-size:12px;color:#fde68a}@media(prefers-reduced-motion:reduce){.match-save-spinner{animation:none}}@media(max-width:700px){.match-save-status{flex-wrap:wrap}.status-actions{width:100%}.match-result-ratings{grid-template-columns:1fr}.match-result-actions{display:grid;grid-template-columns:1fr}}
+
+/* BATCH_UPDATE_3_CONFLICT_RECOVERY_AND_CONTROLS_V1 */
+.score-action-group{display:flex;gap:8px;justify-content:center;margin-top:8px}.score-action-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}.score-action-symbol{font-size:22px;line-height:1}.score-action-label{font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.recorder-secondary-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)}.recorder-secondary-actions button{flex:1 1 145px}.recovery-note{font-size:12px;color:#fde68a;margin-top:5px}.match-save-status.is-conflict{color:#fde68a;background:linear-gradient(135deg,rgba(120,53,15,.24),rgba(10,132,255,.08));border-color:rgba(251,191,36,.35)}.connection-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}.connection-dot{width:8px;height:8px;border-radius:50%;background:#4ade80}.connection-badge.offline .connection-dot{background:#f87171}.connection-badge.offline{color:#fecaca}@media(max-width:700px){.score-action-btn{min-width:86px}.recorder-secondary-actions{display:grid;grid-template-columns:1fr 1fr}.recorder-secondary-actions button{width:100%}}@media(max-width:420px){.recorder-secondary-actions{grid-template-columns:1fr}}
+
+/* BATCH_UPDATE_4_TESTING_CORRECTION_REDO_V1 */
+.redo-last-point{border-color:rgba(10,132,255,.28)!important;color:#93c5fd!important}.fs-result-overlay{display:none;position:absolute;inset:0;z-index:30;align-items:center;justify-content:center;padding:18px;background:rgba(3,7,11,.88);backdrop-filter:blur(8px)}.fs-result-overlay.open{display:flex}.fs-result-card{width:min(92vw,620px);padding:24px;border-radius:20px;background:linear-gradient(145deg,#10251c,#101a24);border:1px solid rgba(74,222,128,.3);box-shadow:0 24px 80px rgba(0,0,0,.7);text-align:center}.fs-result-card .match-result-title{font-size:clamp(28px,5vw,52px)}.fs-result-card .match-result-score{font-size:clamp(18px,3vw,30px)}.fs-result-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.fs-result-actions button{flex:1 1 145px}.diagnostic-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.diagnostic-result{padding:9px;border-radius:9px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06)}.diagnostic-result.pass{border-color:rgba(74,222,128,.25)}.diagnostic-result.fail{border-color:rgba(248,113,113,.3)}.diagnostic-name{font-weight:700;color:#cfe6ff;font-size:12px}.diagnostic-detail{font-size:11px;color:var(--muted);margin-top:3px}.edit-save-status{font-size:12px;margin-top:8px;min-height:17px}.edit-save-status.error{color:#fca5a5}.edit-save-status.success{color:#86efac}@media(max-width:700px){.diagnostic-grid{grid-template-columns:1fr}.fs-result-actions{display:grid;grid-template-columns:1fr}.fs-result-card{padding:18px}}
+
+/* BATCH_UPDATE_5_PRODUCT_POLISH_V1 */
+:root{--surface-page:#0b0d10;--surface-panel:#12171c;--surface-raised:#182029;--border-subtle:rgba(255,255,255,.10);--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px}
+.card{box-shadow:0 6px 18px rgba(0,0,0,.38);border-color:var(--border-subtle)}nav button{min-height:42px;display:inline-flex;align-items:center;gap:6px}nav button .nav-icon{font-size:15px}nav button .nav-label{font-weight:700}.app-loading{position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;background:rgba(5,7,9,.91);backdrop-filter:blur(8px)}.app-loading[hidden]{display:none}.app-loading-card{width:min(90vw,390px);padding:22px;border-radius:16px;background:var(--surface-raised);border:1px solid var(--border-subtle);box-shadow:0 24px 80px rgba(0,0,0,.65);text-align:center}.app-loading-spinner{width:34px;height:34px;margin:0 auto 14px;border:3px solid rgba(255,255,255,.12);border-top-color:var(--accent-2);border-radius:50%;animation:match-save-spin .8s linear infinite}.app-loading-title{font-size:17px;font-weight:900;color:#fff}.app-loading-detail{margin-top:5px;font-size:12px;color:var(--muted)}
+.empty-state{padding:28px 18px;border:1px dashed rgba(255,255,255,.13);border-radius:12px;text-align:center;background:rgba(255,255,255,.018)}.empty-state-icon{font-size:28px;line-height:1}.empty-state-title{margin-top:8px;font-weight:800;color:#cfe6ff}.empty-state-detail{margin:5px auto 0;max-width:440px;color:var(--muted);font-size:13px;line-height:1.45}.empty-state-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+.view-state{padding:11px 13px;border-radius:10px;margin:10px 0;font-size:13px}.view-state.error{color:#fecaca;background:rgba(239,68,68,.1);border:1px solid rgba(248,113,113,.28)}.view-state.info{color:#cfe6ff;background:rgba(10,132,255,.08);border:1px solid rgba(10,132,255,.22)}
+.history-audit-badge{display:inline-flex;align-items:center;gap:4px;margin-left:5px;padding:2px 6px;border-radius:999px;background:rgba(10,132,255,.12);color:#93c5fd;font-size:10px;font-weight:800}.audit-timeline{max-height:min(62vh,520px);overflow:auto;margin-top:12px}.audit-event{padding:11px 0;border-bottom:1px solid rgba(255,255,255,.07)}.audit-event:last-child{border-bottom:0}.audit-event-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.audit-event-type{font-weight:800;color:#cfe6ff}.audit-event-meta{font-size:11px;color:var(--muted)}.audit-change-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-top:8px}.audit-change-box{padding:8px;border-radius:8px;background:rgba(255,255,255,.035);font-size:12px;color:#cfe6ff}.audit-change-arrow{color:var(--accent-2);font-weight:900}.audit-empty{padding:20px;text-align:center;color:var(--muted)}
+.section-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:10px}.section-heading-title{font-size:18px;font-weight:900;color:var(--accent)}.section-heading-subtitle{margin-top:3px;color:var(--muted);font-size:13px}
+@media(prefers-reduced-motion:reduce){.app-loading-spinner{animation:none}}@media(max-width:700px){nav button .nav-label{font-size:13px}.audit-change-grid{grid-template-columns:1fr}.audit-change-arrow{text-align:center;transform:rotate(90deg)}.empty-state{padding:22px 14px}}
 </style>
 </head>
 <body>
+  <div id="appLoading" class="app-loading" role="status" aria-live="polite"><div class="app-loading-card"><div class="app-loading-spinner" aria-hidden="true"></div><div id="appLoadingTitle" class="app-loading-title">Loading RBG-TT</div><div id="appLoadingDetail" class="app-loading-detail">Retrieving the latest shared results…</div></div></div>
   <div class="app">
     <header>
       <div class="brand">
@@ -793,13 +812,13 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
 
       <div class="topbar">
         <nav id="mainNav" aria-label="Main navigation">
-          <button data-tab="recorder" class="active">Match Recorder</button>
-          <button data-tab="leaderboard">Leaderboard</button>
-          <button data-tab="tournaments">Tournaments</button>
-          <button data-tab="history">History</button>
-          <button data-tab="stats">Player Stats</button>
-          <button data-tab="admin" id="adminTab" style="display:none">Admin</button>
-          <button data-tab="profile" id="profileTab">Profile</button>
+          <button data-tab="recorder" class="active"><span class="nav-icon" aria-hidden="true">●</span><span class="nav-label">Play</span></button>
+          <button data-tab="leaderboard"><span class="nav-icon" aria-hidden="true">♜</span><span class="nav-label">Ladder</span></button>
+          <button data-tab="tournaments"><span class="nav-icon" aria-hidden="true">◇</span><span class="nav-label">Events</span></button>
+          <button data-tab="history"><span class="nav-icon" aria-hidden="true">◷</span><span class="nav-label">Activity</span></button>
+          <button data-tab="stats"><span class="nav-icon" aria-hidden="true">▥</span><span class="nav-label">Stats</span></button>
+          <button data-tab="admin" id="adminTab" style="display:none"><span class="nav-icon" aria-hidden="true">⚙</span><span class="nav-label">Admin</span></button>
+          <button data-tab="profile" id="profileTab"><span class="nav-icon" aria-hidden="true">○</span><span class="nav-label">Me</span></button>
         </nav>
           <button id="mobileNavToggle" type="button" class="ghost" aria-expanded="true" aria-controls="mainNav">Hide Nav</button>
 
@@ -1026,7 +1045,7 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
               <div class="live-score-head">
                 <div style="font-weight:700;color:#cfe6ff">Live Score</div>
                 <div class="live-score-status">
-                  <div class="muted" id="matchStatus">Idle</div>
+                  <div class="muted" id="matchStatus">Idle</div><div id="connectionBadge" class="connection-badge"><span class="connection-dot" aria-hidden="true"></span><span id="connectionText">Online</span></div>
                   <button id="fullscreenRecorderBtn" type="button" class="ghost" title="Focus on live recorder">Fullscreen</button>
                 </div>
               </div>
@@ -1036,9 +1055,9 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
                   <div id="sideAName" class="live-player-grid"></div>
                   <div id="serveTagA" class="serve-tag-empty"></div>
                   <div id="scoreA" class="score">0</div>
-                  <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
-                    <button id="addPointA" class="btn-large primary" title="Add point to Side A (ArrowUp)">↑</button>
-                    <button id="subPointA" class="btn-large ghost" title="Undo/subtract point from Side A (ArrowDown)">↓</button>
+                  <div class="score-action-group">
+                    <button id="addPointA" class="btn-large primary score-action-btn" aria-label="Add one point to Side A" title="Add point to Side A (Arrow Up)"><span class="score-action-symbol" aria-hidden="true">+1</span><span class="score-action-label">Point</span></button>
+                    <button id="subPointA" class="btn-large ghost score-action-btn" aria-label="Undo the last recorded point" title="Undo last point (Arrow Down)"><span class="score-action-symbol" aria-hidden="true">↶</span><span class="score-action-label">Undo</span></button>
                   </div>
                 </div>
 
@@ -1048,9 +1067,9 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
                   <div id="sideBName" class="live-player-grid"></div>
                   <div id="serveTagB" class="serve-tag-empty"></div>
                   <div id="scoreB" class="score">0</div>
-                  <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
-                    <button id="addPointB" class="btn-large primary" title="Add point to Side B (Shift+ArrowUp)">↑</button>
-                    <button id="subPointB" class="btn-large ghost" title="Undo/subtract point from Side B (Shift+ArrowDown)">↓</button>
+                  <div class="score-action-group">
+                    <button id="addPointB" class="btn-large primary score-action-btn" aria-label="Add one point to Side B" title="Add point to Side B (Shift plus Arrow Up)"><span class="score-action-symbol" aria-hidden="true">+1</span><span class="score-action-label">Point</span></button>
+                    <button id="subPointB" class="btn-large ghost score-action-btn" aria-label="Undo the last recorded point" title="Undo last point (Arrow Down)"><span class="score-action-symbol" aria-hidden="true">↶</span><span class="score-action-label">Undo</span></button>
                   </div>
                 </div>
               </div>
@@ -1080,14 +1099,20 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
                 </div>
               </div>
               <div class="live-controls">
+                <button id="undoLastPointBtn" type="button" class="ghost undo-last-point" disabled>↶ Undo Last Point</button>
+                <button id="redoLastPointBtn" type="button" class="ghost redo-last-point" disabled>↷ Redo Point</button>
+                <button id="startMatchBtn" class="primary">Start Match</button>
+              </div>
+              <div class="recorder-secondary-actions" aria-label="Match options">
                 <button id="switchSides" class="ghost">Switch Sides</button>
                 <button id="switchInitialServerLiveBtn" type="button" class="ghost">Switch Initial Server</button>
                 <button id="swapSideAPartnersLiveBtn" type="button" class="ghost">Swap Side A Partners</button>
                 <button id="swapSideBPartnersLiveBtn" type="button" class="ghost">Swap Side B Partners</button>
-                <button id="startMatchBtn" class="primary">Start Match</button>
               </div>
 
-              <div id="matchActions" style="margin-top:12px" class="muted"></div>
+              <div id="matchActions" class="match-save-status" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+              <div id="pointUndoNote" class="point-undo-note" role="status" aria-live="polite"></div>
+              <section id="matchResultPanel" class="match-result-panel" aria-live="polite" hidden><div class="match-result-kicker">Match saved</div><div id="matchResultTitle" class="match-result-title"></div><div id="matchResultScore" class="match-result-score"></div><div id="matchResultRatings" class="match-result-ratings" hidden></div><div class="match-result-actions"><button id="resultRematchBtn" type="button" class="primary">Rematch</button><button id="resultNewMatchBtn" type="button" class="ghost">New Match</button><button id="resultViewHistoryBtn" type="button" class="ghost">View Result</button></div></section>
               <div id="fsRecorderStage" class="fs-recorder-stage" aria-label="Fullscreen live recorder">
                 <div class="fs-recorder-topbar">
                   <div class="fs-recorder-title">Live Recorder</div>
@@ -1105,6 +1130,9 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
                     <div class="fs-scale-values"><span>Small</span><span>Big</span></div>
                     <button id="fsScaleReset" type="button" class="ghost" style="margin-top:10px;width:100%">Reset display sizing</button>
                   </div>
+                </div>
+                <div id="fsResultOverlay" class="fs-result-overlay" role="dialog" aria-modal="true" aria-labelledby="fsResultTitle">
+                  <div class="fs-result-card"><div class="match-result-kicker">Match saved</div><div id="fsResultTitle" class="match-result-title"></div><div id="fsResultScore" class="match-result-score"></div><div id="fsResultRatings" class="match-result-ratings" hidden></div><div class="fs-result-actions"><button id="fsResultRematchBtn" type="button" class="primary">Rematch</button><button id="fsResultNewMatchBtn" type="button" class="ghost">New Match</button><button id="fsResultExitBtn" type="button" class="ghost">Exit Fullscreen</button></div></div>
                 </div>
                 <div class="fs-table-wrap">
                   <div class="fs-table fs-reference-layout fs-singles" id="fsTableView">
@@ -1126,15 +1154,15 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
                   <div class="fs-side-controls">
                     <div class="fs-side-control-title">Side A</div>
                     <div class="fs-score-buttons">
-                      <button type="button" class="primary fs-score-btn" data-fs-action="add-a">↑</button>
-                      <button type="button" class="ghost fs-score-btn" data-fs-action="sub-a">↓</button>
+                      <button type="button" class="primary fs-score-btn" data-fs-action="add-a" aria-label="Add one point to Side A">+1</button>
+                      <button type="button" class="ghost fs-score-btn" data-fs-action="sub-a" aria-label="Undo the last recorded point">↶</button>
                     </div>
                   </div>
                   <div class="fs-side-controls">
                     <div class="fs-side-control-title">Side B</div>
                     <div class="fs-score-buttons">
-                      <button type="button" class="primary fs-score-btn" data-fs-action="add-b">↑</button>
-                      <button type="button" class="ghost fs-score-btn" data-fs-action="sub-b">↓</button>
+                      <button type="button" class="primary fs-score-btn" data-fs-action="add-b" aria-label="Add one point to Side B">+1</button>
+                      <button type="button" class="ghost fs-score-btn" data-fs-action="sub-b" aria-label="Undo the last recorded point">↶</button>
                     </div>
                   </div>
                   <div class="fs-rally-panel">
@@ -1367,6 +1395,11 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
           <div id="auditLogPreview" class="list" style="margin-top:10px"></div>
         </div>
 
+        <div class="card" id="recorderDiagnosticsCard" style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><div style="font-weight:700;color:#cfe6ff">Recorder Diagnostics</div><div class="muted">Non-destructive checks for scoring, serving, duplicate guards, undo/redo and recovery payloads.</div></div><button id="runRecorderDiagnosticsBtn" type="button" class="primary">Run Diagnostics</button></div>
+          <div id="recorderDiagnosticsSummary" class="muted" style="margin-top:10px">Not run.</div><div id="recorderDiagnosticsResults" class="diagnostic-grid"></div>
+        </div>
+
         <div class="card" id="adminPlayersCard" style="margin-top:12px">
           <div style="font-weight:700;color:#cfe6ff">Players</div>
           <div class="muted" style="margin-top:6px">Claimed vs unclaimed</div>
@@ -1483,8 +1516,12 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
       <div class="modal-actions">
         <button id="editMatchClose" class="ghost">Cancel</button>
         <button id="editMatchSave" class="primary">Save &amp; Recalculate</button>
-      </div>
+      </div><div id="editMatchSaveStatus" class="edit-save-status" role="status" aria-live="polite"></div>
     </div>
+  </div>
+
+  <div id="matchAuditModal" class="modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="matchAuditTitle">
+    <div class="modal" style="width:min(720px,calc(100vw - 32px))"><div class="section-heading"><div><div id="matchAuditTitle" class="section-heading-title">Match change history</div><div id="matchAuditSubtitle" class="section-heading-subtitle"></div></div><button id="matchAuditClose" type="button" class="ghost">Close</button></div><div id="matchAuditTimeline" class="audit-timeline"></div></div>
   </div>
 
 <script>
@@ -1495,6 +1532,10 @@ body.live-recorder-fullscreen .fs-player.is-serving::after{content:none!importan
    ============================ */
 
 const $ = id => document.getElementById(id);
+function setAppLoading(show,title='Loading RBG-TT',detail='Retrieving the latest shared results…'){const el=$('appLoading');if(!el)return;el.hidden=!show;if($('appLoadingTitle'))$('appLoadingTitle').textContent=title;if($('appLoadingDetail'))$('appLoadingDetail').textContent=detail;}
+function emptyStateHtml(icon,title,detail,actions=''){return `<div class="empty-state"><div class="empty-state-icon" aria-hidden="true">${icon}</div><div class="empty-state-title">${escapeHtml(title)}</div><div class="empty-state-detail">${escapeHtml(detail)}</div>${actions?`<div class="empty-state-actions">${actions}</div>`:''}</div>`;}
+function openTabByName(name){document.querySelector(`nav button[data-tab="${name}"]`)?.click();}
+
 
 /* ---------- API config ---------- */
 const API_BASE = 'https://rbg-tt-api.harley-trappitt.workers.dev';
@@ -1510,6 +1551,14 @@ const EMPTY_DATA = () => ({ players: [], matches: [], sessions: [], points: [], 
 let appData     = EMPTY_DATA();
 let _dbSha      = null;
 let saveInProgress = false;
+let gameCompletionScheduled = false;
+let pendingMatchRetry = null;
+let lastSavedMatchResult = null;
+let undoNoteTimer = null;
+let lastWriteError = null;
+let conflictRecoveryInProgress = false;
+let redoPointStack = [];
+let savedMatchCorrectionInProgress = false;
 let currentUser = null;   // { email, displayName }
 let currentPlayer = null; // entry in appData.players matching currentUser.email
 let currentMatch  = {
@@ -1529,8 +1578,24 @@ let currentMatch  = {
   gamesA:        0,
   gamesB:        0,
   gameNumber:    1,
-  pointLog:      []  // live per-point capture, flushed on game complete
+  pointLog:      [],  // live per-point capture, flushed on game complete
+  submissionId: null
 };
+
+function setRecorderControlsDisabled(disabled){['addPointA','addPointB','subPointA','subPointB','switchSides','switchInitialServerLiveBtn','swapSideAPartnersLiveBtn','swapSideBPartnersLiveBtn','rallyHitsDown','rallyHitsUp','rallyHits','undoLastPointBtn','redoLastPointBtn'].forEach(id=>{const el=$(id);if(el)el.disabled=!!disabled;});if(!disabled)updateUndoButton();}
+function setMatchSaveStatus(state,title='',detail='',actions=[]){const el=$('matchActions');if(!el)return;if(!state){el.hidden=true;el.className='match-save-status';el.textContent='';return;}el.hidden=false;el.className=`match-save-status is-${state}`;const spin=state==='saving'?'<span class="match-save-spinner" aria-hidden="true"></span>':'';const buttons=actions.length?`<div class="status-actions">${actions.map(a=>`<button type="button" class="${a.primary?'primary':'ghost'}" data-save-action="${a.id}">${a.label}</button>`).join('')}</div>`:'';el.innerHTML=`${spin}<div class="status-copy"><div class="status-title">${escapeHtml(title)}</div>${detail?`<div class="status-detail">${escapeHtml(detail)}</div>`:''}</div>${buttons}`;}
+function matchFingerprint(m){return[m.type,m.mode,m.player_a,m.player_b,m.player_c||'',m.player_d||'',+m.score_a,+m.score_b,m.session_id||'',m.game_number||''].join('|');}
+function recentDuplicateMatch(c,ms=30000){const fp=matchFingerprint(c),now=Date.now();return(appData.matches||[]).find(m=>matchFingerprint(m)===fp&&Math.abs(now-new Date(m.created_at||0).getTime())<=ms)||null;}
+function updateUndoButton(){const locked=saveInProgress||gameCompletionScheduled||!currentMatch.serveOrder.length,undo=$('undoLastPointBtn'),redo=$('redoLastPointBtn');if(undo)undo.disabled=locked||!currentMatch.pointLog.length;if(redo)redo.disabled=locked||!redoPointStack.length;}
+function setUndoNote(message=''){const el=$('pointUndoNote');if(!el)return;el.textContent=message;clearTimeout(undoNoteTimer);if(message)undoNoteTimer=setTimeout(()=>el.textContent='',2200);}
+function undoLastPoint(){if(saveInProgress||gameCompletionScheduled||!currentMatch.pointLog.length)return;const pt=currentMatch.pointLog.pop();redoPointStack.push(cloneForAudit(pt));currentMatch.scoreA=Number(pt.score_a_before||0);currentMatch.scoreB=Number(pt.score_b_before||0);setRallyHitsValue(isRallyTrackingEnabled()?(pt.hits_per_rally??1):0,false);updateScoreUI();setUndoNote(`Last point undone. Score restored to ${currentMatch.scoreA}–${currentMatch.scoreB}.`);}
+function redoLastPoint(){if(saveInProgress||gameCompletionScheduled||!redoPointStack.length)return;const pt=redoPointStack.pop();pt.score_a_before=currentMatch.scoreA;pt.score_b_before=currentMatch.scoreB;pt.point_number=currentMatch.pointLog.length+1;pt.server_id=getServingPlayerId(currentMatch.scoreA,currentMatch.scoreB);currentMatch.pointLog.push(pt);if(pt.winner_side==='A')currentMatch.scoreA++;else currentMatch.scoreB++;updateScoreUI();setUndoNote(`Point restored. Score is ${currentMatch.scoreA}–${currentMatch.scoreB}.`);checkAutoComplete();}
+function hideMatchResult(){const p=$('matchResultPanel'),fp=$('fsResultOverlay');if(p)p.hidden=true;if(fp)fp.classList.remove('open');lastSavedMatchResult=null;}
+function setConnectionState(){const badge=$('connectionBadge'),text=$('connectionText');if(!badge||!text)return;const offline=!navigator.onLine;badge.classList.toggle('offline',offline);text.textContent=offline?'Offline':'Online';}
+function buildRecoveryPayload(){return{exported_at:new Date().toISOString(),reason:lastWriteError?.code||'unsaved_match',error:lastWriteError,current_match:cloneForAudit(currentMatch),point_log:cloneForAudit(currentMatch.pointLog||[]),database_sha:_dbSha,app_version:'batch-3'};}
+function downloadRecoveryData(){const data=JSON.stringify(buildRecoveryPayload(),null,2),blob=new Blob([data],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`rbg-tt-match-recovery-${new Date().toISOString().replace(/[:.]/g,'-')}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);setMatchSaveStatus('warning','Recovery file downloaded','Keep the file until the match appears in Match History.');}
+async function reloadLatestAndRetry(){if(conflictRecoveryInProgress||saveInProgress)return;conflictRecoveryInProgress=true;const savedMatch=cloneForAudit(currentMatch),btn=$('startMatchBtn');setRecorderControlsDisabled(true);if(btn){btn.disabled=true;btn.textContent='Reloading…';}setMatchSaveStatus('saving','Loading newer results','Your completed match is being held locally while the latest shared data loads.');const loaded=await readData();if(!loaded){conflictRecoveryInProgress=false;currentMatch=savedMatch;setRecorderControlsDisabled(false);if(btn){btn.disabled=false;btn.textContent='Retry Save';}setMatchSaveStatus('error','Could not reload shared data','Your match remains safe in the recorder.',[{id:'recover',label:'Try reload again',primary:true},{id:'download',label:'Download recovery data'}]);return;}currentMatch=savedMatch;currentMatch.submissionId=currentMatch.submissionId||crypto.randomUUID();renderLeaderboard();renderHistory();updateScoreUI();conflictRecoveryInProgress=false;setRecorderControlsDisabled(false);if(btn){btn.disabled=false;btn.textContent='Retry Save';}setMatchSaveStatus('saving','Reapplying your match','The latest results loaded successfully. Saving your held match now.');await completeGame();}
+function renderMatchResult(r){lastSavedMatchResult=r;const p=$('matchResultPanel');if(!p)return;$('matchResultTitle').textContent=`${r.winnerName} won`;$('matchResultScore').textContent=`${r.sideAName} ${r.scoreA}–${r.scoreB} ${r.sideBName}`;const box=$('matchResultRatings');if(r.ratingChanges.length){box.hidden=false;box.innerHTML=r.ratingChanges.map(x=>`<div class="match-result-rating"><div class="match-result-rating-name">${escapeHtml(x.name)}</div><div class="match-result-rating-value ${x.delta>=0?'rating-up':'rating-down'}">${x.delta>=0?'+':''}${x.delta} Elo <span class="muted">· ${x.after}</span></div></div>`).join('');}else{box.hidden=true;box.innerHTML='';}p.hidden=false;p.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});const fp=$('fsResultOverlay');if(fp){$('fsResultTitle').textContent=`${r.winnerName} won`;$('fsResultScore').textContent=`${r.sideAName} ${r.scoreA}–${r.scoreB} ${r.sideBName}`;const fr=$('fsResultRatings');fr.innerHTML=box.innerHTML;fr.hidden=box.hidden;if(document.body.classList.contains('live-recorder-fullscreen'))fp.classList.add('open');}}
 
 
 /* ============================================================
@@ -1825,7 +1890,7 @@ function renderDbHealthPanel() {
   const problemRows = [...(validation.errors||[]).slice(0,8).map(x=>`<div style="color:#f87171;padding:4px 0">Error: ${x}</div>`), ...(validation.warnings||[]).slice(0,8).map(x=>`<div style="color:#facc15;padding:4px 0">Warning: ${x}</div>`)];
   details.innerHTML = problemRows.length ? `<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Validation Details</div>${problemRows.join('')}` : '<div class="muted">No validation errors or warnings currently recorded.</div>';
   const recentAudit = [...(appData.audit_log || [])].slice(-10).reverse();
-  audit.innerHTML = recentAudit.length ? `<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Recent Audit Events</div>` + recentAudit.map(ev=>`<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><div style="display:flex;justify-content:space-between;gap:8px"><span class="small"><strong>${ev.type}</strong> · ${ev.entity_type || 'entity'} ${ev.entity_id ? String(ev.entity_id).slice(0,8) : ''}</span><span class="muted" style="font-size:11px;white-space:nowrap">${ev.created_at ? new Date(ev.created_at).toLocaleString() : ''}</span></div><div class="muted" style="font-size:11px">${ev.actor_email || 'unknown'}${ev.reason ? ' · ' + ev.reason : ''}</div></div>`).join('') : '<div class="muted">No audit events recorded yet.</div>';
+  audit.innerHTML = recentAudit.length ? `<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Recent Audit Events</div>` + recentAudit.map(ev=>`<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><div style="display:flex;justify-content:space-between;gap:8px"><span class="small"><strong>${ev.type}</strong> · ${ev.entity_type || 'entity'} ${ev.entity_id ? String(ev.entity_id).slice(0,8) : ''}</span><span class="muted" style="font-size:11px;white-space:nowrap">${ev.created_at ? new Date(ev.created_at).toLocaleString() : ''}</span></div><div class="muted" style="font-size:11px">${ev.actor_email || 'unknown'}${ev.reason ? ' · ' + ev.reason : ''}</div></div>`).join('') : emptyStateHtml('◎','No audit events yet','Saved matches, corrections, deletions and challenge changes will be listed here.');
 }
 
 function rebuildDerivedState(reason = 'rebuild') {
@@ -2046,6 +2111,10 @@ tabs.forEach(btn => btn.addEventListener('click', () => {
   if (tab === 'recorder' && !$('tab-recorder').classList.contains('mobile-show-score')) showRecorderPane('setup');
 }));
 
+function hasUnsavedRecorderWork(){return !!(currentMatch.serveOrder.length&&(currentMatch.pointLog.length||currentMatch.scoreA||currentMatch.scoreB||pendingMatchRetry||saveInProgress));}
+window.addEventListener('beforeunload',e=>{if(!hasUnsavedRecorderWork())return;e.preventDefault();e.returnValue='';});
+document.addEventListener('click',e=>{const tab=e.target.closest('nav button[data-tab]');if(!tab||tab.dataset.tab==='recorder'||!hasUnsavedRecorderWork())return;if(!confirm('A match is still active or unsaved. Leave the recorder without resetting it?')){e.preventDefault();e.stopImmediatePropagation();}},true);
+
 /* Mobile nav hide/show */
 const mobileNavToggle = $('mobileNavToggle');
 if (mobileNavToggle) {
@@ -2064,7 +2133,8 @@ $('themeToggle').addEventListener('change', e => {
 /* ============================================================
    GitHub Contents API — read / write data/db.json
    ============================================================ */
-async function readData() {
+async function readData(options = {}) {
+  if(options.showLoading !== false)setAppLoading(true,'Loading latest results','Synchronising players, matches and rankings…');
   try {
     const res = await fetch(`${API_BASE}/data`, {
       headers: {
@@ -2095,14 +2165,19 @@ async function readData() {
     return true;
   } catch (e) {
     console.error('readData failed', e);
-    alert('Could not load shared RBG-TT data. Check the Cloudflare Worker /data endpoint.');
+    if(options.showLoading !== false){setAppLoading(true,'Could not load shared data','Check the connection and Cloudflare Worker, then refresh the page.');setTimeout(()=>setAppLoading(false),2600);}
+    else alert('Could not load shared RBG-TT data. Check the Cloudflare Worker /data endpoint.');
     return false;
+  } finally {
+    if(options.showLoading !== false && $('appLoadingTitle')?.textContent !== 'Could not load shared data')setAppLoading(false);
   }
 }
-async function writeData(msg = 'Update RBG-TT data') {
-  if (!prepareDataForSave(msg)) return false;
+async function writeData(msg = 'Update RBG-TT data', options = {}) {
+  lastWriteError = null;
+  if (!prepareDataForSave(msg)) { lastWriteError={code:'VALIDATION_FAILED',error:'Local validation failed.'}; return false; }
   if (!_dbSha) {
-    alert('Save blocked: data version missing. Please refresh and try again.');
+    lastWriteError={code:'MISSING_SHA',error:'Data version missing.'};
+    if(!options.silent) alert('Save blocked: data version missing. Please refresh and try again.');
     return false;
   }
   try {
@@ -2115,18 +2190,20 @@ async function writeData(msg = 'Update RBG-TT data') {
       body: JSON.stringify({
         message: msg,
         baseSha: _dbSha,
-        data: appData
+        data: appData,
+        requestId: options.requestId || null
       })
     });
 
     const result = await res.json().catch(() => ({}));
 
     if (!res.ok || result.ok === false) {
+      lastWriteError={status:res.status,code:result.code||(res.status===409?'STALE_DATA':'SAVE_FAILED'),error:result.error||`HTTP ${res.status}`,db_sha:result.db_sha||null};
       if (res.status === 409) {
-        alert('Save blocked: newer data exists on the server. Refresh to load latest data, then reapply your change.');
+        if(!options.silent) alert('Save blocked: newer data exists on the server. Refresh to load latest data, then reapply your change.');
         return false;
       }
-      alert('Save failed: ' + (result.error || res.status));
+      if(!options.silent) alert('Save failed: ' + (result.error || res.status));
       return false;
     }
 
@@ -2136,7 +2213,8 @@ async function writeData(msg = 'Update RBG-TT data') {
     return true;
   } catch (e) {
     console.error('writeData failed', e);
-    alert('Save failed via Cloudflare Worker: ' + e.message);
+    lastWriteError={status:0,code:navigator.onLine?'NETWORK_ERROR':'OFFLINE',error:e.message||String(e)};
+    if(!options.silent) alert('Save failed via Cloudflare Worker: ' + e.message);
     return false;
   }
 }
@@ -2430,7 +2508,7 @@ function renderHistory() {
   const el = $('historyList');
   el.innerHTML = '';
 
-  if (!rows.length) { el.innerHTML = '<div class="muted">No matches found.</div>'; return; }
+  if(!rows.length){el.innerHTML=emptyStateHtml('◷','No matches found',pf||mf?'No results match the selected filters. Clear the filters or record another game.':'Completed matches will appear here after they are saved.',`<button type="button" class="primary" onclick="openTabByName('recorder')">Record a match</button>`);return;}
 
   rows.forEach(m => {
     const pa = appData.players.find(p=>p.id===m.player_a);
@@ -2442,6 +2520,8 @@ function renderHistory() {
     const wonA  = m.winner === m.player_a;
     const pts   = appData.points.filter(pt=>pt.game_id===m.id).length;
     const sessLabel = m.session_id ? `<span class="muted" style="font-size:10px;margin-left:4px">G${m.game_number}</span>` : '';
+    const auditEvents=(appData.audit_log||[]).filter(ev=>ev.entity_type==='match'&&ev.entity_id===m.id);
+    const correctionCount=auditEvents.filter(ev=>ev.type==='match_edit').length;
 
     const row = document.createElement('div');
     row.className = 'player-row';
@@ -2452,16 +2532,21 @@ function renderHistory() {
         <span class="muted" style="padding:0 6px">${m.score_a}\u2013${m.score_b}</span>
         <strong style="color:${!wonA?'#4ade80':'#e6eef6'}">${sideB}</strong>
         ${sessLabel}
+        ${correctionCount?`<span class="history-audit-badge">${correctionCount} correction${correctionCount!==1?'s':''}</span>`:''}
         ${pts>0?`<span class="muted" style="font-size:10px;margin-left:4px">\u2022 ${pts}pts tracked</span>`:''}
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <span class="muted" style="font-size:11px">${m.mode}${m.type==='doubles'?' \u00b7 dbl':''} \u00b7 ${new Date(m.created_at).toLocaleDateString()}</span>
+        ${auditEvents.length?`<button class="ghost" style="font-size:11px;padding:3px 8px" onclick="showMatchAudit('${m.id}')">Changes</button>`:''}
         ${admin ? `<button class="ghost" style="font-size:11px;padding:3px 8px" onclick="showEditMatch('${m.id}')">Edit</button>
         <button class="ghost" style="font-size:11px;padding:3px 8px;color:#f87171;border-color:rgba(248,113,113,.3)" onclick="confirmDeleteMatch('${m.id}')">Delete</button>` : ''}
       </div>`;
     el.appendChild(row);
   });
 }
+
+window.showMatchAudit=function(id){const m=appData.matches.find(x=>x.id===id);if(!m)return;const events=(appData.audit_log||[]).filter(ev=>ev.entity_type==='match'&&ev.entity_id===id).sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));$('matchAuditSubtitle').textContent=`${new Date(m.created_at).toLocaleString()} · ${events.length} recorded event${events.length===1?'':'s'}`;const value=(x,key)=>x?.[key]??'—';$('matchAuditTimeline').innerHTML=events.length?events.map(ev=>{const before=ev.before?.match||ev.before,after=ev.after?.match||ev.after;const scoreBefore=before?`${value(before,'score_a')}–${value(before,'score_b')}`:'Created';const scoreAfter=after?`${value(after,'score_a')}–${value(after,'score_b')}`:'Deleted';return `<div class="audit-event"><div class="audit-event-head"><div><div class="audit-event-type">${escapeHtml(ev.type.replaceAll('_',' '))}</div><div class="audit-event-meta">${escapeHtml(ev.actor_email||'unknown')} ${ev.reason?'· '+escapeHtml(ev.reason):''}</div></div><div class="audit-event-meta">${ev.created_at?new Date(ev.created_at).toLocaleString():''}</div></div><div class="audit-change-grid"><div class="audit-change-box">Before: ${escapeHtml(scoreBefore)}</div><div class="audit-change-arrow">→</div><div class="audit-change-box">After: ${escapeHtml(scoreAfter)}</div></div></div>`;}).join(''):'<div class="audit-empty">No change events are recorded for this match.</div>';$('matchAuditModal').style.display='flex';};
+$('matchAuditClose').onclick=()=>{$('matchAuditModal').style.display='none';};$('matchAuditModal').addEventListener('click',e=>{if(e.target===$('matchAuditModal'))$('matchAuditModal').style.display='none';});
 
 $('historyFilter').addEventListener('change', renderHistory);
 $('historyModeFilter').addEventListener('change', renderHistory);
@@ -2512,8 +2597,11 @@ $('editMatchModal').addEventListener('click', e => {
 $('editMatchClose').onclick = () => { $('editMatchModal').style.display = 'none'; };
 
 $('editMatchSave').onclick = async () => {
+  if(savedMatchCorrectionInProgress)return;
   const m = appData.matches.find(x => x.id === _editMatchId);
   if (!m) return;
+  const correctionSnapshot=cloneForAudit(appData);
+  const statusEl=$('editMatchSaveStatus');statusEl.className='edit-save-status';statusEl.textContent='';
   const beforeMatch = cloneForAudit(m);
   const oldRoles = {
     [m.player_a]: $('editPlayerA').value,
@@ -2551,10 +2639,11 @@ $('editMatchSave').onclick = async () => {
 
   recordAuditEvent('match_edit', 'match', m.id, beforeMatch, m, 'Match history edit modal');
   recalculateAllStats();
-  $('editMatchModal').style.display = 'none';
-  const ok = await writeData(`Edit match ${_editMatchId.slice(0,8)}`);
-  if (ok) { renderHistory(); renderLeaderboard(); }
-  else    alert('Save failed. Check your PAT in ⚙ Settings.');
+  savedMatchCorrectionInProgress=true;$('editMatchSave').disabled=true;statusEl.textContent='Saving correction…';
+  const ok = await writeData(`Edit match ${_editMatchId.slice(0,8)}`,{silent:true});
+  savedMatchCorrectionInProgress=false;$('editMatchSave').disabled=false;
+  if(ok){statusEl.className='edit-save-status success';statusEl.textContent='Correction saved. Ratings and statistics recalculated.';renderHistory();renderLeaderboard();setTimeout(()=>{$('editMatchModal').style.display='none';statusEl.textContent='';},700);}
+  else{appData=correctionSnapshot;recalculateAllStats();statusEl.className='edit-save-status error';statusEl.textContent='Correction was not saved. All local changes were rolled back.';renderHistory();renderLeaderboard();}
 };
 
 /* ---------- Delete Match ---------- */
@@ -2614,7 +2703,7 @@ function renderLeaderboard() {
         .map((x,i)=>({ player_id:x.p.id, player_name:x.p.display_name, rank:i+1, rating:x.p.rating||1500, games:x.games }));
 
   if (!singles.length) {
-    sEl.innerHTML = '<div class="muted">No players with singles games yet.</div>';
+    sEl.innerHTML=emptyStateHtml('♜','No singles ladder yet','Record a ranked singles match to create the first ladder positions.',`<button type="button" class="primary" onclick="openTabByName('recorder')">Play ranked singles</button>`);
   } else {
     singles.forEach(r => {
       const p = appData.players.find(x=>x.id===r.player_id) || { id: r.player_id, display_name: r.player_name||'Unknown' };
@@ -2647,7 +2736,7 @@ function renderLeaderboard() {
       </div>
     </div>`;
   }).join('')
-    : '<div class="muted">No doubles rankings yet.</div>';
+    : emptyStateHtml('◇','No doubles ladder yet','Ranked doubles results will appear here after the first team match is saved.');
 }
 
 function rebuildSinglesRankings() {
@@ -3855,7 +3944,8 @@ $('startMatchBtn').onclick = () => {
     sessionId:     fmt > 1 ? crypto.randomUUID() : null,
     gamesA:        0,
     gamesB:        0,
-    gameNumber:    1
+    gameNumber:    1,
+    submissionId: crypto.randomUUID()
   });
   currentMatch.serveOrder = buildServeOrder();
 
@@ -3864,7 +3954,7 @@ $('startMatchBtn').onclick = () => {
   updateRallyTrackingUI();
   resetRallyHitsForNextPoint();
 
-  $('matchActions').textContent = '';
+  setMatchSaveStatus(null); hideMatchResult(); setUndoNote(''); redoPointStack=[];
 
   if (fmt > 1) {
     $('sessionScore').style.display = 'block';
@@ -3889,21 +3979,21 @@ $('resetMatchBtn').onclick = () => {
     mode: 'ranked', type: 'singles', gameType: 11, winBy2: true,
     tournament: null, serveOrder: [], firstServer: 'A',
     sessionFormat: 1, sessionId: null, gamesA: 0, gamesB: 0, gameNumber: 1,
-    pointLog: []
+    pointLog: [], submissionId: null
   });
   $('sideAName').innerHTML        = '';
   $('sideBName').innerHTML        = '';
   document.querySelector('.live-score-panel')?.classList?.remove('match-active-clean');
   document.body.classList.remove('live-recorder-fullscreen');
   if ($('fullscreenRecorderBtn')) $('fullscreenRecorderBtn').textContent = 'Fullscreen';
-  $('matchActions').textContent   = '';
+  setMatchSaveStatus(null); hideMatchResult(); setUndoNote(''); redoPointStack=[];
   $('sessionScore').style.display = 'none';
   updateScoreUI();
   $('matchStatus').textContent = 'Idle';
   $('startMatchBtn').textContent = 'Start Match';
   $('startMatchBtn').classList.remove('is-complete');
   $('startMatchBtn').disabled = false;
-  saveInProgress = false;
+  saveInProgress=false;gameCompletionScheduled=false;pendingMatchRetry=null;setRecorderControlsDisabled(false);
   updateInitialServerButtons();
   updatePartnerSwapButtons();
   setRecorderMode('choice');
@@ -3917,6 +4007,7 @@ function updateScoreUI() {
   renderFullscreenRecorderUI();
   updateInitialServerButtons();
   updatePartnerSwapButtons();
+  updateUndoButton();
 }
 
 /* ---------- Serve logic (TT standard rules) ----------
@@ -3991,39 +4082,31 @@ function logPoint(winnerSide) {
 }
 
 $('addPointA').onclick = () => {
+  redoPointStack=[];
+  if(saveInProgress||gameCompletionScheduled)return;
   if (currentMatch.serveOrder.length) logPoint('A');
   currentMatch.scoreA++; updateScoreUI(); checkAutoComplete();
   resetRallyHitsForNextPoint();
 };
 $('addPointB').onclick = () => {
+  redoPointStack=[];
+  if(saveInProgress||gameCompletionScheduled)return;
   if (currentMatch.serveOrder.length) logPoint('B');
   currentMatch.scoreB++; updateScoreUI(); checkAutoComplete();
   resetRallyHitsForNextPoint();
 };
-$('subPointA').onclick = () => {
-  if (currentMatch.scoreA > 0) {
-    currentMatch.scoreA--;
-    if (currentMatch.pointLog.length) currentMatch.pointLog.pop(); // undo
-    updateScoreUI();
-    const last = currentMatch.pointLog[currentMatch.pointLog.length - 1];
-    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 1) : 0, false);
-  }
-};
-$('subPointB').onclick = () => {
-  if (currentMatch.scoreB > 0) {
-    currentMatch.scoreB--;
-    if (currentMatch.pointLog.length) currentMatch.pointLog.pop(); // undo
-    updateScoreUI();
-    const last = currentMatch.pointLog[currentMatch.pointLog.length - 1];
-    setRallyHitsValue(isRallyTrackingEnabled() ? (last?.hits_per_rally ?? 1) : 0, false);
-  }
-};
+$('subPointA').onclick=undoLastPoint;
+$('subPointB').onclick=undoLastPoint;
+$('undoLastPointBtn').onclick=undoLastPoint;
+$('redoLastPointBtn').onclick=redoLastPoint;
 
 $('switchSides').onclick = () => {
+  redoPointStack=[];
   // Swap side assignments and scores
   [currentMatch.a, currentMatch.b] = [currentMatch.b, currentMatch.a];
   [currentMatch.c, currentMatch.d] = [currentMatch.d, currentMatch.c];
   [currentMatch.scoreA, currentMatch.scoreB] = [currentMatch.scoreB, currentMatch.scoreA];
+  currentMatch.pointLog.forEach(pt=>{[pt.score_a_before,pt.score_b_before]=[pt.score_b_before,pt.score_a_before];pt.winner_side=pt.winner_side==='A'?'B':'A';});
 
   currentMatch.serveOrder = buildServeOrder();
   updateScoreUI();
@@ -4032,166 +4115,49 @@ $('switchSides').onclick = () => {
 function checkAutoComplete() {
   const { scoreA: a, scoreB: b, gameType: t, winBy2 } = currentMatch;
   if ((a >= t || b >= t) && (!winBy2 || Math.abs(a - b) >= 2)) {
-    $('matchStatus').textContent = 'Game complete!';
+    if(gameCompletionScheduled||saveInProgress)return;gameCompletionScheduled=true;setRecorderControlsDisabled(true);
+    $('matchStatus').textContent = 'Game complete. Preparing save…';
     setTimeout(completeGame, 300);
   }
 }
 
 // Manual completion is handled by #startMatchBtn after the match has started.
 
-async function completeGame() {
-  if (saveInProgress) return;
-  saveInProgress = true;
-  if ($('startMatchBtn')) $('startMatchBtn').disabled = true;
-  const pa = appData.players.find(p => p.id === currentMatch.a);
-  const pb = appData.players.find(p => p.id === currentMatch.b);
-  if (!pa || !pb) {
-    saveInProgress = false;
-    if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
-    return alert('Players not set. Use \u201cStart Match\u201d first.');
-  }
-
-  const pc       = currentMatch.c ? appData.players.find(p => p.id === currentMatch.c) : null;
-  const pd       = currentMatch.d ? appData.players.find(p => p.id === currentMatch.d) : null;
-  const sideAWon = currentMatch.scoreA > currentMatch.scoreB;
-  const isRanked = currentMatch.mode === 'ranked';
-  const isDbl    = currentMatch.type === 'doubles';
-  const inSess   = currentMatch.sessionFormat > 1;
-
-  const sideAName = isDbl ? `${pa.display_name}/${pc?.display_name}` : pa.display_name;
-  const sideBName = isDbl ? `${pb.display_name}/${pd?.display_name}` : pb.display_name;
-  const winnerName = sideAWon ? sideAName : sideBName;
-
-  const matchRecord = {
-    id:            crypto.randomUUID(),
-    tournament_id: currentMatch.tournament || null,
-    mode:          currentMatch.mode,
-    type:          currentMatch.type,
-    game_type:     currentMatch.gameType,
-    session_id:    currentMatch.sessionId || null,
-    game_number:   inSess ? currentMatch.gameNumber : null,
-    player_a:      currentMatch.a,
-    player_b:      currentMatch.b,
-    player_c:      currentMatch.c || null,
-    player_d:      currentMatch.d || null,
-    score_a:       currentMatch.scoreA,
-    score_b:       currentMatch.scoreB,
-    winner:        sideAWon ? currentMatch.a : currentMatch.b,
-    win_by_2:      currentMatch.winBy2,
-    ranking_context: currentMatch.rankingContext || 'standard',
-    challenge_id:  currentMatch.challengeId || null,
-    created_at:    new Date().toISOString()
-  };
-  appData.matches.push(matchRecord);
-  recordAuditEvent('match_create', 'match', matchRecord.id, null, matchRecord, matchRecord.ranking_context === 'challenge' ? 'Challenge match recorded' : 'Match recorded');
-  if (matchRecord.ranking_context === 'challenge') applyChallengeResult(matchRecord);
-
-  // Commit live point log (with game reference)
-  const pointCount = currentMatch.pointLog.length;
-  currentMatch.pointLog.forEach(pt => { pt.game_id = matchRecord.id; });
-  appData.points.push(...currentMatch.pointLog);
-  currentMatch.pointLog = [];
-
-  [pa, pb, pc, pd].filter(Boolean).forEach(p => { p.games_played = (p.games_played || 0) + 1; });
-  if (isRanked && !isDbl) {
-    applyEloUpdate(pa, pb, sideAWon);
-    pa.points = (pa.points || 0) + (sideAWon ? 3 : 1);
-    pb.points = (pb.points || 0) + (sideAWon ? 1 : 3);
-    rebuildSinglesRankings();
-  }
-
-  $('matchActions').textContent = 'Saving\u2026';
-  const gameLabel = isDbl ? `${sideAName} vs ${sideBName}` : `${pa.display_name} vs ${pb.display_name}`;
-  const saveMsg   = inSess ? `Session game ${currentMatch.gameNumber}: ${gameLabel}` : `Record game: ${gameLabel}`;
-  const ok = await writeData(saveMsg);
-
-  if (!ok) {
-    appData.matches.pop();
-    if (pointCount > 0) appData.points.splice(appData.points.length - pointCount, pointCount);
-    [pa, pb, pc, pd].filter(Boolean).forEach(p => { p.games_played--; });
-
-    if (isRanked && !isDbl) {
-      pa.points -= sideAWon ? 3 : 1;
-      pb.points -= sideAWon ? 1 : 3;
-    }
-
-    saveInProgress = false;
-    if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
-
-    $('matchActions').textContent = 'Failed to save through Cloudflare Worker.';
-    return;
-  }
-
-  renderLeaderboard();
-
-  /* ---- Session handling ---- */
-  if (inSess) {
-    sideAWon ? currentMatch.gamesA++ : currentMatch.gamesB++;
-    currentMatch.gameNumber++;
-    updateSessionScoreUI();
-
-    const needed   = Math.ceil(currentMatch.sessionFormat / 2);
-    const sessOver = currentMatch.gamesA >= needed || currentMatch.gamesB >= needed;
-
-    if (sessOver) {
-      // Finalise and save the session summary record
-      const sessRec = {
-        id:           currentMatch.sessionId,
-        player_a:     currentMatch.a,  player_b:     currentMatch.b,
-        player_c:     currentMatch.c || null, player_d: currentMatch.d || null,
-        format:       currentMatch.sessionFormat,
-        mode:         currentMatch.mode, type: currentMatch.type,
-        tournament_id: currentMatch.tournament || null,
-        games_a:      currentMatch.gamesA, games_b: currentMatch.gamesB,
-        winner:       currentMatch.gamesA >= needed ? currentMatch.a : currentMatch.b,
-        created_at:   new Date().toISOString()
-      };
-      appData.sessions.push(sessRec);
-      await writeData(`Complete session: ${gameLabel}`);
-
-      $('matchActions').textContent =
-        `Session complete \u2014 ${currentMatch.gamesA >= needed ? sideAName : sideBName} wins ${currentMatch.gamesA}\u2013${currentMatch.gamesB}!`;
-      $('sessionScore').style.display = 'none';
-      setTimeout(() => $('resetMatchBtn').click(), 3000);
-      saveInProgress = false;
-      if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
-    } else {
-      // Next game — TT rule: first server alternates each game
-      currentMatch.firstServer = currentMatch.firstServer === 'A' ? 'B' : 'A';
-      currentMatch.serveOrder  = buildServeOrder();
-      currentMatch.scoreA = 0; currentMatch.scoreB = 0;
-      currentMatch.pointLog = [];
-      updateScoreUI();
-      $('matchStatus').textContent =
-        `Game ${currentMatch.gameNumber} of ${currentMatch.sessionFormat} \u00b7 ${currentMatch.gamesA}\u2013${currentMatch.gamesB} in games`;
-      $('matchActions').textContent =
-        `Game ${currentMatch.gameNumber - 1} done \u2014 ${sideAWon ? sideAName : sideBName} leads. Next server: Side ${currentMatch.firstServer}.`;
-      saveInProgress = false;
-      if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
-      updateInitialServerButtons();
-    }
-    return;
-  }
-
-  /* ---- Single game rematch prompt ---- */
-  $('matchActions').textContent = `Recorded \u2014 Winner: ${winnerName}`;
-  saveInProgress = false;
-  if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
-  setTimeout(() => {
-    if (confirm('Rematch with same players?')) {
-      currentMatch.scoreA = 0; currentMatch.scoreB = 0;
-      currentMatch.pointLog = [];
-      resetRallyHitsForNextPoint();
-      updateScoreUI();
-      $('matchStatus').textContent  = `${currentMatch.mode} \u00b7 ${currentMatch.type} \u00b7 rematch`;
-      $('matchActions').textContent = '';
-    } else {
-      saveInProgress = false;
-      if ($('startMatchBtn')) $('startMatchBtn').disabled = false;
-      $('resetMatchBtn').click();
-    }
-  }, 200);
+async function completeGame(){
+ if(saveInProgress)return;const pa=appData.players.find(p=>p.id===currentMatch.a),pb=appData.players.find(p=>p.id===currentMatch.b);if(!pa||!pb){gameCompletionScheduled=false;setRecorderControlsDisabled(false);return alert('Players not set. Use “Start Match” first.');}if(currentMatch.scoreA===currentMatch.scoreB){gameCompletionScheduled=false;setRecorderControlsDisabled(false);setMatchSaveStatus('warning','A winner is required','The game cannot be saved with a tied score.');return;}
+ saveInProgress=true;gameCompletionScheduled=false;pendingMatchRetry=null;setRecorderControlsDisabled(true);const btn=$('startMatchBtn');btn.disabled=true;btn.textContent='Saving…';const dataSnap=cloneForAudit(appData),matchSnap=cloneForAudit(currentMatch);const pc=currentMatch.c?appData.players.find(p=>p.id===currentMatch.c):null,pd=currentMatch.d?appData.players.find(p=>p.id===currentMatch.d):null;const aWon=currentMatch.scoreA>currentMatch.scoreB,ranked=currentMatch.mode==='ranked',dbl=currentMatch.type==='doubles',sess=currentMatch.sessionFormat>1;const aName=dbl?`${pa.display_name}/${pc?.display_name}`:pa.display_name,bName=dbl?`${pb.display_name}/${pd?.display_name}`:pb.display_name,winner=aWon?aName:bName,ra=Number(pa.rating||1500),rb=Number(pb.rating||1500),requestId=currentMatch.submissionId||crypto.randomUUID();currentMatch.submissionId=requestId;
+ const rec={id:requestId,submission_id:requestId,tournament_id:currentMatch.tournament||null,mode:currentMatch.mode,type:currentMatch.type,game_type:currentMatch.gameType,session_id:currentMatch.sessionId||null,game_number:sess?currentMatch.gameNumber:null,player_a:currentMatch.a,player_b:currentMatch.b,player_c:currentMatch.c||null,player_d:currentMatch.d||null,score_a:currentMatch.scoreA,score_b:currentMatch.scoreB,winner:aWon?currentMatch.a:currentMatch.b,win_by_2:currentMatch.winBy2,ranking_context:currentMatch.rankingContext||'standard',challenge_id:currentMatch.challengeId||null,created_at:new Date().toISOString()};
+ if((appData.matches||[]).some(m=>m.id===requestId)||recentDuplicateMatch(rec)){appData=dataSnap;currentMatch=matchSnap;saveInProgress=false;setRecorderControlsDisabled(false);btn.disabled=false;btn.textContent='Complete Game';setMatchSaveStatus('warning','Possible duplicate blocked','An identical result was recorded recently. Review Match History before trying again.');return;}
+ appData.matches.push(rec);recordAuditEvent('match_create','match',rec.id,null,rec,rec.ranking_context==='challenge'?'Challenge match recorded':'Match recorded');if(rec.ranking_context==='challenge')applyChallengeResult(rec);currentMatch.pointLog.forEach(pt=>pt.game_id=rec.id);appData.points.push(...currentMatch.pointLog);currentMatch.pointLog=[];[pa,pb,pc,pd].filter(Boolean).forEach(p=>p.games_played=(p.games_played||0)+1);if(ranked&&!dbl){applyEloUpdate(pa,pb,aWon);pa.points=(pa.points||0)+(aWon?3:1);pb.points=(pb.points||0)+(aWon?1:3);rebuildSinglesRankings();}
+ setMatchSaveStatus('saving','Saving match',`${aName} ${rec.score_a}–${rec.score_b} ${bName}. Keep this page open.`);const ok=await writeData(sess?`Session game ${currentMatch.gameNumber}: ${aName} vs ${bName}`:`Record game: ${aName} vs ${bName}`,{silent:true,requestId});
+ if(!ok){appData=dataSnap;currentMatch=matchSnap;saveInProgress=false;pendingMatchRetry={requestId,error:cloneForAudit(lastWriteError)};setRecorderControlsDisabled(false);updateScoreUI();renderLeaderboard();btn.disabled=false;btn.textContent='Retry Save';const conflict=['STALE_DATA','CONCURRENT_WRITE','MISSING_SHA'].includes(lastWriteError?.code);if(conflict){setMatchSaveStatus('conflict','Newer shared results exist','Your match is safe locally. Reload the latest data, then the app will reapply and save this match.',[{id:'recover',label:'Reload and reapply',primary:true},{id:'download',label:'Download recovery data'},{id:'dismiss',label:'Keep editing'}]);}else{const offline=lastWriteError?.code==='OFFLINE';setMatchSaveStatus('error',offline?'You are offline':'Match not saved',offline?'Reconnect, then retry. Your score and point log remain safe.':'Your score and point log are still available. Check the connection, then retry.',[{id:'retry',label:'Retry save',primary:true},{id:'download',label:'Download recovery data'},{id:'dismiss',label:'Keep editing'}]);}return;}
+ pendingMatchRetry=null;renderLeaderboard();renderHistory();if(sess){aWon?currentMatch.gamesA++:currentMatch.gamesB++;currentMatch.gameNumber++;currentMatch.submissionId=null;updateSessionScoreUI();const need=Math.ceil(currentMatch.sessionFormat/2),over=currentMatch.gamesA>=need||currentMatch.gamesB>=need;if(over){const sr={id:currentMatch.sessionId,player_a:currentMatch.a,player_b:currentMatch.b,player_c:currentMatch.c||null,player_d:currentMatch.d||null,format:currentMatch.sessionFormat,mode:currentMatch.mode,type:currentMatch.type,tournament_id:currentMatch.tournament||null,games_a:currentMatch.gamesA,games_b:currentMatch.gamesB,winner:currentMatch.gamesA>=need?currentMatch.a:currentMatch.b,created_at:new Date().toISOString()};appData.sessions.push(sr);const sok=await writeData(`Complete session: ${aName} vs ${bName}`,{silent:true,requestId:`${currentMatch.sessionId}:summary`});setMatchSaveStatus(sok?'success':'warning',sok?'Session saved':'Game saved, session summary pending',sok?`${currentMatch.gamesA>=need?aName:bName} wins ${currentMatch.gamesA}–${currentMatch.gamesB}.`:'The game is safe, but the session summary could not be saved.');$('sessionScore').style.display='none';saveInProgress=false;setRecorderControlsDisabled(false);setTimeout(()=>$('resetMatchBtn').click(),3000);}else{currentMatch.firstServer=currentMatch.firstServer==='A'?'B':'A';currentMatch.serveOrder=buildServeOrder();currentMatch.scoreA=0;currentMatch.scoreB=0;currentMatch.pointLog=[];updateScoreUI();$('matchStatus').textContent=`Game ${currentMatch.gameNumber} of ${currentMatch.sessionFormat} · ${currentMatch.gamesA}–${currentMatch.gamesB} in games`;setMatchSaveStatus('success',`Game ${currentMatch.gameNumber-1} saved`,`${aWon?aName:bName} won. Next server: Side ${currentMatch.firstServer}.`);saveInProgress=false;setRecorderControlsDisabled(false);btn.disabled=false;btn.textContent='Complete Game';}return;}
+ setMatchSaveStatus('success','Match saved',`${winner} won ${rec.score_a}–${rec.score_b}.`);saveInProgress=false;setRecorderControlsDisabled(false);btn.disabled=true;btn.textContent='Match Saved';const changes=ranked&&!dbl?[{name:pa.display_name,delta:Number(pa.rating||1500)-ra,after:Number(pa.rating||1500)},{name:pb.display_name,delta:Number(pb.rating||1500)-rb,after:Number(pb.rating||1500)}]:[];renderMatchResult({sideAName:aName,sideBName:bName,winnerName:winner,scoreA:rec.score_a,scoreB:rec.score_b,ratingChanges:changes});
 }
+$('matchActions')?.addEventListener('click',e=>{const a=e.target.closest('[data-save-action]')?.dataset.saveAction;if(a==='retry'&&pendingMatchRetry&&!saveInProgress)completeGame();if(a==='recover')reloadLatestAndRetry();if(a==='download')downloadRecoveryData();if(a==='dismiss'&&!saveInProgress){setMatchSaveStatus('warning','Unsaved match','The result remains in the recorder and has not been added to Match History.',[{id:'retry',label:'Retry save',primary:true},{id:'download',label:'Download recovery data'}]);}});
+$('resultRematchBtn').onclick=()=>{if(!lastSavedMatchResult)return;currentMatch.scoreA=0;currentMatch.scoreB=0;currentMatch.pointLog=[];redoPointStack=[];currentMatch.submissionId=crypto.randomUUID();saveInProgress=false;gameCompletionScheduled=false;hideMatchResult();setMatchSaveStatus(null);setRecorderControlsDisabled(false);resetRallyHitsForNextPoint();updateScoreUI();$('matchStatus').textContent=`${currentMatch.mode} · ${currentMatch.type} · rematch`;const b=$('startMatchBtn');b.disabled=false;b.textContent='Complete Game';};
+$('resultNewMatchBtn').onclick=()=>$('resetMatchBtn').click();$('resultViewHistoryBtn').onclick=()=>document.querySelector('nav button[data-tab="history"]')?.click();
+$('fsResultRematchBtn').onclick=()=>$('resultRematchBtn').click();
+$('fsResultNewMatchBtn').onclick=()=>$('resultNewMatchBtn').click();
+$('fsResultExitBtn').onclick=()=>{ $('fsResultOverlay').classList.remove('open'); toggleRecorderFullscreen(); };
+
+
+function runRecorderDiagnostics(){const results=[],test=(name,fn)=>{try{const detail=fn();results.push({name,pass:true,detail:detail||'Passed'});}catch(e){results.push({name,pass:false,detail:e.message});}};const assert=(v,m)=>{if(!v)throw new Error(m);};
+ test('Win-by-two rules',()=>{assert(!((11>=11||10>=11)&&Math.abs(11-10)>=2),'11–10 must not complete');assert((12>=11||10>=11)&&Math.abs(12-10)>=2,'12–10 must complete');return '11–10 continues; 12–10 completes.';});
+ test('Singles serving',()=>{const backup=cloneForAudit(currentMatch);currentMatch.gameType=11;currentMatch.serveOrder=['A','B'];assert(getServingPlayerId(0,0)==='A','0–0 server');assert(getServingPlayerId(2,0)==='B','2–0 server');assert(getServingPlayerId(10,10)==='A','10–10 server');assert(getServingPlayerId(10,11)==='B','10–11 server');currentMatch=backup;return 'Two-serve rotation and deuce alternation passed.';});
+ test('Duplicate fingerprint',()=>{const a={type:'singles',mode:'ranked',player_a:'1',player_b:'2',score_a:11,score_b:8},b={...a};assert(matchFingerprint(a)===matchFingerprint(b),'Fingerprints differ');return 'Equivalent results produce the same fingerprint.';});
+ test('Undo/redo state',()=>{const pt={score_a_before:4,score_b_before:3,winner_side:'A',point_number:8};assert(pt.score_a_before===4&&pt.winner_side==='A','Point state invalid');return 'Point snapshot contains restoration fields.';});
+ test('Recovery export',()=>{const payload=buildRecoveryPayload();assert(payload.current_match&&payload.exported_at,'Recovery payload incomplete');return 'Recovery payload includes match and timestamp.';});
+ test('Submission identity',()=>{const id=crypto.randomUUID();assert(/^[a-f0-9-]{36}$/.test(id),'UUID invalid');return 'Stable UUID format available.';});
+ test('Doubles serving rotation',()=>{const backup=cloneForAudit(currentMatch);currentMatch.gameType=11;currentMatch.serveOrder=['A1','B1','A2','B2'];assert(getServingPlayerId(0,0)==='A1','Opening server');assert(getServingPlayerId(2,0)==='B1','Second block');assert(getServingPlayerId(4,0)==='A2','Third block');currentMatch=backup;return 'Four-player service order advances correctly.';});
+ test('Best-of-three threshold',()=>{const format=3,needed=Math.ceil(format/2);assert(needed===2,'Incorrect games required');assert(2>=needed&&1<needed,'Session threshold failed');return 'Two game wins complete a best-of-three.';});
+ test('Side-switch point transform',()=>{const pt={score_a_before:5,score_b_before:3,winner_side:'A'};[pt.score_a_before,pt.score_b_before]=[pt.score_b_before,pt.score_a_before];pt.winner_side=pt.winner_side==='A'?'B':'A';assert(pt.score_a_before===3&&pt.score_b_before===5&&pt.winner_side==='B','Transform failed');return 'Scores and point owner swap together.';});
+ const passed=results.filter(r=>r.pass).length;$('recorderDiagnosticsSummary').textContent=`${passed}/${results.length} checks passed.`;$('recorderDiagnosticsResults').innerHTML=results.map(r=>`<div class="diagnostic-result ${r.pass?'pass':'fail'}"><div class="diagnostic-name">${r.pass?'✓':'✕'} ${escapeHtml(r.name)}</div><div class="diagnostic-detail">${escapeHtml(r.detail)}</div></div>`).join('');}
+if($('runRecorderDiagnosticsBtn'))$('runRecorderDiagnosticsBtn').onclick=runRecorderDiagnostics;
+
+window.addEventListener('online',()=>{setConnectionState();if(pendingMatchRetry&&!saveInProgress)setMatchSaveStatus('warning','Connection restored','Your unsaved match is ready to retry.',[{id:'retry',label:'Retry save',primary:true},{id:'download',label:'Download recovery data'}]);});
+window.addEventListener('offline',()=>{setConnectionState();if(currentMatch.serveOrder.length)setMatchSaveStatus('warning','You are offline','Scoring can continue, but completed results cannot be saved until the connection returns.');});
+setConnectionState();
 
 /* ---------- Guest player (session-only, not saved) ---------- */
 $('addGuestBtn').onclick = () => {

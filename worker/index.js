@@ -6,7 +6,7 @@ export default {
       return corsJson({
         ok: true,
         service: "rbg-tt-api",
-        routes: ["/health", "/debug-env", "/github-whoami", "/github-auth-test", "/data", "/save-match"]
+        routes: ["/health", "/debug-env", "/github-whoami", "/github-auth-test", "/data", "/save-match", "/save-db"]
       }, env);
     }
 
@@ -98,44 +98,38 @@ export default {
 
       if (url.pathname === "/save-db" && request.method === "POST") {
         const payload = await request.json();
-
-        if (!payload || typeof payload !== "object" || !payload.data) {
-          return corsJson({ ok: false, error: "Missing data object." }, env, 400);
-        }
-
+        if (!payload || typeof payload !== "object" || !payload.data) return corsJson({ ok:false, error:"Missing data object.", code:"INVALID_PAYLOAD" }, env, 400);
         const current = await getDb(env);
-        if (!payload.baseSha || typeof payload.baseSha !== "string") {
-          return corsJson({ ok: false, error: "Missing baseSha. Refresh the app and try saving again." }, env, 409);
+        const requestId = normaliseRequestId(payload.requestId);
+        if (requestId) {
+          const existing = findRequestMatch(current.data, requestId);
+          if (existing) {
+            const candidate = findRequestMatch(payload.data, requestId);
+            if (candidate && matchIdentity(candidate) !== matchIdentity(existing)) return corsJson({ ok:false, error:"The requestId already belongs to a different match.", code:"IDEMPOTENCY_CONFLICT" }, env, 409);
+            return corsJson({ ok:true, duplicate:true, request_id:requestId, match_id:existing.id||requestId, commit:null, db_sha:current.sha }, env);
+          }
         }
-        if (payload.baseSha !== current.sha) {
-          return corsJson({ ok: false, error: "Data is stale. Refresh before saving to avoid overwriting newer changes." }, env, 409);
-        }
+        if (!payload.baseSha || typeof payload.baseSha !== "string") return corsJson({ ok:false, error:"Missing baseSha. Refresh the app and try saving again.", code:"MISSING_SHA", db_sha:current.sha }, env, 409);
+        if (payload.baseSha !== current.sha) return corsJson({ ok:false, error:"Data is stale. Refresh before saving to avoid overwriting newer changes.", code:"STALE_DATA", db_sha:current.sha }, env, 409);
         const db = normaliseDb(payload.data);
-
-        const result = await putDb(
-          env,
-          db,
-          current.sha,
-          payload.message || "Update RBG-TT data"
-        );
-
-        return corsJson({
-          ok: true,
-          commit: result.commit?.sha || null,
-          db_sha: result.content?.sha || null
-        }, env);
+        if (requestId && !findRequestMatch(db, requestId)) return corsJson({ ok:false, error:"requestId does not match a submitted match record.", code:"REQUEST_MATCH_MISSING" }, env, 400);
+        try {
+          const result = await putDb(env, db, current.sha, payload.message || "Update RBG-TT data");
+          return corsJson({ ok:true, duplicate:false, request_id:requestId, commit:result.commit?.sha||null, db_sha:result.content?.sha||null }, env);
+        } catch (err) {
+          if (err?.status === 409) {
+            const latest = await getDb(env), existing = requestId ? findRequestMatch(latest.data, requestId) : null;
+            if (existing) return corsJson({ ok:true, duplicate:true, request_id:requestId, match_id:existing.id||requestId, commit:null, db_sha:latest.sha }, env);
+            return corsJson({ ok:false, error:"Data changed while saving. Reload and retry to preserve newer results.", code:"CONCURRENT_WRITE", db_sha:latest.sha }, env, 409);
+          }
+          throw err;
+        }
       }
 
       return corsJson({ ok: false, error: "Not found" }, env, 404);
     } catch (err) {
-      return corsJson(
-        {
-          ok: false,
-          error: err.message || String(err)
-        },
-        env,
-        500
-      );
+      const status = Number.isInteger(err?.status) && err.status >= 400 && err.status <= 599 ? err.status : 500;
+      return corsJson({ ok:false, error:err.message || String(err), code:err.code || "WORKER_ERROR" }, env, status);
     }
   }
 };
@@ -269,48 +263,20 @@ async function getDb(env) {
 }
 
 async function putDb(env, db, sha, message) {
-  const json = JSON.stringify(db, null, 2);
-  const encoded = btoa(unescape(encodeURIComponent(json)));
-
-  let nextSha = sha;
-  let lastErrorText = "";
-
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const res = await fetch(githubFileUrl(env), {
-      method: "PUT",
-      headers: githubHeaders(env),
-      body: JSON.stringify({
-        message,
-        content: encoded,
-        sha: nextSha,
-        branch: env.GH_BRANCH || "main"
-      })
-    });
-
-    if (res.ok) {
-      return await res.json();
-    }
-
-    lastErrorText = await res.text();
-
-    // GitHub 409 usually means the file changed after we fetched its SHA.
-    // Re-fetch latest SHA, wait briefly, and retry.
-    if (res.status === 409) {
-      await sleep(250 * (attempt + 1));
-      const fresh = await getDb(env);
-      nextSha = fresh.sha;
-      continue;
-    }
-
-    throw new Error(`GitHub write failed: ${res.status} ${lastErrorText}`);
-  }
-
-  throw new Error(`GitHub write failed after retrying SHA conflict: ${lastErrorText}`);
+  const json = JSON.stringify(db, null, 2), encoded = btoa(unescape(encodeURIComponent(json)));
+  const res = await fetch(githubFileUrl(env), { method:"PUT", headers:githubHeaders(env), body:JSON.stringify({ message, content:encoded, sha, branch:env.GH_BRANCH || "main" }) });
+  if (res.ok) return await res.json();
+  const text = await res.text(), error = new Error(`GitHub write failed: ${res.status} ${text}`);
+  error.status = res.status; throw error;
 }
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+function normaliseRequestId(value){if(typeof value!=="string")return null;const id=value.trim();return id&&id.length<=128&&/^[a-zA-Z0-9:_|.-]+$/.test(id)?id:null;}
+function findRequestMatch(data,id){return id&&Array.isArray(data?.matches)?data.matches.find(m=>m&&(m.submission_id===id||m.id===id))||null:null;}
+function matchIdentity(m){return JSON.stringify({type:m.type||null,mode:m.mode||null,player_a:m.player_a||null,player_b:m.player_b||null,player_c:m.player_c||null,player_d:m.player_d||null,score_a:Number(m.score_a),score_b:Number(m.score_b),session_id:m.session_id||null,game_number:m.game_number??null});}
 
 function validateMatchPayload(payload) {
   if (!payload || typeof payload !== "object") {
