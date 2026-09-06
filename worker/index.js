@@ -115,36 +115,28 @@ export default {
         if (requestId && !findRequestMatch(db, requestId)) return corsJson({ ok:false, error:"requestId does not match a submitted match record.", code:"REQUEST_MATCH_MISSING" }, env, 400);
         try {
           const result = await putDb(env, db, current.sha, payload.message || "Update RBG-TT data");
-          const writtenSha = result.content?.sha || null;
-
-          // Never tell the recorder that a match is saved until GitHub can
-          // read the submitted match back from the authoritative DB.
-          if (requestId) {
-            for (let attempt = 0; attempt < 4; attempt++) {
-              if (attempt) await sleep(250 * attempt);
-              const latest = await getDb(env);
-              const verified = findRequestMatch(latest.data, requestId);
-              if (verified) {
-                return corsJson({
-                  ok:true, persisted:true, duplicate:false,
-                  request_id:requestId,
-                  match_id:verified.id || requestId,
-                  commit:result.commit?.sha || null,
-                  db_sha:latest.sha || writtenSha
-                }, env);
-              }
-            }
+          const commitSha = result.commit?.sha || null;
+          const dbSha = result.content?.sha || null;
+          if (!commitSha || !dbSha) {
             return corsJson({
-              ok:false, persisted:false,
-              error:"GitHub accepted the write, but the match could not be verified in shared history.",
-              code:"PERSISTENCE_VERIFY_FAILED",
+              ok:false,
+              persisted:false,
+              error:"GitHub returned success without a commit or content SHA.",
+              code:"PERSISTENCE_NOT_CONFIRMED",
               request_id:requestId,
-              commit:result.commit?.sha || null,
-              db_sha:writtenSha
+              commit:commitSha,
+              db_sha:dbSha
             }, env, 502);
           }
-
-          return corsJson({ ok:true, persisted:true, duplicate:false, request_id:null, commit:result.commit?.sha||null, db_sha:writtenSha }, env);
+          return corsJson({
+            ok:true,
+            persisted:true,
+            duplicate:false,
+            request_id:requestId,
+            match_id:requestId || null,
+            commit:commitSha,
+            db_sha:dbSha
+          }, env);
         } catch (err) {
           if (err?.status === 409) {
             const latest = await getDb(env), existing = requestId ? findRequestMatch(latest.data, requestId) : null;

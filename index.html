@@ -2139,7 +2139,7 @@ $('themeToggle').addEventListener('change', e => {
 async function readData(options = {}) {
   if(options.showLoading !== false)setAppLoading(true,'Loading latest results','Synchronising players, matches and rankings…');
   try {
-    const res = await fetch(`${API_BASE}/data?ts=${Date.now()}`, {
+    const res = await fetch(`${API_BASE}/data`, {
       headers: {
         Accept: 'application/json'
       }
@@ -2183,9 +2183,12 @@ async function writeData(msg = 'Update RBG-TT data', options = {}) {
     if(!options.silent) alert('Save blocked: data version missing. Please refresh and try again.');
     return false;
   }
+  const saveController = new AbortController();
+  const saveTimeout = setTimeout(() => saveController.abort(), 45000);
   try {
     const res = await fetch(`${API_BASE}/save-db`, {
       method: 'POST',
+      signal: saveController.signal,
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
@@ -2212,26 +2215,21 @@ async function writeData(msg = 'Update RBG-TT data', options = {}) {
     }
 
     if (result.db_sha) _dbSha = result.db_sha;
-
-    // For match submissions, only report success after the Worker confirms
-    // that the match exists in the authoritative GitHub database.
-    if (options.requestId && result.persisted !== true && result.duplicate !== true) {
-      lastWriteError = {
-        status: 502,
-        code: 'PERSISTENCE_NOT_CONFIRMED',
-        error: 'The Worker accepted the request but did not confirm the match in shared history.'
-      };
-      return false;
-    }
-
     renderDbHealthPanel();
     renderChallengeManager();
     return true;
   } catch (e) {
     console.error('writeData failed', e);
-    lastWriteError={status:0,code:navigator.onLine?'NETWORK_ERROR':'OFFLINE',error:e.message||String(e)};
-    if(!options.silent) alert('Save failed via Cloudflare Worker: ' + e.message);
+    const timedOut = e?.name === 'AbortError';
+    lastWriteError={
+      status:0,
+      code: timedOut ? 'SAVE_TIMEOUT' : (navigator.onLine ? 'NETWORK_ERROR' : 'OFFLINE'),
+      error: timedOut ? 'The save took longer than 45 seconds.' : (e.message||String(e))
+    };
+    if(!options.silent) alert(timedOut ? 'Save timed out. The result remains in the recorder; retry safely.' : 'Save failed via Cloudflare Worker: ' + e.message);
     return false;
+  } finally {
+    clearTimeout(saveTimeout);
   }
 }
 
@@ -4146,7 +4144,7 @@ async function completeGame(){
  if((appData.matches||[]).some(m=>m.id===requestId)||recentDuplicateMatch(rec)){appData=dataSnap;currentMatch=matchSnap;saveInProgress=false;setRecorderControlsDisabled(false);btn.disabled=false;btn.textContent='Complete Game';setMatchSaveStatus('warning','Possible duplicate blocked','An identical result was recorded recently. Review Match History before trying again.');return;}
  appData.matches.push(rec);recordAuditEvent('match_create','match',rec.id,null,rec,rec.ranking_context==='challenge'?'Challenge match recorded':'Match recorded');if(rec.ranking_context==='challenge')applyChallengeResult(rec);currentMatch.pointLog.forEach(pt=>pt.game_id=rec.id);appData.points.push(...currentMatch.pointLog);currentMatch.pointLog=[];[pa,pb,pc,pd].filter(Boolean).forEach(p=>p.games_played=(p.games_played||0)+1);if(ranked&&!dbl){applyEloUpdate(pa,pb,aWon);pa.points=(pa.points||0)+(aWon?3:1);pb.points=(pb.points||0)+(aWon?1:3);rebuildSinglesRankings();}
  setMatchSaveStatus('saving','Saving match',`${aName} ${rec.score_a}–${rec.score_b} ${bName}. Keep this page open.`);const ok=await writeData(sess?`Session game ${currentMatch.gameNumber}: ${aName} vs ${bName}`:`Record game: ${aName} vs ${bName}`,{silent:true,requestId});
- if(!ok){appData=dataSnap;currentMatch=matchSnap;saveInProgress=false;pendingMatchRetry={requestId,error:cloneForAudit(lastWriteError)};setRecorderControlsDisabled(false);updateScoreUI();renderLeaderboard();btn.disabled=false;btn.textContent='Retry Save';const conflict=['STALE_DATA','CONCURRENT_WRITE','MISSING_SHA'].includes(lastWriteError?.code);if(conflict){setMatchSaveStatus('conflict','Newer shared results exist','Your match is safe locally. Reload the latest data, then the app will reapply and save this match.',[{id:'recover',label:'Reload and reapply',primary:true},{id:'download',label:'Download recovery data'},{id:'dismiss',label:'Keep editing'}]);}else{const offline=lastWriteError?.code==='OFFLINE';setMatchSaveStatus('error',offline?'You are offline':'Match not saved',offline?'Reconnect, then retry. Your score and point log remain safe.':'Your score and point log are still available. Check the connection, then retry.',[{id:'retry',label:'Retry save',primary:true},{id:'download',label:'Download recovery data'},{id:'dismiss',label:'Keep editing'}]);}return;}
+ if(!ok){appData=dataSnap;currentMatch=matchSnap;saveInProgress=false;pendingMatchRetry={requestId,error:cloneForAudit(lastWriteError)};setRecorderControlsDisabled(false);updateScoreUI();renderLeaderboard();btn.disabled=false;btn.textContent='Retry Save';const conflict=['STALE_DATA','CONCURRENT_WRITE','MISSING_SHA'].includes(lastWriteError?.code);if(conflict){setMatchSaveStatus('conflict','Newer shared results exist','Your match is safe locally. Reload the latest data, then the app will reapply and save this match.',[{id:'recover',label:'Reload and reapply',primary:true},{id:'download',label:'Download recovery data'},{id:'dismiss',label:'Keep editing'}]);}else{const offline=lastWriteError?.code==='OFFLINE',timedOut=lastWriteError?.code==='SAVE_TIMEOUT';setMatchSaveStatus('error',offline?'You are offline':timedOut?'Save timed out':'Match not saved',offline?'Reconnect, then retry. Your score and point log remain safe.':timedOut?'The Worker did not reply within 45 seconds. The match remains safe here and can be retried without duplication.':'Your score and point log are still available. Check the connection, then retry.',[{id:'retry',label:'Retry save',primary:true},{id:'download',label:'Download recovery data'},{id:'dismiss',label:'Keep editing'}]);}return;}
  pendingMatchRetry=null;renderLeaderboard();renderHistory();if(sess){aWon?currentMatch.gamesA++:currentMatch.gamesB++;currentMatch.gameNumber++;currentMatch.submissionId=null;updateSessionScoreUI();const need=Math.ceil(currentMatch.sessionFormat/2),over=currentMatch.gamesA>=need||currentMatch.gamesB>=need;if(over){const sr={id:currentMatch.sessionId,player_a:currentMatch.a,player_b:currentMatch.b,player_c:currentMatch.c||null,player_d:currentMatch.d||null,format:currentMatch.sessionFormat,mode:currentMatch.mode,type:currentMatch.type,tournament_id:currentMatch.tournament||null,games_a:currentMatch.gamesA,games_b:currentMatch.gamesB,winner:currentMatch.gamesA>=need?currentMatch.a:currentMatch.b,created_at:new Date().toISOString()};appData.sessions.push(sr);const sok=await writeData(`Complete session: ${aName} vs ${bName}`,{silent:true,requestId:`${currentMatch.sessionId}:summary`});setMatchSaveStatus(sok?'success':'warning',sok?'Session saved':'Game saved, session summary pending',sok?`${currentMatch.gamesA>=need?aName:bName} wins ${currentMatch.gamesA}–${currentMatch.gamesB}.`:'The game is safe, but the session summary could not be saved.');$('sessionScore').style.display='none';saveInProgress=false;setRecorderControlsDisabled(false);setTimeout(()=>$('resetMatchBtn').click(),3000);}else{currentMatch.firstServer=currentMatch.firstServer==='A'?'B':'A';currentMatch.serveOrder=buildServeOrder();currentMatch.scoreA=0;currentMatch.scoreB=0;currentMatch.pointLog=[];updateScoreUI();$('matchStatus').textContent=`Game ${currentMatch.gameNumber} of ${currentMatch.sessionFormat} · ${currentMatch.gamesA}–${currentMatch.gamesB} in games`;setMatchSaveStatus('success',`Game ${currentMatch.gameNumber-1} saved`,`${aWon?aName:bName} won. Next server: Side ${currentMatch.firstServer}.`);saveInProgress=false;setRecorderControlsDisabled(false);btn.disabled=false;btn.textContent='Complete Game';}return;}
  setMatchSaveStatus('success','Match saved',`${winner} won ${rec.score_a}–${rec.score_b}.`);saveInProgress=false;setRecorderControlsDisabled(false);btn.disabled=true;btn.textContent='Match Saved';const changes=ranked&&!dbl?[{name:pa.display_name,delta:Number(pa.rating||1500)-ra,after:Number(pa.rating||1500)},{name:pb.display_name,delta:Number(pb.rating||1500)-rb,after:Number(pb.rating||1500)}]:[];renderMatchResult({sideAName:aName,sideBName:bName,winnerName:winner,scoreA:rec.score_a,scoreB:rec.score_b,ratingChanges:changes});
 }
