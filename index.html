@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()" />
 <title>RBG-TT</title>
 <style>
   :root{
@@ -1539,6 +1541,7 @@ function openTabByName(name){document.querySelector(`nav button[data-tab="${name
 
 /* ---------- API config ---------- */
 const API_BASE = 'https://rbg-tt-api.harley-trappitt.workers.dev';
+const API_DIAGNOSTICS_ENABLED = false;
 
 const LS_USER = 'tt_user';
 
@@ -2136,7 +2139,7 @@ $('themeToggle').addEventListener('change', e => {
 async function readData(options = {}) {
   if(options.showLoading !== false)setAppLoading(true,'Loading latest results','Synchronising players, matches and rankings…');
   try {
-    const res = await fetch(`${API_BASE}/data`, {
+    const res = await fetch(`${API_BASE}/data?ts=${Date.now()}`, {
       headers: {
         Accept: 'application/json'
       }
@@ -2185,7 +2188,8 @@ async function writeData(msg = 'Update RBG-TT data', options = {}) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'application/json'
+        Accept: 'application/json',
+        'X-Request-ID': options.requestId || crypto.randomUUID()
       },
       body: JSON.stringify({
         message: msg,
@@ -2208,6 +2212,18 @@ async function writeData(msg = 'Update RBG-TT data', options = {}) {
     }
 
     if (result.db_sha) _dbSha = result.db_sha;
+
+    // For match submissions, only report success after the Worker confirms
+    // that the match exists in the authoritative GitHub database.
+    if (options.requestId && result.persisted !== true && result.duplicate !== true) {
+      lastWriteError = {
+        status: 502,
+        code: 'PERSISTENCE_NOT_CONFIRMED',
+        error: 'The Worker accepted the request but did not confirm the match in shared history.'
+      };
+      return false;
+    }
+
     renderDbHealthPanel();
     renderChallengeManager();
     return true;
@@ -4919,6 +4935,14 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
   enhanceTournamentModal();
   if (typeof loadTournaments === 'function') loadTournaments();
 })();
+
+/* Batch 6: production API hardening */
+window.addEventListener('DOMContentLoaded', () => {
+  ['debugEnvBtn','githubWhoamiBtn','githubAuthTestBtn'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !API_DIAGNOSTICS_ENABLED) { el.hidden = true; el.disabled = true; }
+  });
+});
 </script>
 
 </body>
