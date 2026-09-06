@@ -106,7 +106,7 @@ export default {
           if (existing) {
             const candidate = findRequestMatch(payload.data, requestId);
             if (candidate && matchIdentity(candidate) !== matchIdentity(existing)) return corsJson({ ok:false, error:"The requestId already belongs to a different match.", code:"IDEMPOTENCY_CONFLICT" }, env, 409);
-            return corsJson({ ok:true, duplicate:true, request_id:requestId, match_id:existing.id||requestId, commit:null, db_sha:current.sha }, env);
+            return corsJson({ ok:true, persisted:true, duplicate:true, request_id:requestId, match_id:existing.id||requestId, commit:null, db_sha:current.sha }, env);
           }
         }
         if (!payload.baseSha || typeof payload.baseSha !== "string") return corsJson({ ok:false, error:"Missing baseSha. Refresh the app and try saving again.", code:"MISSING_SHA", db_sha:current.sha }, env, 409);
@@ -115,11 +115,40 @@ export default {
         if (requestId && !findRequestMatch(db, requestId)) return corsJson({ ok:false, error:"requestId does not match a submitted match record.", code:"REQUEST_MATCH_MISSING" }, env, 400);
         try {
           const result = await putDb(env, db, current.sha, payload.message || "Update RBG-TT data");
-          return corsJson({ ok:true, duplicate:false, request_id:requestId, commit:result.commit?.sha||null, db_sha:result.content?.sha||null }, env);
+          const writtenSha = result.content?.sha || null;
+
+          // Never tell the recorder that a match is saved until GitHub can
+          // read the submitted match back from the authoritative DB.
+          if (requestId) {
+            for (let attempt = 0; attempt < 4; attempt++) {
+              if (attempt) await sleep(250 * attempt);
+              const latest = await getDb(env);
+              const verified = findRequestMatch(latest.data, requestId);
+              if (verified) {
+                return corsJson({
+                  ok:true, persisted:true, duplicate:false,
+                  request_id:requestId,
+                  match_id:verified.id || requestId,
+                  commit:result.commit?.sha || null,
+                  db_sha:latest.sha || writtenSha
+                }, env);
+              }
+            }
+            return corsJson({
+              ok:false, persisted:false,
+              error:"GitHub accepted the write, but the match could not be verified in shared history.",
+              code:"PERSISTENCE_VERIFY_FAILED",
+              request_id:requestId,
+              commit:result.commit?.sha || null,
+              db_sha:writtenSha
+            }, env, 502);
+          }
+
+          return corsJson({ ok:true, persisted:true, duplicate:false, request_id:null, commit:result.commit?.sha||null, db_sha:writtenSha }, env);
         } catch (err) {
           if (err?.status === 409) {
             const latest = await getDb(env), existing = requestId ? findRequestMatch(latest.data, requestId) : null;
-            if (existing) return corsJson({ ok:true, duplicate:true, request_id:requestId, match_id:existing.id||requestId, commit:null, db_sha:latest.sha }, env);
+            if (existing) return corsJson({ ok:true, persisted:true, duplicate:true, request_id:requestId, match_id:existing.id||requestId, commit:null, db_sha:latest.sha }, env);
             return corsJson({ ok:false, error:"Data changed while saving. Reload and retry to preserve newer results.", code:"CONCURRENT_WRITE", db_sha:latest.sha }, env, 409);
           }
           throw err;
