@@ -1899,9 +1899,25 @@ function renderDbHealthPanel() {
 function rebuildDerivedState(reason = 'rebuild') {
   ensureDataShape(); window.__captureDoublesRatingEvents = true; recalculateAllStats(); if (typeof window.rebuildDoublesTeamRankings === 'function') window.rebuildDoublesTeamRankings(); window.__captureDoublesRatingEvents = false; rebuildChallengeLadders(); const validation = validateDbReferences(appData); appData.derived.last_rebuilt_at = new Date().toISOString(); appData.derived.last_rebuild_reason = reason; appData.derived.validation = validation; renderDbHealthPanel(); renderChallengeManager(); return validation;
 }
-function prepareDataForSave(reason = 'save') { const validation = rebuildDerivedState(reason); if (validation.errors.length) { console.error('RBG-TT validation failed', validation.errors, validation.warnings); alert('Data validation failed. Save blocked. Check console.\n\n' + validation.errors.slice(0,5).join('\n')); return false; } if (validation.warnings.length) console.warn('RBG-TT validation warnings', validation.warnings); return true; }
+function prepareDataForSave(reason = 'save', silent = false) { const validation = rebuildDerivedState(reason); if (validation.errors.length) { console.error('RBG-TT validation failed', validation.errors, validation.warnings); if (!silent) alert('Data validation failed. Save blocked. Check console.\n\n' + validation.errors.slice(0,5).join('\n')); return false; } if (validation.warnings.length) console.warn('RBG-TT validation warnings', validation.warnings); return true; }
 async function manualRebuildAndSave() { if (!isAdmin()) return alert('Admin access required.'); if (!confirm('Rebuild derived stats, ratings, rankings, validation, rating events and then save the DB?')) return; const before = cloneForAudit(appData.derived || {}); const validation = rebuildDerivedState('manual admin rebuild'); const after = cloneForAudit(appData.derived || {}); recordAuditEvent('derived_rebuild','derived','manual',before,after,'Manual admin rebuild and save'); if (validation.errors.length) return; const ok = await writeData('Manual derived rebuild'); if (ok) { renderLeaderboard(); renderHistory(); renderDbHealthPanel(); alert('Derived data rebuilt and saved.'); } }
 
+
+/* ---------- New-match validation (only the record being saved) ---------- */
+function validateNewMatch(rec, players) {
+  const errors = [];
+  const playerIds = new Set((players || []).map(p => p.id));
+  if (!rec.id) errors.push('Match has no id.');
+  if (!rec.player_a || !playerIds.has(rec.player_a)) errors.push('Side A player is not registered.');
+  if (!rec.player_b || !playerIds.has(rec.player_b)) errors.push('Side B player is not registered.');
+  if ((rec.type || 'singles') === 'doubles') {
+    if (!rec.player_c || !playerIds.has(rec.player_c)) errors.push('Side A partner is not registered.');
+    if (!rec.player_d || !playerIds.has(rec.player_d)) errors.push('Side B partner is not registered.');
+  }
+  if (typeof rec.score_a !== 'number' || typeof rec.score_b !== 'number') errors.push('Scores must be numbers.');
+  if (!rec.winner) errors.push('Match has no winner.');
+  return errors;
+}
 
 /* ---------- Challenge Management UI - Phase 3A ---------- */
 const CHALLENGE_STATUSES = ['pending', 'accepted', 'declined', 'expired', 'completed', 'cancelled', 'disputed'];
@@ -2177,7 +2193,7 @@ async function readData(options = {}) {
 }
 async function writeData(msg = 'Update RBG-TT data', options = {}) {
   lastWriteError = null;
-  if (!prepareDataForSave(msg)) { lastWriteError={code:'VALIDATION_FAILED',error:'Local validation failed.'}; return false; }
+  try { if (!prepareDataForSave(msg, !!options.silent)) { lastWriteError={code:'VALIDATION_FAILED',error:'Local validation failed.'}; return false; } } catch(e) { console.error('prepareDataForSave threw',e); lastWriteError={code:'VALIDATION_FAILED',error:e.message||String(e)}; return false; }
   if (!_dbSha) {
     lastWriteError={code:'MISSING_SHA',error:'Data version missing.'};
     if(!options.silent) alert('Save blocked: data version missing. Please refresh and try again.');
@@ -2230,6 +2246,50 @@ async function writeData(msg = 'Update RBG-TT data', options = {}) {
     return false;
   } finally {
     clearTimeout(saveTimeout);
+  }
+}
+
+/* ============================================================
+   Save a single match via the lightweight /save-match endpoint.
+   Sends only the match record + points (not the full DB), so the
+   Worker handles 1–2 KB instead of 1.7 MB and completes well within
+   the 30-second Cloudflare Worker time limit.
+   ============================================================ */
+async function saveMatchToServer(rec, points, requestId) {
+  lastWriteError = null;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 45000);
+  try {
+    const res = await fetch(`${API_BASE}/save-match`, {
+      method: 'POST',
+      signal: ctrl.signal,
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ match: rec, points: points || [] })
+    });
+    const result = await res.json().catch(() => ({}));
+    if (!res.ok || result.ok === false) {
+      lastWriteError = {
+        status: res.status,
+        code: result.code || (res.status === 409 ? 'CONCURRENT_WRITE' : 'SAVE_FAILED'),
+        error: result.error || `HTTP ${res.status}`,
+        db_sha: result.db_sha || null
+      };
+      return false;
+    }
+    if (result.result?.db_sha) _dbSha = result.result.db_sha;
+    renderDbHealthPanel();
+    return true;
+  } catch (e) {
+    console.error('saveMatchToServer failed', e);
+    const timedOut = e?.name === 'AbortError';
+    lastWriteError = {
+      status: 0,
+      code: timedOut ? 'SAVE_TIMEOUT' : (navigator.onLine ? 'NETWORK_ERROR' : 'OFFLINE'),
+      error: timedOut ? 'The save took longer than 45 seconds.' : (e.message || String(e))
+    };
+    return false;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -4142,8 +4202,8 @@ async function completeGame(){
  saveInProgress=true;gameCompletionScheduled=false;pendingMatchRetry=null;setRecorderControlsDisabled(true);const btn=$('startMatchBtn');btn.disabled=true;btn.textContent='Saving…';const dataSnap=cloneForAudit(appData),matchSnap=cloneForAudit(currentMatch);const pc=currentMatch.c?appData.players.find(p=>p.id===currentMatch.c):null,pd=currentMatch.d?appData.players.find(p=>p.id===currentMatch.d):null;const aWon=currentMatch.scoreA>currentMatch.scoreB,ranked=currentMatch.mode==='ranked',dbl=currentMatch.type==='doubles',sess=currentMatch.sessionFormat>1;const aName=dbl?`${pa.display_name}/${pc?.display_name}`:pa.display_name,bName=dbl?`${pb.display_name}/${pd?.display_name}`:pb.display_name,winner=aWon?aName:bName,ra=Number(pa.rating||1500),rb=Number(pb.rating||1500),requestId=currentMatch.submissionId||crypto.randomUUID();currentMatch.submissionId=requestId;
  const rec={id:requestId,submission_id:requestId,tournament_id:currentMatch.tournament||null,mode:currentMatch.mode,type:currentMatch.type,game_type:currentMatch.gameType,session_id:currentMatch.sessionId||null,game_number:sess?currentMatch.gameNumber:null,player_a:currentMatch.a,player_b:currentMatch.b,player_c:currentMatch.c||null,player_d:currentMatch.d||null,score_a:currentMatch.scoreA,score_b:currentMatch.scoreB,winner:aWon?currentMatch.a:currentMatch.b,win_by_2:currentMatch.winBy2,ranking_context:currentMatch.rankingContext||'standard',challenge_id:currentMatch.challengeId||null,created_at:new Date().toISOString()};
  if((appData.matches||[]).some(m=>m.id===requestId)||recentDuplicateMatch(rec)){appData=dataSnap;currentMatch=matchSnap;saveInProgress=false;setRecorderControlsDisabled(false);btn.disabled=false;btn.textContent='Complete Game';setMatchSaveStatus('warning','Possible duplicate blocked','An identical result was recorded recently. Review Match History before trying again.');return;}
- appData.matches.push(rec);recordAuditEvent('match_create','match',rec.id,null,rec,rec.ranking_context==='challenge'?'Challenge match recorded':'Match recorded');if(rec.ranking_context==='challenge')applyChallengeResult(rec);currentMatch.pointLog.forEach(pt=>pt.game_id=rec.id);appData.points.push(...currentMatch.pointLog);currentMatch.pointLog=[];[pa,pb,pc,pd].filter(Boolean).forEach(p=>p.games_played=(p.games_played||0)+1);if(ranked&&!dbl){applyEloUpdate(pa,pb,aWon);pa.points=(pa.points||0)+(aWon?3:1);pb.points=(pb.points||0)+(aWon?1:3);rebuildSinglesRankings();}
- setMatchSaveStatus('saving','Saving match',`${aName} ${rec.score_a}–${rec.score_b} ${bName}. Keep this page open.`);const ok=await writeData(sess?`Session game ${currentMatch.gameNumber}: ${aName} vs ${bName}`:`Record game: ${aName} vs ${bName}`,{silent:true,requestId});
+ {const _ve=validateNewMatch(rec,appData.players);if(_ve.length){appData=dataSnap;currentMatch=matchSnap;saveInProgress=false;setRecorderControlsDisabled(false);btn.disabled=false;btn.textContent='Complete Game';setMatchSaveStatus('error','Cannot save match',_ve[0],[{id:'dismiss',label:'Close'}]);return;}}appData.matches.push(rec);recordAuditEvent('match_create','match',rec.id,null,rec,rec.ranking_context==='challenge'?'Challenge match recorded':'Match recorded');if(rec.ranking_context==='challenge')applyChallengeResult(rec);const _serverPoints=[...currentMatch.pointLog];currentMatch.pointLog.forEach(pt=>pt.game_id=rec.id);appData.points.push(...currentMatch.pointLog);currentMatch.pointLog=[];[pa,pb,pc,pd].filter(Boolean).forEach(p=>p.games_played=(p.games_played||0)+1);if(ranked&&!dbl){applyEloUpdate(pa,pb,aWon);pa.points=(pa.points||0)+(aWon?3:1);pb.points=(pb.points||0)+(aWon?1:3);rebuildSinglesRankings();}
+ setMatchSaveStatus('saving','Saving match',`${aName} ${rec.score_a}–${rec.score_b} ${bName}. Keep this page open.`);let ok=false;try{ok=await saveMatchToServer(rec,_serverPoints,requestId);}catch(e){console.error('match save threw',e);lastWriteError={code:'WORKER_ERROR',error:e.message||String(e)};}
  if(!ok){appData=dataSnap;currentMatch=matchSnap;saveInProgress=false;pendingMatchRetry={requestId,error:cloneForAudit(lastWriteError)};setRecorderControlsDisabled(false);updateScoreUI();renderLeaderboard();btn.disabled=false;btn.textContent='Retry Save';const conflict=['STALE_DATA','CONCURRENT_WRITE','MISSING_SHA'].includes(lastWriteError?.code);if(conflict){setMatchSaveStatus('conflict','Newer shared results exist','Your match is safe locally. Reload the latest data, then the app will reapply and save this match.',[{id:'recover',label:'Reload and reapply',primary:true},{id:'download',label:'Download recovery data'},{id:'dismiss',label:'Keep editing'}]);}else{const offline=lastWriteError?.code==='OFFLINE',timedOut=lastWriteError?.code==='SAVE_TIMEOUT';setMatchSaveStatus('error',offline?'You are offline':timedOut?'Save timed out':'Match not saved',offline?'Reconnect, then retry. Your score and point log remain safe.':timedOut?'The Worker did not reply within 45 seconds. The match remains safe here and can be retried without duplication.':'Your score and point log are still available. Check the connection, then retry.',[{id:'retry',label:'Retry save',primary:true},{id:'download',label:'Download recovery data'},{id:'dismiss',label:'Keep editing'}]);}return;}
  pendingMatchRetry=null;renderLeaderboard();renderHistory();if(sess){aWon?currentMatch.gamesA++:currentMatch.gamesB++;currentMatch.gameNumber++;currentMatch.submissionId=null;updateSessionScoreUI();const need=Math.ceil(currentMatch.sessionFormat/2),over=currentMatch.gamesA>=need||currentMatch.gamesB>=need;if(over){const sr={id:currentMatch.sessionId,player_a:currentMatch.a,player_b:currentMatch.b,player_c:currentMatch.c||null,player_d:currentMatch.d||null,format:currentMatch.sessionFormat,mode:currentMatch.mode,type:currentMatch.type,tournament_id:currentMatch.tournament||null,games_a:currentMatch.gamesA,games_b:currentMatch.gamesB,winner:currentMatch.gamesA>=need?currentMatch.a:currentMatch.b,created_at:new Date().toISOString()};appData.sessions.push(sr);const sok=await writeData(`Complete session: ${aName} vs ${bName}`,{silent:true,requestId:`${currentMatch.sessionId}:summary`});setMatchSaveStatus(sok?'success':'warning',sok?'Session saved':'Game saved, session summary pending',sok?`${currentMatch.gamesA>=need?aName:bName} wins ${currentMatch.gamesA}–${currentMatch.gamesB}.`:'The game is safe, but the session summary could not be saved.');$('sessionScore').style.display='none';saveInProgress=false;setRecorderControlsDisabled(false);setTimeout(()=>$('resetMatchBtn').click(),3000);}else{currentMatch.firstServer=currentMatch.firstServer==='A'?'B':'A';currentMatch.serveOrder=buildServeOrder();currentMatch.scoreA=0;currentMatch.scoreB=0;currentMatch.pointLog=[];updateScoreUI();$('matchStatus').textContent=`Game ${currentMatch.gameNumber} of ${currentMatch.sessionFormat} · ${currentMatch.gamesA}–${currentMatch.gamesB} in games`;setMatchSaveStatus('success',`Game ${currentMatch.gameNumber-1} saved`,`${aWon?aName:bName} won. Next server: Side ${currentMatch.firstServer}.`);saveInProgress=false;setRecorderControlsDisabled(false);btn.disabled=false;btn.textContent='Complete Game';}return;}
  setMatchSaveStatus('success','Match saved',`${winner} won ${rec.score_a}–${rec.score_b}.`);saveInProgress=false;setRecorderControlsDisabled(false);btn.disabled=true;btn.textContent='Match Saved';const changes=ranked&&!dbl?[{name:pa.display_name,delta:Number(pa.rating||1500)-ra,after:Number(pa.rating||1500)},{name:pb.display_name,delta:Number(pb.rating||1500)-rb,after:Number(pb.rating||1500)}]:[];renderMatchResult({sideAName:aName,sideBName:bName,winnerName:winner,scoreA:rec.score_a,scoreB:rec.score_b,ratingChanges:changes});
@@ -4284,9 +4344,6 @@ if ($('recorderScoreTab')) $('recorderScoreTab').onclick = () => showRecorderPan
   loadTournaments();
   populatePlayerSelectors();
   setRecorderMode('choice');
-  if (typeof updateRallyTrackingUI === 'function') updateRallyTrackingUI();
-  if (typeof applyFullscreenScaleSettings === 'function') applyFullscreenScaleSettings();
-  if (typeof wireFullscreenRecorderControls === 'function') wireFullscreenRecorderControls();
   if (typeof updateRallyTrackingUI === 'function') updateRallyTrackingUI();
   if (typeof applyFullscreenScaleSettings === 'function') applyFullscreenScaleSettings();
   if (typeof wireFullscreenRecorderControls === 'function') wireFullscreenRecorderControls();

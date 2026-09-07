@@ -157,7 +157,7 @@ export default {
 
 function corsHeaders(env) {
   return {
-    "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN || "*",
+    "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN || "https://harley-rbg.github.io",
     "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Expose-Headers": "X-DB-SHA",
@@ -381,6 +381,7 @@ async function appendMatch(env, payload) {
 
   return {
     match_id: match.id,
-    commit: write.commit?.sha || null
+    commit: write.commit?.sha || null,
+    db_sha: write.content?.sha || null
   };
 }
