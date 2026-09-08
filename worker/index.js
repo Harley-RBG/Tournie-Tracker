@@ -242,7 +242,7 @@ async function getDb(env) {
   }
 
   const file = await res.json();
-  const decodeContent = (content) => atob(String(content || "").replace(/\n/g, ""));
+  const decodeContent = (content) => Buffer.from(String(content || "").replace(/\n/g, ""), "base64").toString("utf-8");
   let jsonText = "";
   let data = null;
   let parseErr = null;
@@ -284,7 +284,8 @@ async function getDb(env) {
 }
 
 async function putDb(env, db, sha, message) {
-  const json = JSON.stringify(db, null, 2), encoded = btoa(unescape(encodeURIComponent(json)));
+  const json = JSON.stringify(db);
+  const encoded = Buffer.from(json, "utf-8").toString("base64");
   const res = await fetch(githubFileUrl(env), { method:"PUT", headers:githubHeaders(env), body:JSON.stringify({ message, content:encoded, sha, branch:env.GH_BRANCH || "main" }) });
   if (res.ok) return await res.json();
   const text = await res.text(), error = new Error(`GitHub write failed: ${res.status} ${text}`);
