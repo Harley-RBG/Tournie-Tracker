@@ -2131,7 +2131,11 @@ tabs.forEach(btn => btn.addEventListener('click', () => {
   if (tab === 'recorder' && !$('tab-recorder').classList.contains('mobile-show-score')) showRecorderPane('setup');
 }));
 
-function hasUnsavedRecorderWork(){return !!(currentMatch.serveOrder.length&&(currentMatch.pointLog.length||currentMatch.scoreA||currentMatch.scoreB||pendingMatchRetry||saveInProgress));}
+function hasUnsavedRecorderWork(){
+  const btn=$('startMatchBtn');
+  if(btn&&btn.textContent==='Match Saved')return false;
+  return !!(currentMatch.serveOrder.length&&(currentMatch.pointLog.length||currentMatch.scoreA||currentMatch.scoreB||pendingMatchRetry||saveInProgress));
+}
 window.addEventListener('beforeunload',e=>{if(!hasUnsavedRecorderWork())return;e.preventDefault();e.returnValue='';});
 document.addEventListener('click',e=>{const tab=e.target.closest('nav button[data-tab]');if(!tab||tab.dataset.tab==='recorder'||!hasUnsavedRecorderWork())return;if(!confirm('A match is still active or unsaved. Leave the recorder without resetting it?')){e.preventDefault();e.stopImmediatePropagation();}},true);
 
