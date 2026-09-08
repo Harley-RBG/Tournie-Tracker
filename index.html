@@ -1534,6 +1534,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
    ============================ */
 
 const $ = id => document.getElementById(id);
+function escapeHtml(s){const d=document.createElement('div');d.textContent=String(s??'');return d.innerHTML;}
 function setAppLoading(show,title='Loading RBG-TT',detail='Retrieving the latest shared results…'){const el=$('appLoading');if(!el)return;el.hidden=!show;if($('appLoadingTitle'))$('appLoadingTitle').textContent=title;if($('appLoadingDetail'))$('appLoadingDetail').textContent=detail;}
 function emptyStateHtml(icon,title,detail,actions=''){return `<div class="empty-state"><div class="empty-state-icon" aria-hidden="true">${icon}</div><div class="empty-state-title">${escapeHtml(title)}</div><div class="empty-state-detail">${escapeHtml(detail)}</div>${actions?`<div class="empty-state-actions">${actions}</div>`:''}</div>`;}
 function openTabByName(name){document.querySelector(`nav button[data-tab="${name}"]`)?.click();}
